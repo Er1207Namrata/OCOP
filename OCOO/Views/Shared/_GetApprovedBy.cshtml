@@ -1,0 +1,47 @@
+﻿@model OCOO.Models.DailyCapacity
+
+
+ <table class="table table-striped footable">
+    <thead>
+        <tr>
+            <th style="min-width: 150px;">Sn</th>
+            <th>Firm Name</th>
+            <th>District</th>
+            <th>Month</th>
+            <th class="tdaction">Approved By</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int sn = 1;
+            if (Model.dtDetails.Rows.Count > 0)
+            {
+                for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                {
+                    <tr>
+                        <td>@sn</td>
+                        <td>@Model.dtDetails.Rows[i]["Name"].ToString()</td>
+                        <td>@Model.dtDetails.Rows[i]["District"].ToString()</td>
+                        <td>@Model.dtDetails.Rows[i]["Month"].ToString()</td>
+                        <td>@Model.dtDetails.Rows[i]["DesignationName"].ToString()</td>
+                    </tr>
+                    sn++;
+                }
+            }
+            else
+            {
+                <h2>No Record Found</h2>
+            }
+        }
+    </tbody>
+    <tfoot>
+        @*<tr>
+        <td colspan="8">
+        <div class="text-right">
+        <ul class="pagination"> <li class="footable-page-arrow disabled"><a data-page="first" href="#first">«</a></li><li class="footable-page-arrow disabled"><a data-page="prev" href="#prev">‹</a></li><li class="footable-page active"><a data-page="0" href="#">1</a></li><li class="footable-page"><a data-page="1" href="#">2</a></li><li class="footable-page-arrow"><a data-page="next" href="#next">›</a></li><li class="footable-page-arrow"><a data-page="last" href="#last">»</a></li></ul>
+        </div>
+        </td>
+        </tr>*@
+    </tfoot>
+</table>
+

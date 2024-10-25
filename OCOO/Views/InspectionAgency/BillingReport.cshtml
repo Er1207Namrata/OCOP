@@ -1,0 +1,220 @@
+﻿@model OCOO.Models.BillingReport
+@{
+    ViewData["Title"] = "BillingReport";
+    Layout = "~/Views/Shared/_AgencyLayout.cshtml";
+}
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Billing List</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="BillingReport">
+                <div class="card-body pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-hover footable" id="tblBilling">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Bill No</th>
+                                    <th>Billing Date</th>
+                                    <th>Zone</th>
+                                    <th>STP</th>
+                                    <th>Design Capacity</th>
+                                    <th>Actual Flow</th>
+                                    <th>Consider Flow</th>
+                                    <th>BOD</th>
+                                    <th>COD</th>
+                                    <th>TSS</th>
+                                    <th>FC</th>
+                                    <th>InHouse Status</th>
+                                    <th>InHouse Remark</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @(
+                                                            i + 1
+                                                            )
+                                                    </td>
+                                                    <td>@Model.dtDetails.Rows[i]["BillNo"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["BillingDate"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Zone"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["StpName"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["DesignCapacity"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ActualFLow"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ConsiderFlow"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["BOD"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["COD"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["TSS"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["FC"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["In_HouseStatus"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["IN_HouseRemarks"].ToString()</td>
+                                                    <td>
+                                                        @if (Context.Session.GetString("InspectionTypeName") == "In-House")
+                                                        {
+                                                            @if (@Model.dtDetails.Rows[i]["In_HouseStatus"].ToString() == "Pending")
+                                                            {
+                                                                <a href="#" class="btn btn-small btn-primary" onclick="return ShowPopup(@Model.dtDetails.Rows[i]["Pk_BillingId"].ToString())">Upate Status</a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @if (@Model.dtDetails.Rows[i]["In_HouseStatus"].ToString() != "Pending")
+                                                            {
+                                                                <a href="#" class="btn btn-small btn-primary" onclick="return ShowPopup(@Model.dtDetails.Rows[i]["Pk_BillingId"].ToString())">Upate Status</a>
+                                                            }
+
+                                                        }
+                                                    </td>
+
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="14" class="text-center">No Record Found</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="BillApproveAndFail" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"> Billing </h5>
+                <a href="#" class="btn-close" data-dismiss="modal">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" asp-for="Pk_StpBillindId" />
+                    <div class="col-md-6">
+                        <label>Upload File <span class="text-danger">*</span></label>
+                        <input type="file" asp-for="DocumentFile" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                    </div>
+                    <div class="col-md-6">
+                        <label>Status <span class="text-danger">*</span></label>
+                        <select asp-for="BillStatus" class="form-control">
+                            <option value="">--Select Status--</option>
+                            <option value="Pass">Pass</option>
+                            <option value="Failure">Failure</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Remark <span class="text-danger">*</span></label>
+                        <textarea class="form-control" asp-for="Remark"></textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="checkbox" id="IsTerm" name="IsTerm" />
+                        <label for="IsTerm">IsTerm</label>
+                    </div>
+
+                    <div class="col-md-6 p-4">
+                        <input type="button" class="btn btn-primary" id="submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit" />
+
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/jquery.datatables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var table = $('#tblBilling').DataTable({ retrieve: true, "paging": false, bFilter: false, bInfo: false, "ordering": false, fixedHeader: true }).clear();
+
+    });
+    ;
+
+    function ShowPopup(Pk_StpBillindId) {
+
+        $('#BillApproveAndFail').modal('show');
+        $("#Pk_StpBillindId").val(Pk_StpBillindId)
+    }
+
+
+
+    function ValidateForm() {
+        var IsTerm = $('input[name="IsTerm"]:checked').val()
+        if ($("#DocumentFile").val() == null || $("#DocumentFile").val() == '') {
+            $("#DocumentFile").focus();
+            return false;
+        }
+
+        if ($("#BillStatus").val() == null || $("#BillStatus").val() == '') {
+            $("#BillStatus").focus();
+            return false;
+        }
+
+        if ($("#Remark").val() == null || $("#Remark").val() == '') {
+            $("#Remark").focus();
+            return false;
+        }
+
+        if ($('input[name="IsTerm"]:checked').val() == "" || $('input[name="IsTerm"]:checked').val() == null) {
+            fShowToastalert('Please accept terms and conditions')
+            return false;
+        }
+
+        var file_data = $("#DocumentFile").prop("files")[0];
+        var form_data = new FormData();
+        form_data.append("DocumentFile", file_data);
+        form_data.append("BillStatus", $("#BillStatus").val());
+        form_data.append("Pk_StpBillindId", $("#Pk_StpBillindId").val());
+        form_data.append("Remark", $("#Remark").val());
+        $.ajax({
+            url: "/InspectionAgency/UpdateStatusBill",
+            type: "POST",
+            processData: false,
+            contentType: false,
+            data: form_data,
+            success: function (response) {
+                if (response != null) {
+                    if (response.status == '1') {
+                        fShowToast(response.message);
+                        window.location.reload(true);
+                    }
+                    else {
+                        fShowToasterror(response.message);
+                    }
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+
+</script>

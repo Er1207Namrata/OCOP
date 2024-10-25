@@ -1,0 +1,22 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+
+
+.vs/
+OCOO/obj
+/OCOO/wwwroot/ProfilePic
+/DTOs/obj/Release/net6.0
+/DbHelper/obj/Release/net6.0
+/Services/obj/Release/net6.0
+*.vs/ProjectEvaluation/ocoo.metadata.v7.bin
+*.vs/ProjectEvaluation/ocoo.projects.v7.bin
+*.bin
+*OCOO/bin
+*OCOO/obj
+/.vs
+/.vs
+/.vs
+.vs/ProjectEvaluation/ocoo.metadata.v7.bin
+.vs/ProjectEvaluation/ocoo.projects.v7.bin

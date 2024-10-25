@@ -1,0 +1,202 @@
+﻿@model OCOO.Models.Menu
+@{
+    ViewData["Title"] = "MenuMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Menu</h3>
+
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a href="#" onclick="return ShowMenuPopup();" id="btn" class="btn btn-success btn-sm"><i class="fa fa-plus mdi-18px"></i> Menu</a></span>
+             
+        </div>
+    </div>
+    <div class="container-fluid">
+                <div class="card">
+            <form asp-action="MenuMaster">
+                <div class="card-body pb-20">
+                    <div class="table-responsive">
+                         <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Menu Name</th>
+                                    <th>Menu Url</th>
+                                   
+                                    <th class="tdaction">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.dtDetails != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["MenuName"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Url"].ToString()</td>
+                                                    
+                                                    <td>
+                                                        <a href="#" data-bs-toggle="modal" onclick="return MenuEdit(@Model.dtDetails.Rows[i]["MenuId"].ToString(),'@Model.dtDetails.Rows[i]["MenuName"].ToString()','@Model.dtDetails.Rows[i]["Url"].ToString()','@Model.dtDetails.Rows[i]["Icon"].ToString()','@Model.dtDetails.Rows[i]["IsDropdown"].ToString()','@Model.dtDetails.Rows[i]["IndexNo"].ToString()')" data-bs-target="#exampleModal" class="text-primary">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a href="/MenuMaster/DeleteMenu?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["MenuId"].ToString())" id="btnDelete" class="text-danger" onclick="return confirm('are you sure to delete this menu?')" ToolTip="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3" class="text-center">No Record Found</td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <form asp-action="SaveMenuMaster" asp-controller="MenuMaster" method="post">
+        <div id="modelMenu" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Menu</h5>
+                        <a href="#" class="btn-close" data-dismiss="modal">
+                            <i class="fa fa-close"></i>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Menu Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="MenuName" placeholder="Enter Menu Name" />
+                                    <input type="hidden" asp-for="MenuId" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Menu URL<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="Url" placeholder="Enter Menu Url" />
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Menu Icon<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="Icon" placeholder="Enter Icon Class" />
+
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Index No<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="IndexNo" placeholder="Enter Index No" />
+
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Dropdown<span class="text-danger">*</span></label>
+                                    <select class="form-control" asp-for="IsDropdown">
+                                        <option value="0">--select</option>
+                                        <option value="Y">Yes</option>
+                                        <option value="N">No</option>
+                                    </select>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-right">
+                                <button type="submit" class="btn btn-primary btn-xs" id="submit" onclick="return ValidateUser();" value="Submit" name="btnSubmit" ><i class="fa fa-save"> Save</i></button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<script>
+
+    function ShowMenuPopup() {
+        $("#MenuName").val("");
+        $("#Url").val("");
+        $("#Icon").val("");
+        $("#IsDropdown").val(0);
+        $("#IndexNo").val("");
+        $('#modelMenu').modal('show');
+        $("#MenuId").val(0);
+        $("#submit").val('Submit');
+        $("#submit").html('<i class="fa fa-save"> Save</i>');
+        $("#submit").css("background", "green");
+    }
+
+
+    function ValidateUser() {
+        if ($("#MenuName").val() == '' || $("#MenuName").val() == null) {
+            $("#MenuName").focus();
+            return false;
+        }if ($("#Url").val() == '' || $("#Url").val() == null) {
+            $("#Url").focus();
+            return false;
+        }if ($("#Icon").val() == '' || $("#Icon").val() == null) {
+            $("#Icon").focus();
+            return false;
+        }if ($("#IndexNo").val() == '' || $("#IndexNo").val() == null) {
+            $("#IndexNo").focus();
+            return false;
+        }if ($("#IsDropdown").val() == '' || $("#IsDropdown").val() == null|| $("#IsDropdown").val() == "0") {
+            $("#IsDropdown").focus();
+            return false;
+        }
+
+    }
+    function MenuEdit(Pk_MenuId, MenuName,Url, Icon,Isdropdown,IndexNo) {
+        $("#MenuId").val(Pk_MenuId);
+        $("#MenuName").val(MenuName);
+        $("#Url").val(Url);
+        $("#Icon").val(Icon);
+        $("#IsDropdown").val(Isdropdown);
+        $("#IndexNo").val(IndexNo);
+        $("#submit").html('<i class="fa fa-pencil"> Update</i>');
+        $("#submit").val('Update');
+        $("#submit").css("background", "green");
+        $('#modelMenu').modal('show');
+    }
+
+    $(function () {
+        $("#select-all").click(function () {
+            if ($(this).is(":checked")) {
+                $("#div1").show();
+            } else {
+                $("#div1").hide();
+            }
+        });
+    });
+</script>
+
+

@@ -1,0 +1,86 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "StpPumpStationListAdmin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Sub Pumping Station</h3>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <button id="export-excel" class="btn btn-sm btn-success ml-2 float-right" value="Sub Pumping Station" title="Export to excel"><i class="fa fa-file-excel-o mdi-18px" aria-hidden="true"></i></button>
+        </div>
+
+
+    </div>
+    <div class="container-fluid">
+        <div class="card mb-0">
+            <div class="card-body p-3">
+                <div class="table-responsive" id="data-table">
+                    <table class="table footable table-striped table-hover" cellspacing="0" cellpadding="0" border="0">
+                        <thead>
+
+
+                            @if (Model.dtDetails != null)
+                            {
+                                <tr>
+                                    <th colspan="11" style="font-size:20px; text-align:center"><span>@Model.dtDetails.Rows[0]["StpName"].ToString()</span></th>
+                                </tr>
+
+                            }
+                            <tr>
+                                <th>Sn.</th>
+                                <th>MPS/SPS/IPS</th>
+                                <th> Name of STP/MPS/SPS/IPS discharging directly </th>
+                                <th>Electricity  Meter Load</th>
+                                <th>Electricity Account No.</th>
+                                <th>Billing Cycle</th>
+                                <th>Peak Discharge Discharge</th>
+                                <th>Peak Designed factor</th>
+                                <th>Drain</th>
+                                <th>Sewer</th>
+                             
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                if (Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                                {
+
+                                    for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@(i + 1)</td>
+                                            <td>@Model.dtDetails.Rows[i]["Name"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["ParentName"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["MeterLoad"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AccountNo"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["BillingCycle"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["PeekDesignedDischarge"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["PeekDesignedFactor"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["DrainageName"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["SewerLength"].ToString()</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10" class="alert alert-warning text-center">No Record Found</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/script/showtestingagency.js"></script>
+<script src="~/script/year.js"></script>
+

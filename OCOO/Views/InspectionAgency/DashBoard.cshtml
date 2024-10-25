@@ -1,0 +1,454 @@
+﻿@model OCOO.Models.AgencyDashboard
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_InsAgencyLayout.cshtml";
+}
+
+    <div class="page-wrapper">
+        <input type="hidden" name="ProfileStatus" id="ProfileStatus" value="@Context.Session.GetString("IsDetailsUpdateded")" />
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor">Dashboard</h3>
+
+            </div>
+            <div class="col-md-6 align-self-right">
+            <span class="float-right"><a data-toggle="collapse" title="Search" href="#searchblock" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-sm btn-primary"><i class="fa fa-filter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+        <div class="container-fluid">
+
+
+            <input type="hidden" id="STPId" value="@TempData["Fk_STPId"]" />
+            <input type="hidden" id="FDate" value="@TempData["FromDate"]" />
+            <input type="hidden" id="TDate" value="@TempData["ToDate"]" />
+            <input type="hidden" id="FMonth" value="@TempData["Fk_MonthId"]" />
+            <div class="collapse" id="searchblock">
+                <div class="card">
+                    <form asp-controller="InspectionAgency" asp-action="Dashboard" method="post">
+                        <div class="card-body pb-0">
+                            <div class="row">
+
+
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>STP</label>
+                                        @Html.DropDownListFor(m => m.Fk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Month</label>
+                                        @Html.DropDownListFor(m => m.Fk_MonthId, new SelectList(ViewBag.ddlMonth, "Value", "Text"), new { @class = "form-control"})
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>From Date</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control mydatepicker" readonly asp-for="FromDate" value="@ViewBag.FromDate" placeholder="dd/mm/yyyy" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text"><i class="icon-calender"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>To Date</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control mydatepicker" readonly value="@ViewBag.ToDate" asp-for="ToDate" placeholder="dd/mm/yyyy" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text"><i class="icon-calender"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                <div class="form-group mt-2">
+                                    <label>&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary  m10r  btn-xs btn-sm" id="submit" value="Search" name="btnSubmit"><i class="fa fa-search"> Search</i></button>
+                                    <button type="reset" class="btn btn-secondary   btn-xs btn-sm"><i class="fa fa-refresh"></i>     Reset</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Column -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-row">
+                            <div class="round align-self-center round-primary"><i class="mdi mdi-hospital-building"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h3 class="m-b-0">@Model.dtDetails.Rows[0]["FirmCount"]</h3>
+                                    <h5 class="text-muted m-b-0">Total Firm</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <!-- Column -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-row">
+                                <div class="round align-self-center round-warning"><i class="mdi mdi-account"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h3 class="m-b-0">@Model.dtDetails.Rows[0]["StpCount"]</h3>
+                                    <h5 class="text-muted m-b-0">Total STP</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-info"><i class="mdi mdi-wallet"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@Model.dtDetails.Rows[0]["ApprovedBill"]</h3>
+                                <h5 class="text-muted m-b-0">ApprovedBill</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-primary"><i class="ti-wallet"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@Model.dtDetails.Rows[0]["PendingBill"]</h3>
+                                <h5 class="text-muted m-b-0">Pending Bill</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            @*    <!-- Column -->
+                <!-- Column -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-row">
+                                <div class="round align-self-center round-info"><i class="mdi mdi-account"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h3 class="m-b-0">@Model.dtDetails.Rows[0]["BODCount"]</h3>
+                                    <h5 class="text-muted m-b-0">Total BOD LD</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <!-- Column -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-row">
+                                <div class="round align-self-center round-info"><i class="mdi mdi-account"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h3 class="m-b-0">@Model.dtDetails.Rows[0]["CODCount"]</h3>
+                                    <h5 class="text-muted m-b-0">Total COD LD</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->*@
+
+            </div>
+
+            <div class="row">
+              
+                <!-- Column -->
+              @*  <div class="col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-row">
+                                <div class="round align-self-center round-success"><i class="mdi mdi-account"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h3 class="m-b-0">@Model.dtDetails.Rows[0]["TSSCount"]</h3>
+                                    <h5 class="text-muted m-b-0">Total TSS LD</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+                <!-- Column -->
+                <!-- Column -->
+               @* <div class="col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-row">
+                                <div class="round align-self-center round-info"><i class="mdi mdi-account"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h3 class="m-b-0">@Model.dtDetails.Rows[0]["FCCount"]</h3>
+                                    <h5 class="text-muted m-b-0">Total FC Count </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+                <!-- Column -->
+           
+
+
+        </div>
+            <!-- Row -->
+      
+            <div class="row">
+                <div class="col-lg-7 col-md-7">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap">
+                                <div>
+                                    <h4 class="card-title">Monthly LD Report</h4>
+                                </div>
+                            </div>
+                            <figure class="highcharts-figure">
+                                <div id="LDbarchart" style="height: 400px;"></div>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5">
+                    <!-- Column -->
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h4 class="card-title m-b-0">Overall Analysis</h4>
+                        </div>
+                        <div class="card-body">
+                            <figure class="highcharts-figure">
+                                <div id="PieChart" style="height: 400px;"></div>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+           
+        </div>
+
+
+    </div>
+
+
+<script>
+    $(document).ready(function () {
+   
+        funcPiechart();
+        funcLDbarchart();
+    });
+
+    let txtSTPId = $("#Fk_STPId").val();
+
+    let txtFDate = $("#FDate").val();
+    let txtTDate = $("#TDate").val();
+    let txtTMonth = $("#FMonth").val();
+
+
+    function funcPiechart() {
+        $.ajax({
+            url: '/InspectionAgency/BindChartData',
+            type: 'GET',
+            data: { Fk_STPId: txtSTPId, FromDate: txtFDate, ToDate: txtTDate, Fk_MonthId: txtTMonth },
+            success: function (response) {
+
+                if (response != null) {
+
+                    let BodCount = parseInt(response.pieChartLDCountData.bodCount);
+                    let CodCount = parseInt(response.pieChartLDCountData.codCount);
+                    let Tss = parseInt(response.pieChartLDCountData.tss);
+                    let Fc = parseInt(response.pieChartLDCountData.fc);
+                    let TotalLDAmount = parseInt(response.pieChartLDCountData.totalLDAmount);
+
+                    Highcharts.chart('PieChart', {
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false,
+                            type: 'pie'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y:.1f}</b>'
+                        },
+                        accessibility: {
+                            point: {
+                                valueSuffix: ''
+                            }
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '<b>{point.name}</b>: {point.y:.1f} :',
+                                    connectorColor: 'blue'
+                                }
+                            }
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        navigation: {
+                            buttonOptions: {
+                                enabled: false
+                            }
+                        },
+                        series: [{
+                            name: 'LD Count',
+                            colorByPoint: true,
+                            data: [{
+                                name: 'BOD LD Count',
+                                y: BodCount
+                                //sliced: true,
+                                //selected: true
+                            }, {
+                                name: 'COD LD Count',
+                                y: CodCount
+                            }, {
+                                name: 'TSS LD Count',
+                                y: Tss
+                            },
+                            {
+                                name: 'FC LD Count',
+                                y: Fc,
+                                color: '#0ca573'
+                            },
+                            {
+                                name: 'Total LD Count',
+                                y: TotalLDAmount,
+                                color: '#ef5350'
+                            }]
+                        }]
+                    });
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+
+    }
+    function funcLDbarchart() {
+        $.ajax({
+            url: '/InspectionAgency/BindChartData',
+            type: 'GET',
+            data: { Fk_STPId: txtSTPId, FromDate: txtFDate, ToDate: txtTDate, Fk_MonthId: txtTMonth },
+            success: function (response) {
+
+                if (response != null) {
+
+                    let BodCount = [];
+                    let CodCount = [];
+                    let Tss = [];
+                    let Fc = [];
+                    let monthName = [];
+                    let TotalLDAmount = [];
+        
+                    for (var i = 0; i < response.listLDCount.length; i++) {
+                        BodCount.push(parseInt(response.listLDCount[i].bodCount));
+                        CodCount.push(parseInt(response.listLDCount[i].codCount));
+                        Tss.push(parseInt(response.listLDCount[i].tss));
+                        Fc.push(parseInt(response.listLDCount[i].fc));
+                        TotalLDAmount.push(parseInt(response.listLDCount[i].totalLDAmount));
+                        monthName.push(response.listLDCount[i].monthName);
+
+                    }
+
+                    Highcharts.chart('LDbarchart', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        subtitle: {
+                            text: ''
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        xAxis: {
+                            categories: monthName,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'LD Counts'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.0f} </b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        navigation: {
+                            buttonOptions: {
+                                enabled: false
+                            }
+                        },
+                        series: [{
+                            name: 'BOD LD',
+                            data: BodCount
+                        }, {
+                            name: 'COD LD',
+                            data: CodCount
+                        }, {
+                            name: 'TSS LD',
+                            data: Tss
+                        },
+                        {
+                            name: 'FC LD',
+                            data: Fc,
+                            color: '#0ca573'
+                        }, {
+                            name: 'Total LD',
+                            data: TotalLDAmount,
+                            color: '#ef5350'
+
+                        }
+                        ]
+                    });
+
+
+                }
+                else {
+
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+</script>

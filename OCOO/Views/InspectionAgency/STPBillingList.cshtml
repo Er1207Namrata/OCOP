@@ -1,0 +1,400 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "Update Billing Status";
+    Layout = "~/Views/Shared/_InsAgencyLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Billing List</h3>
+
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a data-toggle="collapse" href="#searchblock" title="Search" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-sm btn-primary"><i class="fa fa-filter" aria-hidden="true"></i></a></span>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="collapse" id="searchblock">
+            <div class="card">
+                <form asp-controller="InspectionAgency" asp-action="STPBillingList">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Firm</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.Fk_FirmId, new SelectList(ViewBag.ddlFirm, "Value", "Text"), new {@class = "form-control", @onchange="return fGetSTP()"})
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>STP</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.Pk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new {@class = "form-control"})
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 p-4">
+                                <div class="form-group mt-2">
+                                    <button type="submit" class="btn btn-primary btn-xs btn-sm" id="submit" value="Search" name="btnSubmit"><i class="fa fa-search"> Search</i></button>
+                                    <button type="reset" class="btn btn-secondary   btn-xs btn-sm"><i class="fa fa-refresh"></i>     Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <form asp-action="STCRequestList">
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>STP</th>
+                                    <th>Billing No</th>
+                                    <th>Billing Date</th>
+                                    <th>Water Discharge</th>
+                                    <th>Complaint Received</th>
+                                    <th>Complaint Resolved</th>
+                                    @if (Context.Session.GetString("InspectionType").ToString() == "1")
+                                    {
+                                        <th>In House BOD</th>
+                                        <th>In House COD</th>
+                                        <th>In House TSS</th>
+                                        <th>In House FC</th>
+                                    }
+                                    else if (Context.Session.GetString("InspectionType").ToString() == "2")
+                                    {
+                                        <th>Third Party BOD</th>
+                                        <th>Third Party COD</th>
+                                        <th>Third Party TSS</th>
+                                        <th>Third Party FC</th>
+                                    }
+                                    else if (Context.Session.GetString("InspectionType").ToString() == "3")
+                                    {
+                                        <th>UPPCB BOD</th>
+                                        <th>UPPCB COD</th>
+                                        <th>UPPCB TSS</th>
+                                        <th>UPPCB FC</th>
+                                    }
+                                    <th>IN House Status</th>
+                                    <th>Third Party Status</th>
+                                    <th>UPPCB Status</th>
+                                    @* <th>Action</th> *@
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["StpName"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["BillNo"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["BillingDate"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Waterdischarge"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ComplaintReceived"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ComplaintResolved"].ToString()</td>
+                                                    @if (Context.Session.GetString("InspectionType").ToString() == "1")
+                                                    {
+                                                        <td>@Model.dtDetails.Rows[i]["InHouseBOD"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["InHouseCOD"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["InHouseTSS"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["InHouseFC"].ToString()</td>
+                                                    }
+                                                    else if (Context.Session.GetString("InspectionType").ToString() == "2")
+                                                    {
+                                                        <td>@Model.dtDetails.Rows[i]["ThirdPartyBOD"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["ThirdPartyCOD"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["ThirdPartyTSS"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["ThirdPartyFC"].ToString()</td>
+                                                    }
+                                                    else if (Context.Session.GetString("InspectionType").ToString() == "3")
+                                                    {
+                                                        <td>@Model.dtDetails.Rows[i]["UPPCBBOD"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["UPPCBCOD"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["UPPCBTSS"].ToString()</td>
+                                                        <td>@Model.dtDetails.Rows[i]["UPPCBFC"].ToString()</td>
+                                                    }
+                                                    <td>
+                                                        @if (@Model.dtDetails.Rows[i]["InHouse_Status"].ToString() == "Varified")
+                                                        {
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["InHouse_Status"].ToString()</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Context.Session.GetString("InspectionType") == "1" && @Model.dtDetails.Rows[i]["InHouse_Status"].ToString() == "Pending")
+                                                            {
+                                                                <span class="badge badge-warning">
+                                                                    <a href="#" data-bs-toggle="modal" onclick="return EditForm(@Model.dtDetails.Rows[i]["Pk_BillingId"].ToString());" data-bs-target="#exampleModal">
+                                                                        @Model.dtDetails.Rows[i]["InHouse_Status"].ToString()
+                                                                    </a>
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge badge-warning">
+                                                                    @Model.dtDetails.Rows[i]["InHouse_Status"].ToString()
+                                                                </span>
+                                                            }
+
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (@Model.dtDetails.Rows[i]["ThirdParty_Status"].ToString() == "Varified")
+                                                        {
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["ThirdParty_Status"].ToString()</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Context.Session.GetString("InspectionType") == "2")
+                                                            {
+                                                                if (@Model.dtDetails.Rows[i]["InHouse_Status"].ToString() == "Varified" && @Model.dtDetails.Rows[i]["ThirdParty_Status"].ToString() == "Pending")
+                                                                {
+                                                                    <span class="badge badge-warning">
+                                                                        <a href="#" data-bs-toggle="modal" onclick="return EditForm(@Model.dtDetails.Rows[i]["Pk_BillingId"].ToString());" data-bs-target="#exampleModal">
+                                                                            @Model.dtDetails.Rows[i]["ThirdParty_Status"].ToString()
+                                                                        </a>
+                                                                    </span>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge badge-warning">
+                                                                    @Model.dtDetails.Rows[i]["ThirdParty_Status"].ToString()
+                                                                </span>
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (@Model.dtDetails.Rows[i]["UPPCB_Status"].ToString() == "Varified")
+                                                        {
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["UPPCB_Status"].ToString()</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Context.Session.GetString("InspectionType") == "3")
+                                                            {
+                                                                if (@Model.dtDetails.Rows[i]["InHouse_Status"].ToString() == "Varified" && @Model.dtDetails.Rows[i]["UPPCB_Status"].ToString() == "Pending")
+                                                                {
+                                                                    <span class="badge badge-warning">
+                                                                        <a href="#" data-bs-toggle="modal" onclick="return EditForm(@Model.dtDetails.Rows[i]["Pk_BillingId"].ToString());" data-bs-target="#exampleModal">
+                                                                            @Model.dtDetails.Rows[i]["UPPCB_Status"].ToString()
+                                                                        </a>
+                                                                    </span>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge badge-warning">
+                                                                    @Model.dtDetails.Rows[i]["UPPCB_Status"].ToString()
+                                                                </span>
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @* <tr>
+                                <td colspan="15" class="alert alert-warning text-center">No Record Found</td>
+                                </tr> *@
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="txtDetails" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Billing Status</h5>
+                <a href="#" class="btn-close" data-dismiss="modal">
+                    <i class="fa fa-close"></i>
+                </a>
+            </div>
+            <div class="modal-body">
+                <form asp-action="UpdateBillingStatus" asp-controller="InspectionAgency" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Pk_BillingId" />
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>BOD <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="BOD" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value BOD" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>COD <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="COD" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value COD" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>TSS <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="TSS" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value TSS" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>FC</label>
+                                    <input type="text" class="form-control" asp-for="FC" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value FC" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Remarks <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="Remarks" placeholder="Enter Remarks" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Document</label>
+                                    <input type="file" class="form-control" asp-for="DocsFile" onchange="demo(this); return fvalidateTPIReport(this)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-xs" id="Submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save"> Save</i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // $(document).ready(function () {
+    //     $('#example').DataTable({
+    //         "columns": [
+    //             null, // This corresponds to the first column
+    //             null, // This corresponds to the second column
+    //             // Add null for each additional column
+    //         ]
+    //     });
+    // });
+
+
+    function ShowPopup() {
+        $('#txtDetails').modal('show');
+
+        $.ajax({
+            url: '/Firm/GetAgencyList',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // Clear existing options
+                $('.ddlAgency').empty();
+
+                // Populate dropdown options
+                $.each(data, function (key, item) {
+                    //
+                    $('.ddlAgency').append($('<option>', {
+                        value: item.pk_Id,
+                        text: item.name
+                    }));
+                });
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+
+    function ValidateForm() {
+        //
+        if ($("#BOD").val() == null || $("#BOD").val() == '' || $("#BOD").val() <= 0) {
+            $("#BOD").focus();
+            return false;
+        }
+        if ($("#COD").val() == null || $("#COD").val() == '') {
+            $("#COD").focus();
+            return false;
+        }
+        if ($("#TSS").val() == null || $("#TSS").val() == '' || $("#TSS").val() <= 0) {
+            $("#TSS").focus();
+            return false;
+        }
+        if ($("#Remarks").val() == null || $("#Remarks").val() == '') {
+            $("#Remarks").focus();
+            return false;
+        }
+    }
+
+    function demo(x) {
+        var path = x.value;
+        var ext = path.slice(path.lastIndexOf('.') + 1).toUpperCase()
+        if (ext == "JPG" || ext == "JPEG" || ext == "PNG" || ext == "PDF" || ext == "DOC" || ext == "DOCX") { }
+        else {
+            fShowToastalert('Invalid Format')
+            $("#DocsFile").val('');
+        }
+    }
+
+    function EditForm(txtId) {
+        $('#txtDetails').modal('show');
+        $("#Pk_BillingId").val(txtId);
+    }
+
+
+    function fGetSTP() {
+        //debugger;
+
+        let txtFk_FirmId = $("#Fk_FirmId").val();
+        if (txtFk_FirmId > 0) {
+            $.ajax({
+                url: '/InspectionAgency/GetSTPDDl',
+                type: 'GET',
+                data: { Id: txtFk_FirmId },
+                success: function (response) {
+                    if (response != null) {
+                        ;
+                        //console.log(response);
+                        $("#Pk_STPId").html('');
+                        let dd = '';
+                        for (let i = 0; i < response.length; i++) {
+                            dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                        }
+                        //console.log(dd)
+                        $("#Pk_STPId").html(dd);
+                    }
+                },
+                error: function (error) {
+                    fShowToasterror(error);
+                }
+            })
+        }
+        else {
+            $("#Pk_STPId").empty();
+            let dd = '';
+            dd += '<option value="0">--select--</option>';
+            $("#Pk_STPId").html(dd);
+        }
+    }
+
+</script>

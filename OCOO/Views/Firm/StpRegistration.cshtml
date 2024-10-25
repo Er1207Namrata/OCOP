@@ -1,0 +1,897 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "STP Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string msg = "";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">STP Registration</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card p-3">
+            <form asp-action="StpRegistration" asp-controller="Firm" method="post">
+                <div class="row">
+                    <input type="hidden" name="Pk_FirmId" value="@Context.Session.GetString("Pk_UserId")" />
+                    <input type="hidden" asp-for="Pk_STPId" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>STP Name<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="STPName" id="STPName" placeholder="Enter STP name" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Capacity<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onchange="return FvalidateCapacity();" asp-for="Capacity" id="Capacity" onkeypress="return isNumberKey(event)" placeholder="Enter design capacity " />
+                            <span class="float-center" id="txtSpanError1" style="color: red; font-weight: bold;display:none"></span>
+                        </div>
+                    </div>
+                    @*   <div class="col-md-6">
+                    <label>MLD/Day<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" asp-for="MLDDay" id="MLDDay" placeholder="Enter MLD" />
+                    </div>*@
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Electricity Meter Load<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="ElectricityMeterLoad" onkeypress="return isNumberKey(event)" id="ElectricityMeterLoad" placeholder="Enter electricity meter load" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Electricity Account No<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="ElectricityAccountNo" id="ElectricityAccountNo" placeholder="Enter electricity account no" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label> Bill Cycle<span class="text-danger">*</span>(every month of day)</label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(event)" asp-for="UPPCLBillCycle" id="UPPCLBillCycle" placeholder="Enter bill cycle every month of day" />
+                            <span class="float-center" id="txterrorbillCycle" style="color: red; font-weight: bold;display:none"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>City <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.Pk_CityId, new SelectList(ViewBag.ddlCity, "Value", "Text"), new { @class = "form-control"  })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label> Location </label>
+                            <textarea class="form-control" asp-for="Address"> </textarea>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Treatment Technology </label>
+                            <input type="text" class="form-control" asp-for="TreatmentTechnology" id="TreatmentTechnology" placeholder="Enter Treatment Technology " />
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2" style="display:none;">
+                    <div class="col-md-12">
+                        <h3>Testing Agency</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="checkbox" class="testinglab" asp-for="IsInhouse" disabled id="InHouseCheck" checked />
+                            <label for="InHouseCheck">In House</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="checkbox" class="testinglab" asp-for="IsUPPCB" disabled id="UPPCBCheck" checked />
+                            <label for="UPPCBCheck">UPPCB</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="checkbox" class="testinglab" asp-for="IsTPI" disabled id="TPICheck" checked />
+                            <label for="TPICheck">TPI</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-12">
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr class="bg-light-primary">
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="checkbox" class="Billtype" asp-for="IsBOD" id="BODCheck" disabled checked />
+                                            <label for="BODCheck">STP Designed BOD</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: none;" id="BODTextBox">
+                                            <div class="form-group">
+                                                <label>BOD  <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="BOD" onkeypress="return isNumberKey(event)" placeholder="Enter design BOD" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light-info">
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="checkbox" class="Billtype" asp-for="IsCOD" id="CODCheck" disabled checked />
+                                            <label for="CODCheck">STP Designed COD </label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: none;" id="CODTextBox">
+                                            <div class="form-group">
+                                                <label>COD <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="COD" onkeypress="return isNumberKey(event)" placeholder="Enter design COD" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light-warning">
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="checkbox" class="Billtype" asp-for="IsTSS" disabled id="TSSCheck" checked />
+                                            <label for="TSSCheck">STP Designed TSS</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: none;" id="TSSTextBox">
+                                            <div class="form-group">
+                                                <label>TSS <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="TSS" onkeypress="return isNumberKey(event)" placeholder="Enter design TSS" />
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="bg-light-success">
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="checkbox" class="Billtype" asp-for="IsFC" id="FSCheck" />
+                                            <label for="FSCheck">STP Designed FC</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: none;" id="FSTextBox">
+                                            <div class="form-group">
+                                                <label>FC<span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="FC" onkeypress="return isNumberKey(event)" placeholder="Enter design FC" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-12 bg-light-primary">
+                        <h3 class="float-left">Main Pumping Station</h3>
+                    </div>
+
+                    <br />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Name<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="Name" placeholder="Name of pumping station who is  rising  main discharge at in left of stp" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Meter Load<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(event)" asp-for="PumpStationMeterLoad" placeholder="Enter meter load" onkeypress="return isNumberKey(event)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>UPPCL Electricity Account Number<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="PumpingStatisonAccountNo" placeholder="Enter Station UPPCL Account Number" onkeypress="return isNumberKey(event)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>UPPCL Electricity Bill Cycle<span class="text-danger">*</span>(every month of day)</label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(event)" asp-for="PumpingBillCycle" id="PumpingBillCycle" placeholder="Enter UPPCL electricity bill cycle every month of day" />
+                            <span class="float-center" id="txtErrorPumpingBillCycle" style="color: red; font-weight: bold;display:none"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-12 dvMainSPS">
+                        <div class="row">
+                            <div class="col-md-2 pt-4 bg-light-info">
+                                <div class="form-group">
+                                    <input type="checkbox" id="IsDrain" />
+                                    <label for="IsDrain" style="font-size: 12px;">Is Drain</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 bg-light-info d-none" id="MainDrainNameBox">
+                                <div class="form-group">
+                                    <label>Main Drain Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="DrainageName" id="DrainageName" placeholder="Enter main drain name " />
+                                </div>
+                            </div>
+                            <div class="col-md-2 bg-light-primary pt-4">
+                                <div class="form-group">
+                                    <input type="checkbox" id="IsSewer" />
+                                    <label for="IsSewer" style="font-size: 12px;">Is Sewer</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 bg-light-primary d-none" id="MainSewerLengthBox">
+                                <div class="form-group">
+                                    <label>Main Sewer Length(K.M.)<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" onkeypress="return isNumberKey(event)" asp-for="SewerLength" id="SewerLength" placeholder="Enter main sewer length " />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 dvMainSPS">
+                        <div class="form-group">
+                            <label>Peak Designed Discharge<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(event)" asp-for="PeekDesignedDischarge" id="PeekDesignedDischarge" placeholder="Enter peak designed discharge" />
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 dvMainSPS">
+                        <div class="form-group">
+                            <label>Peak Factor<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(event)" asp-for="PeekDesignedFactor" id="PeekDesignedFactor" placeholder="Enter peak factor" />
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 bg-light-warning">
+                        <div class="row">
+                            <div class="col-md-4 pt-4">
+                                <input type="checkbox" id="IsSPSStation" />
+                                <label for="IsSPSStation">Is SPS</label>
+                            </div>
+                            <div class="col-md-8" id="SPSStationCount">
+                                <div class="form-group">
+                                    <label>No. Of Pumping Station<span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(m => m.PumpingStation, new SelectList(ViewBag.PumpingStationCount, "Value", "Text"), new { @class = "form-control", @Id="PumpingStation", @onchange="return fPumpStationForm()"  })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" asp-for="Count" id="Count" />
+                    <div class="col-md-12">
+                        <div class="row mt-2">
+
+                            <div class="col-lg-12 mb-2 bg-light-info" id="tblPoSale">
+                                @* <div class="table-responsive">
+
+                                <table class="table table-striped table-bordered" id="tblPoSale">
+                                <thead>
+                                <tr>
+
+                                <th>SPS <span class="text-danger">*</span></th>
+                                <th>Drain<span class="text-danger">*</span></th>
+                                <th>Sewer(K.M.) <span class="text-danger">*</span></th>
+                                <th>Peek Designed Discharge <span class="text-danger">*</span></th>
+                                <th>Peek Designed Factor <span class="text-danger">*</span></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                </table>
+                                </div> *@
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model!=null)
+                    {
+                        <div class="col-md-12 text-right">
+                            <input type="submit" class="btn btn-success  btn-xs btn-sm" id="Update" value="Update" name="btnUpdate"/>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-12 text-right">
+                            <a href="/Firm/StpRegistration" class="btn btn-danger  btn-xs btn-sm">Cancel</a>
+                            <input type="submit" class="btn btn-success  btn-xs btn-sm" id="Submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit" />
+                            @*  <input type="button" onclick="return frest();"  class="btn btn-warning"  value="Reset" />*@
+
+                        </div>
+                      
+                    }
+
+                </div>
+
+                @* <input type="hidden" asp-for="Count" id="Count" />
+                <div class="row mt-2">
+                <div class="col-lg-12 mb-2">
+                <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="tblPoSale">
+                <thead>
+                <tr>
+                <th>Name<span class="text-danger">*</span></th>
+                <th>Meter Load <span class="text-danger">*</span></th>
+                <th>Account Number <span class="text-danger">*</span></th>
+                <th>Billing Cycle<span class="text-danger">*</span></th>
+                <th>SPS Type<span class="text-danger">*</span></th>
+                <th>Sewer <span class="text-danger">*</span></th>
+                <th>Drainage Name<span class="text-danger">*</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                </table>
+                </div>
+                </div>
+                </div> *@
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/jquery.datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<script>
+    function fPumpStationForm() {
+        let txtPumpStation = $("#PumpingStation").val();
+        // var table = $('#tblPoSale').DataTable({ retrieve: true, "paging": false, bFilter: false, bInfo: false, "ordering": false, }).clear();
+        // var table = $('#tblPoSale').val();
+        let count = 0;
+        if (parseInt(txtPumpStation) > 0) {
+            //$(".dvMainSPS").css({ "Display": "none" })
+            //$(".dvMainSPS").removeClass("show")
+            //$(".dvMainSPS").addClass("hide")
+            $('#tblPoSale').empty();
+            $('#tblPoSale').append('<div class="row"><div class="col-md-12"><h3 class="float-left">Sub Pumping Station</h3></div></div>');
+            for (var i = 1; i <= txtPumpStation; i++) {
+                var RowsData = $('<div class="row pt-3 pr-3">' +
+                    '<div class="col-md-12"><h3>SPS - ' + i + ' </h3></div>' +
+                    '<div class="col-md-6"> <div class="form-group"><label> Name<span class="text-danger">*</span></label><input type = "Text" class= "Quantity' + i + ' form-control" name = "SPSName_' + i + '" placeholder="Name of SPS - ' + i + ' pumping station who is rising main discharge at in left of stp"  id = "SPSName_' + i + '"  class="form-control Quantity' + i + '"/></div ></div>' +
+                    '<div class="col-md-6"> <div class="form-group"><label> Meter Load<span class="text-danger">*</span></label><input type="Text" placeholder="Enter SPS - ' + i + ' Meter Load" class="form-control Quantity' + i + '" name="PumpStationMeterLoad_' + i + '"  id="PumpStationMeterLoad_' + i + '"/></div></div>' +
+                    '<div class="col-md-6"> <div class="form-group"><label> UPPCL Electricity Account Number<span class="text-danger">*</span></label><input type="Text" placeholder="Enter SPS - ' + i + ' UPPCL Station Account Number" class="form-control Quantity' + i + '" name="PumpingStatisonAccountNo_' + i + '"  id="PumpingStatisonAccountNo_' + i + '"/></div ></div>' +
+                    '<div class="col-md-6"> <div class="form-group"><label> UPPCL Electricity Bill Cycle(every month of day)<span class="text-danger">*</span></label><input placeholder="Enter SPS - ' + i + ' UPPCL Electircity Bill Cycle" type="Text" onkeypress="return isNumberKey(event)"  class="form-control Quantity' + i + '" name="PumpingBillCycle_' + i + '"  id="PumpingBillCycle_' + i + '" /></div ></div>' +
+                    '<div class="col-md-6"> <div class="form-group"><label> Drain Name</label><input placeholder="Enter SPS - ' + i + ' Drain Name" type="Text"  onkeypress="return isNumberKey(event)"  class="form-control Quantity' + i + '" name="DrainageName_' + i + '"  id="DrainageName_' + i + '" /></div></div>' +
+                    '<div class="col-md-6"> <div class="form-group"><label> Sewer Length</label><input placeholder="Enter SPS - ' + i + ' Sewer Length" type="Text" onkeypress="return isNumberKey(event)" class="form-control Quantity' + i + '" name="SewerLength_' + i + '"  id="SewerLength_' + i + '" /></div ></div>' +
+                    '<div class="col-md-6"> <div class="form-group"><label> Peak Designed Discharge<span class="text-danger">*</span></label><input placeholder="Enter SPS - ' + i + ' Peak Discharge" type="Text" onkeypress="return isNumberKey(event)" class="form-control Quantity' + i + '" name="PeekDesignedDischarge_' + i + '"  id="PeekDesignedDischarge_' + i + '" /></div ></div >' +
+                    '<div class="col-md-6"> <div class="form-group"><label> Peak Factor<span class="text-danger">*</span></label><input placeholder="Enter SPS - ' + i + ' Peak Factor" type="Text" onkeypress="return isNumberKey(event)" class="form-control Quantity' + i + '" name="PeekDesignedFactor_' + i + '"  id="PeekDesignedFactor_' + i + '" /></div ></div >' +
+                    '</div>');
+                count++;
+                $('#tblPoSale').append(RowsData);
+            }
+            $('#tblPoSale').append('<input type="hidden" name="Count" Id="Count" value="">');
+        }
+        else {
+            var RowsData = $('<tr>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '</tr>');
+            count++;
+            $("#tblPoSale tr td input").val("");
+            table.row.add(RowsData).draw(false);
+            //$(".dvMainSPS").css({ "Display": "block" })
+            //$(".dvMainSPS").removeClass("hide")
+            //$(".dvMainSPS").addClass("show")
+            //$("#DrainageName").val("")
+            //$("#SewerLength").val("")
+            //$("#PeekDesignedDischarge").val("")
+            //$("#PeekDesignedFactor").val("")
+
+        }
+        $("#Count").val(count);
+    }
+
+    $(document).ready(function () {
+        if ($("#BODCheck").is(":checked", false)) {
+
+            $("#BODTextBox").css("display", "block")
+        }
+        else {
+            $("#BODTextBox").css("display", "none")
+        }
+
+        if ($("#CODCheck").is(":checked", false)) {
+
+            $("#CODTextBox").css("display", "block")
+        }
+        else {
+            $("#CODTextBox").css("display", "none")
+        }
+
+        if ($("#TSSCheck").is(":checked", false)) {
+
+            $("#TSSTextBox").css("display", "block")
+        }
+        else {
+            $("#TSSTextBox").css("display", "none")
+        }
+
+        if ($("#FSCheck").is(":checked", false)) {
+
+            $("#FSTextBox").css("display", "block")
+        }
+        else {
+            $("#FsTextBox").css("display", "none")
+        }
+      //  FvalidateStpCount();
+
+        $("#UPPCLBillCycle").on('change', function () {
+
+            var UPPCLBillCycle = (this.value == "" || this.value == null) ? "0" : this.value;
+            if (parseInt(UPPCLBillCycle) > 0) {
+
+                if (parseInt(UPPCLBillCycle) > 31) {
+                    $("#UPPCLBillCycle").val("");
+                    $("#UPPCLBillCycle").focus();
+                    $("#txterrorbillCycle").css({ "display": "block" })
+                    $("#txterrorbillCycle").text("Billing cycle cannot be longer than 31")
+                }
+                else {
+                    $("#txterrorbillCycle").css({ "display": "none" })
+                    $("#txterrorbillCycle").text("")
+                }
+            }
+            else {
+                $("#txterrorbillCycle").css({ "display": "block" })
+                $("#txterrorbillCycle").text("Billing cycle cannot be less then 0 and blank")
+            }
+        })
+
+        $("#PumpingBillCycle").on('change', function () {
+
+            var PumpingBillCycle = (this.value == "" || this.value == null) ? "0" : this.value;
+            if (parseInt(PumpingBillCycle) > 0) {
+
+                if (parseInt(PumpingBillCycle) > 31) {
+                    $("#PumpingBillCycle").val("");
+                    $("#PumpingBillCycle").focus();
+                    $("#txtErrorPumpingBillCycle").css({ "display": "block" })
+                    $("#txtErrorPumpingBillCycle").text("Billing cycle cannot be longer than 31")
+                }
+                else {
+                    $("#txtErrorPumpingBillCycle").css({ "display": "none" })
+                    $("#txtErrorPumpingBillCycle").text("")
+                }
+            }
+            else {
+                $("#txtErrorPumpingBillCycle").css({ "display": "block" })
+                $("#txtErrorPumpingBillCycle").text("Billing cycle cannot be less then 0 and blank")
+            }
+        })
+
+    });
+
+    function ValidateForm() {
+
+        if ($("#STPName").val() == null || $("#STPName").val() == '') {
+            $("#STPName").focus();
+            return false;
+        }
+        if ($("#Capacity").val() == null || $("#Capacity").val() == '') {
+            $("#Capacity").focus();
+            return false;
+        }
+        //if ($("#MLDDay").val() == null || $("#MLDDay").val() == '') {
+        //    $("#MLDDay").focus();
+        //    return false;
+        //}
+        if ($("#ElectricityMeterLoad").val() == null || $("#ElectricityMeterLoad").val() == '') {
+            $("#ElectricityMeterLoad").focus();
+            return false;
+        }
+        if ($("#ElectricityAccountNo").val() == null || $("#ElectricityAccountNo").val() == '') {
+            $("#ElectricityAccountNo").focus();
+            return false;
+        }
+        if ($("#UPPCLBillCycle").val() == null || $("#UPPCLBillCycle").val() == '') {
+            $("#UPPCLBillCycle").focus();
+            return false;
+        }
+
+        if ($("#Pk_CityId").val() == null || $("#Pk_CityId").val() == '' || $("#Pk_CityId").val() == 0) {
+            $("#Pk_CityId").focus();
+            return false;
+        }
+
+
+        if ($("#SewerCheck").is(':checked')) {
+            if ($("#SewerLength").val() == null || $("#SewerLength").val() == '' || $("#NamSewerLengthe").val() <= 0) {
+                $("#SewerLength").focus();
+                return false;
+            }
+        }
+        if ($("#DrainageCheck").is(':checked')) {
+            if ($("#DrainageName").val() == null || $("#DrainageName").val() == '' || $("#DrainageName").val() <= 0) {
+                $("#DrainageName").focus();
+                return false;
+            }
+        }
+        if ($("#SPSCheck").is(':checked')) {
+            if ($("#SPSName").val() == null || $("#SPSName").val() == '' || $("#SPSName").val() <= 0) {
+                $("#SPSName").focus();
+                return false;
+            }
+        }
+        var Billtype = $('input[class="Billtype"]:checked').length;
+        var testinglab = $('input[class="testinglab"]:checked').length;
+        if (testinglab <= 0) {
+            fShowToastalert('Please select atleast one testing lab');
+            $("#TPICheck").focus()
+
+            return false;
+        }
+        if (Billtype <= 0) {
+            fShowToastalert('Please select atleast any one billing');
+            $("#BODCheck").focus()
+            return false;
+        }
+        else {
+            var iSBOd = $('input[name="IsBOD"]:checked').val();
+            if ($("#BODCheck").is(":checked", false)) {
+
+                if ($("#BOD").val() == null || $("#BOD").val() == '') {
+                    $("#BOD").focus();
+                    return false;
+                }
+
+            }
+            if ($("#CODCheck").is(":checked", false)) {
+
+                if ($("#COD").val() == null || $("#COD").val() == '') {
+                    $("#COD").focus();
+                    return false;
+                }
+
+            }
+            if ($("#TSSCheck").is(":checked", false)) {
+
+                if ($("#TSS").val() == null || $("#TSS").val() == '') {
+                    $("#TSS").focus();
+                    return false;
+                }
+
+            }
+            if ($("#FSCheck").is(":checked", false)) {
+
+                if ($("#FC").val() == null || $("#FC").val() == '') {
+                    $("#FC").focus();
+                    return false;
+                }
+
+            }
+
+        }
+
+        if ($("#Name").val() == null || $("#Name").val() == '' || $("#Name").val() <= 0) {
+            $("#Name").focus();
+            return false;
+        }
+        if ($("#PumpStationMeterLoad").val() == null || $("#PumpStationMeterLoad").val() == '' || $("#PumpStationMeterLoad").val() <= 0) {
+            $("#PumpStationMeterLoad").focus();
+            return false;
+        }
+        if ($("#PumpingStatisonAccountNo").val() == null || $("#PumpingStatisonAccountNo").val() == '' || $("#PumpingStatisonAccountNo").val() <= 0) {
+            $("#PumpingStatisonAccountNo").focus();
+            return false;
+        }
+        if ($("#PumpingBillCycle").val() == null || $("#PumpingBillCycle").val() == '') {
+            $("#PumpingBillCycle").focus();
+            return false;
+        }
+
+        if ($("#IsDrain").prop('checked') === true) {
+            if ($("#DrainageName").val() == "" || $("#DrainageName").val() == null) {
+                $("#DrainageName").focus();
+                $("#DrainageName").val('');
+                return false;
+            }
+        }
+
+        if ($("#IsSewer").prop('checked') === true) {
+            if ($("#SewerLength").val() == "" || $("#SewerLength").val() == null) {
+                $("#SewerLength").focus();
+                $("#SewerLength").val('');
+                return false;
+            }
+        }
+
+
+        if ($("#PeekDesignedDischarge").val() == null || $("#PeekDesignedDischarge").val() == '') {
+            $("#PeekDesignedDischarge").focus();
+            return false;
+        }
+
+        if ($("#PeekDesignedFactor").val() == null || $("#PeekDesignedFactor").val() == '') {
+            $("#PeekDesignedFactor").focus();
+            return false;
+        }
+
+        if ($('#IsSPSStation').prop('checked') === true) {
+            if (parseInt($("#PumpingStation").val()) > 0) {
+
+                for (let i = 1; i <= parseInt($("#PumpingStation").val()); i++) {
+
+                    var PeekDesignedDischarge = $("#SPSName_" + i + "").val();
+                    if ($("#SPSName_" + i + "").val() == "" || $("#SPSName_" + i + "").val() == null) {
+                        $("#SPSName_" + i + "").focus();
+                        return false;
+
+                    }
+                    if ($("#PumpStationMeterLoad_" + i + "").val() == "" || $("#PumpStationMeterLoad_" + i + "").val() == null) {
+                        $("#PumpStationMeterLoad_" + i + "").focus();
+                        return false;
+
+                    }
+                    if ($("#PumpingStatisonAccountNo_" + i + "").val() == "" || $("#PumpingStatisonAccountNo_" + i + "").val() == null) {
+                        $("#PumpingStatisonAccountNo_" + i + "").focus();
+                        return false;
+
+                    }
+                    if ($("#PumpingBillCycle_" + i + "").val() == "" || $("#PumpingBillCycle_" + i + "").val() == null) {
+                        $("#PumpingBillCycle_" + i + "").focus();
+                        return false;
+
+                    }
+
+                    if ($("#DrainageName_" + i + "").val() == "" || $("#DrainageName_" + i + "").val() == null && $("#SewerLength_" + i + "").val() == "" || $("#SewerLength_" + i + "").val() == null) {
+                        $("#DrainageName_" + i + "").focus();
+                        $("#SewerLength_" + i + "").focus();
+                        fShowToastalert('Please fill drainage name or sewer length, one of them is mendatory!');
+                        return false;
+                    }
+                    // if ($("#DrainageName_1" + i + "").val() == "" |s| $("#DrainageName_1" + i + "").val() == null) {
+                    //     $("#DrainageName_1" + i + "").focus();
+                    //     return false;
+
+                    // }
+                    // if ($("#SewerLength_" + i + "").val() == "" || $("#SewerLength_" + i + "").val() == null) {
+                    //     $("#SewerLength_" + i + "").focus();
+                    //     return false;
+
+                    // }
+                    if ($("#PeekDesignedDischarge_" + i + "").val() == "" || $("#PeekDesignedDischarge_" + i + "").val() == null) {
+                        $("#PeekDesignedDischarge_" + i + "").focus();
+                        return false;
+
+                    }
+                    if ($("#PeekDesignedFactor_" + i + "").val() == "" || $("#PeekDesignedFactor_" + i + "").val() == null) {
+                        $("#PeekDesignedFactor_" + i + "").focus();
+                        return false;
+
+                    }
+                }
+            }
+            else {
+                $("#PumpingStation").focus();
+                return false;
+            }
+        }
+    }
+
+
+    //$("#SewerCheck").on('change', function () {
+    //    if ($(this).is(':checked')) {
+    //        $("#SewerTextBox").css("display", "block");
+    //    }
+    //    else {
+    //        $("#SewerTextBox").css("display", "none")
+    //    }
+    //})
+
+    //$("#DrainageCheck").on('change', function () {
+    //    if ($(this).is(':checked')) {
+    //        $("#DrainageTextBox").css("display", "block")
+    //    }
+    //    else {
+    //        $("#DrainageTextBox").css("display", "none")
+    //    }
+    //})
+
+    //$("#SPSCheck").on('change', function () {
+    //    if ($(this).is(':checked')) {
+    //        $("#SPSTextBox").css("display", "block")
+    //    }
+    //    else {
+    //        $("#SPSTextBox").css("display", "none")
+    //    }
+    //})
+    //$("#SewerCheck").on('change', function () {
+    //    if ($(this).is(':checked')) {
+    //        $("#SewerTextBox").css("display", "block");
+    //    }
+    //    else {
+    //        $("#SewerTextBox").css("display", "none")
+    //    }
+    //})
+
+    //$("#DrainageCheck").on('change', function () {
+    //    if ($(this).is(':checked')) {
+    //        $("#DrainageTextBox").css("display", "block")
+    //    }
+    //    else {
+    //        $("#DrainageTextBox").css("display", "none")
+    //    }
+    //})
+
+    $("#BODCheck").on('change', function () {
+        if ($(this).is(':checked')) {
+            $("#BODTextBox").css("display", "block")
+        }
+        else {
+            $("#BODTextBox").css("display", "none")
+            $("#BOD").val("0");
+        }
+    })
+    $("#CODCheck").on('change', function () {
+        if ($(this).is(':checked')) {
+            $("#CODTextBox").css("display", "block")
+        }
+        else {
+            $("#CODTextBox").css("display", "none")
+            $("#COD").val("0");
+        }
+    })
+    $("#TSSCheck").on('change', function () {
+        if ($(this).is(':checked')) {
+            $("#TSSTextBox").css("display", "block")
+        }
+        else {
+            $("#TSS").val("0");
+            $("#TSSTextBox").css("display", "none")
+        }
+    })
+    $("#FSCheck").on('change', function () {
+        if ($(this).is(':checked')) {
+            $("#FSTextBox").css("display", "block")
+        }
+        else {
+            $("#FSTextBox").css("display", "none")
+            $("#FC").val("");
+        }
+    })
+    function FvalidateStpCount() {
+
+        if ($("#txtTempError").text() == "" || $("#txtTempError").text() == null) {
+            $.ajax({
+                url: '/home/StpRegistrationValidation',
+                type: 'Post',
+                data: { OpCode: 1 },
+                success: function (response) {
+                    //;
+
+                    if (response != null) {
+                        if (response.status == "1") {
+                           // $("#txtSpanError").css({ "display": "none" })
+                           // $("#txtSpanError").text(response.message)
+                            fShowToast(response.message);
+
+                        }
+                        if (response.status == "0") {
+                          //  $("#txtSpanError").css({ "display": "block" })
+                            // $("#txtSpanError").text(response.message)
+                            fShowToasterror(response.message)
+                        }
+
+
+                    }
+                },
+                error: function (error) {
+                    fShowToasterror(error);
+                }
+            });
+        }
+
+
+    }
+
+    function FvalidateCapacity() {
+        $.ajax({
+            url: '/home/StpRegistrationValidation',
+            type: 'Post',
+            data: { OpCode: 2, Capacity: $("#Capacity").val() },
+            success: function (response) {
+                if (response != null) {
+                    if (response.status == "1") {
+                        $("#txtSpanError1").css({ "display": "none" })
+                        $("#txtSpanError1").text(response.message)
+
+                    }
+                    if (response.status == "0") {
+                        $("#txtSpanError1").css({ "display": "block" })
+                        $("#txtSpanError1").text(response.message)
+                        $("#Capacity").val("")
+                    }
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    //$(function () {
+    //    $("#UPPCLBillCycle").daterangepicker({
+    //        opens: 'left'
+    //    }, function (start, end, label) {
+    //        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+    //    });
+
+    //    $(".dtDateRange").daterangepicker({
+    //        opens: 'left'
+    //    }, function (start, end, label) {
+    //        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+    //    });
+    //});
+
+    function fcheckSPSType(i) {
+        var txtsps = $("#SPSType_" + i).val();
+
+        if (txtsps == 'Sewer') {
+            $("#SewerLength_" + i).prop("disabled", false);
+            $("#DrainageName_" + i).prop("disabled", true);
+        }
+        else if (txtsps == 'Drainage') {
+            $("#DrainageName_" + i).prop("disabled", false);
+            $("#SewerLength_" + i).prop("disabled", true);
+        }
+        else {
+            $("#DrainageName_" + i).prop("disabled", false);
+            $("#SewerLength_" + i).prop("disabled", false);
+        }
+
+    }
+
+    $('#IsDrain').on('change', function () {
+
+        if ($('#IsDrain').prop('checked') === true) {
+            $('#MainDrainNameBox').removeClass('d-none');
+            $('#MainDrainNameBox').val('');
+        }
+        else {
+            $('#MainDrainNameBox').addClass('d-none');
+            $('#MainDrainNameBox').val('');
+        }
+    })
+
+    $('#IsSewer').on('change', function () {
+        if ($('#IsSewer').prop('checked') === true) {
+            $('#MainSewerLengthBox').removeClass('d-none');
+            $('#MainSewerLengthBox').val('');
+        }
+        else {
+            $('#MainSewerLengthBox').addClass('d-none');
+            $('#MainSewerLengthBox').val('');
+        }
+    })
+
+    $('#IsSPSStation').on('change', function () {
+        if ($('#IsSPSStation').prop('checked') === true) {
+            $('#SPSStationCount').removeClass('d-none');
+        }
+        else {
+            $('#SPSStationCount').addClass('d-none');
+        }
+    })
+
+
+
+</script>
+
+

@@ -1,0 +1,79 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "ManageFirm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Firm List</h3>
+          
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a href="#" class="btn btn-warning"><i class="fa fa-plus mdi-18px"></i></a></span>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+
+            <form asp-action="ManageFirm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 150px;">Sn</th>
+                                    <th>District</th>
+                                    <th>Firm Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile No</th>
+                                    <th>Address</th>
+                                    <th class="tdaction">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["District"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Name"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["EmailId"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["MobileNo"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Address"].ToString()</td>
+                                                    <td>
+                                                        <a href="#" onclick="">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="7" class="text-center">No Record Found</td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+

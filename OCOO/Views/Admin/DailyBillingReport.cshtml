@@ -1,0 +1,600 @@
+﻿@model OCOO.Models.FirmDetails
+
+@{
+    ViewData["Title"] = "Daily Billing Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .table-responsive {
+        height: calc(100vh - 260px);
+        overflow: auto;
+    }
+
+    table thead {
+        position: sticky;
+        top: 0;
+    }
+
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .table td {
+        padding: 10px 10px;
+        vertical-align: middle;
+        text-align: right;
+    }
+</style>
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Daily Billing Report</h3>
+        </div>
+        <div class="col-md-6 align-self-right">
+            <button id="export-excel" class="btn btn-sm btn-success ml-2 float-right" title="Export to excel"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
+            <span class="float-right"><a data-toggle="collapse" href="#searchblock" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-sm  btn-primary" title="Search"><i class="fa fa-filter"></i></a></span>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="collapse" id="searchblock">
+            <div class="card">
+                <form asp-controller="Admin" asp-action="DailyBillingReport">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Zone</label>
+                                    @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control" ,@onchange="return fGetFirmData()" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Firm</label>
+                                    @Html.DropDownListFor(m => m.Fk_FirmId, new SelectList(ViewBag.ddlFirm, "Value", "Text"), new { @class = "form-control", @onchange="return fGetSTP()" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>STP</label>
+                                    @Html.DropDownListFor(m => m.Pk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Month</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.Fk_MonthId, new SelectList(ViewBag.ddlMonth, "Value", "Text"), new {@class = "form-control"})
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>From Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control mydatepicker" asp-for="FromDate" placeholder="dd/mm/yyyy" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>To Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control mydatepicker" asp-for="ToDate" placeholder="dd/mm/yyyy" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 mt-4">
+                                <div class="form-group mt-2">
+                                    <button type="submit" class="btn btn-primary  btn-xs btn-sm" id="Submit" value="Search" name="btnSubmit"><i class="fa fa-search"></i> Search</button>
+                                    <button type="reset" class="btn btn-secondary   btn-xs btn-sm"><i class="fa fa-refresh"></i>     Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mb-3">
+        </div>
+        <div class="card">
+            <div class="card-body p-3 pb-20">
+                @if (Model != null && Model.dtDetails1.Rows.Count > 0)
+                {
+                    <h2 class="">@Model.dtDetails1.Rows[0]["Zone"].ToString()  Payment for the month of  @Model.dtDetails1.Rows[0]["MonthName"].ToString() 2023</h2>
+                }
+                <div class="table-responsive" id="data-table">
+
+                    <table class="table table-striped table-bordered" cellpadding="0" cellspacing="0" border="0">
+
+                        <thead>
+                            <tr>
+                                <th>0</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                                <th>9</th>
+                                <th>10</th>
+                                <th>11</th>
+                                <th>12</th>
+                                <th>13</th>
+                                <th>14</th>
+                                <th>15</th>
+                                <th>16</th>
+                                <th>17</th>
+                                <th>18</th>
+                                <th>19</th>
+                                <th>20</th>
+                                <th>21</th>
+                                <th>22</th>
+                                <th>23</th>
+                            </tr>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th colspan="2">Flow</th>
+                                <th>&nbsp;</th>
+                                <th colspan="2">Fix Charges (60%)</th>
+                                <th colspan="16">Variable Cost (40%)</th>
+                            </tr>
+                            <tr>
+                                <th rowspan="2">SL No</th>
+                                <th rowspan="2">Date</th>
+                                <th rowspan="2">Amount Of <br /> 42 Mld Stp</th>
+                                <th rowspan="2">Capacity</th>
+                                <th rowspan="2">Actual<br /> Achieved</th>
+                                <th rowspan="2">Treated for<br /> &nbsp;Payment</th>
+                                <th rowspan="2">As Per CB</th>
+                                <th rowspan="2">As Per Actual</th>
+                                <th rowspan="2">AS Per CB</th>
+                                <th rowspan="2">As Per Actual</th>
+                                <th style="text-align: center;" colspan="3">BOD</th>
+                                <th style="text-align: center;" colspan="3">COD</th>
+                                <th style="text-align: center;" colspan="3">TSS</th>
+                                <th style="width: 227px; text-align: center;" colspan="3">FC</th>
+                                <th rowspan="2">Verified amount <br /> (11+14+17+20)</th>
+                                <th rowspan="2">LD</th>
+                            </tr>
+                            <tr>
+                                <th>Reported Value</th>
+                                <th>BOD (50%)</th>
+                                <th>LD</th>
+                                <th>Reported Value</th>
+                                <th>COD (15%)</th>
+                                <th>LD</th>
+                                <th>Reported Value</th>
+                                <th>TSS (25%)</th>
+                                <th>LD</th>
+                                <th>Reported Value</th>
+                                <th>FC (10%)</th>
+                                <th>LD</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                if (Model.dtDetails.Rows.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                    {
+                                        <tr class="@(Model.dtDetails.Rows[i]["IsSame"].ToString() == "True" ? "measurementwarning" : "")">
+                                            <td>@(i + 1)</td>
+                                            <td>@Model.dtDetails.Rows[i]["Dates"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AmountOfMLDSTP"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["Capacity"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["Actual_Achieved"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["Treated_for_Payement"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AsPerCBFixCharges_60"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AsPerActual_FixCharges_60"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AsPerCBFixCharges_40"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AsPerActual_FixCharges_40"].ToString()</td>
+                                            @if (Convert.ToDecimal(@Model.dtDetails.Rows[i]["BODLDAmount"]) > 0)
+                                            {
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["BODReportedValue"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["BODAmount"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["BODLDAmount"].ToString()</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@Model.dtDetails.Rows[i]["BODReportedValue"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["BODAmount"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["BODLDAmount"].ToString()</td>
+                                            }
+                                            @if (Convert.ToDecimal(@Model.dtDetails.Rows[i]["CODLDAmount"]) > 0)
+                                            {
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["CODReportedValue"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["CODAmount"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["CODLDAmount"].ToString()</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@Model.dtDetails.Rows[i]["CODReportedValue"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["CODAmount"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["CODLDAmount"].ToString()</td>
+                                            }
+                                            @if (Convert.ToDecimal(@Model.dtDetails.Rows[i]["TSSLDAmount"]) > 0)
+                                            {
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["TSSAmount"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["TSSLDAmount"].ToString()</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["TSSAmount"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["TSSLDAmount"].ToString()</td>
+                                            }
+                                            @if (Convert.ToDecimal(@Model.dtDetails.Rows[i]["FCLDAmount"]) > 0)
+                                            {
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["FCReportedValue"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["FCAmount"].ToString()</td>
+                                                <td class="measurementcolor">@Model.dtDetails.Rows[i]["FCLDAmount"].ToString()</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@Model.dtDetails.Rows[i]["FCReportedValue"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["FCAmount"].ToString()</td>
+                                                <td>@Model.dtDetails.Rows[i]["FCLDAmount"].ToString()</td>
+                                            }
+                                            <td>@Model.dtDetails.Rows[i]["TotalVerifiedAmount"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["TotalLDAmount"].ToString()</td>
+                                            @* @if (Model.dtDetails.Rows[i]["BillGenerated"].ToString() == "No")
+                                {
+                                <td class="bg-white">
+                                <a href="#" data-bs-toggle="modal" onclick="return EditForm(@Model.dtDetails.Rows[i]["Pk_BillingId"].ToString());" data-bs-target="#exampleModal" class="text-primary">
+                                <i class="fa fa-edit"></i>
+                                </a>
+                                </td>
+                                }
+                                else
+                                {
+                                <td></td>
+                                } *@
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="24" class="alert alert-warning text-center">No Record Found </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="txtDetails" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Measurement</h5>
+                <a href="#" class="btn-close" data-dismiss="modal">
+                    <i class="fa fa-close"></i>
+                </a>
+            </div>
+
+            <form asp-action="AddSTPBilling" asp-controller="Admin" method="post">
+                <input type="hidden" asp-for="Pk_BillingId" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>STP <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(m => m.Pk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new { @class = "form-control", @onchange="return fGetSTPBillDetails()" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Billing Date <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control mydatepicker" asp-for="BillingDate" onchange="return fGetCallCenterLog()" placeholder="dd/mm/yyyy" readonly>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="icon-calender"></i></span>
+                                    </div>
+                                </div>
+                                <span id="msg" class="text-danger"></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Discharge <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="WaterDischarge" onchange="return fGetDischargeBillDetails()" placeholder="Enter Water Discharge" />
+                            </div>
+                            <span id="capcityExceedmsg" class="text-danger"></span>
+                            <span id="capcityExceedmsg1" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <h3>Testing Agency</h3>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="p-t-20 p-b-20">
+                                <div class="bg-light-info p-3 mb-2 radius">
+                                    <input type="checkbox" name="InHouse" id="InHouseCheck" />
+                                    <label for="InHouseCheck"> In House </label>
+                                    <div id="InHouseForm" style="display:none;">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>BOD <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="InHouseBOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported BOD" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>COD <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="InHouseCOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported COD" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>TSS <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="InHouseTSS" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported TSS" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>FC <span class="text-danger IsFc ">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="InHouseFC" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported FC" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-light-primary p-3 mb-2 radius">
+                                    <div>
+                                        <input type="checkbox" name="ThirdParty" id="ThirdPartyCheck" />
+                                        <label for="ThirdPartyCheck"> Third Party </label>
+                                    </div>
+                                    <div id="ThirdPartyForm" style="display:none;">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>BOD <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="ThirdPartyBOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported BOD" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>COD <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="ThirdPartyCOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported COD" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>TSS <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="ThirdPartyTSS" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported TSS" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>FC <span class="text-danger IsFc">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="ThirdPartyFC" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported FC" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-light-warning p-3 mb-2 radius">
+                                    <div>
+                                        <input type="checkbox" name="UPPCB" id="UPPCBCheck" />
+                                        <label for="UPPCBCheck"> UPPCB </label>
+                                    </div>
+                                    <div id="UPPCBForm" style="display:none;">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>BOD <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="UPPCBBOD" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value BOD" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>COD <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="UPPCBCOD" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value COD" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>TSS <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="UPPCBTSS" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value TSS" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>FC <span class="text-danger IsFc ">*</span></label>
+                                                    <input type="text" class="form-control" asp-for="UPPCBFC" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value FC" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Total Complaint Received <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="ComplaintReceived" onkeypress="return isNumberKey(event)" placeholder="Complaint Received" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Total Complaint Resolved <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="ComplaintResolved" onkeypress="return isNumberKey(event)" placeholder="Complaint Resolved" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-danger float-right ml-2  btn-xs btn-sm " id="Cancel" value="Cancel" name="" />
+                    <input type="submit" class="btn btn-success float-right  btn-xs btn-sm " id="Submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit" />
+                </div>
+                <input type="hidden" asp-for="IsSame" value="false" />
+                <input type="hidden" id="checksamecap" />
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        document.getElementById('export-excel').addEventListener('click', function () {
+            // Get table data
+            var table = document.getElementById('data-table');
+            var data = XLSX.utils.table_to_sheet(table);
+
+            // Create a workbook
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, data, 'Sheet1');
+
+            // Export the workbook as a downloadable Excel file
+            XLSX.writeFile(wb, 'Billing_Report.xlsx');
+        });
+
+
+        document.getElementById('export-pdf').addEventListener('click', function () {
+            // Get table data
+            var table = document.getElementById('data-table');
+
+            // Create a new jsPDF instance
+            var pdf = new jsPDF();
+
+            // Convert the table to a PDF
+            pdf.autoTable({ html: table });
+
+            // Save the PDF as a downloadable file
+            pdf.save('table_data.pdf');
+        });
+    })
+
+    function fGetSTP() {
+
+        let txtFk_FirmId = $("#Fk_FirmId").val();
+        $.ajax({
+            url: '/Admin/GetSTPDDl',
+            type: 'GET',
+            data: { Id: txtFk_FirmId },
+            success: function (response) {
+                if (response != null) {
+                    ;
+                    //console.log(response);
+                    $("#Pk_STPId").html('');
+                    let dd = '';
+                    for (let i = 0; i < response.length; i++) {
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    // console.log(dd)
+                    $("#Pk_STPId").html(dd);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+    function fGetFirmData() {
+        ;
+        let txtFk_ZoneId = $("#Pk_ZoneId").val();
+        $.ajax({
+            url: '/Admin/GetFirmDDl',
+            type: 'GET',
+            data: { Id: txtFk_ZoneId },
+            success: function (response) {
+                if (response != null) {
+                    $("#Fk_FirmId").html('');
+                    let dd = ''; // Initialize dd as an empty string
+                    for (let i = 0; i < response.length; i++) { // Fix the loop condition
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    $("#Fk_FirmId").html(dd);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+    function EditForm(txtId) {
+        $.ajax({
+            url: '/Firm/BillingDetails',
+            type: 'GET',
+            data: { Id: txtId },
+            success: function (response) {
+                if (response != null) {
+                    $('#txtDetails').modal('show');
+                    $("#Pk_BillingId").val(response.pk_BillingId);
+                    $("#BillNo").val(response.billNo);
+                    $("#BillingDate").val(response.billingDate);
+                    $("#Pk_STPId").val(response.pk_STPId);
+                    $("#WaterDischarge").val(response.waterDischarge);
+
+                    if (response.inHouseBOD != null || response.inHouseCOD != null || response.inHouseTSS != null || response.inHouseFC != null) {
+                        $("#InHouseForm").css("display", "block");
+                        $("#InHouseCheck").prop("checked", true);
+                        $("#InHouseBOD").val(response.inHouseBOD);
+                        $("#InHouseCOD").val(response.inHouseCOD);
+                        $("#InHouseTSS").val(response.inHouseTSS);
+                        $("#InHouseFC").val(response.inHouseFC);
+                    }
+                    if (response.thirdPartyBOD != null || response.thirdPartyCOD != null || response.thirdPartyTSS != null || response.thirdPartyFC != null) {
+                        $("#ThirdPartyForm").css("display", "block");
+                        $("#ThirdPartyCheck").prop("checked", true);
+                        $("#ThirdPartyBOD").val(response.thirdPartyBOD);
+                        $("#ThirdPartyCOD").val(response.thirdPartyCOD);
+                        $("#ThirdPartyTSS").val(response.thirdPartyTSS);
+                        $("#ThirdPartyFC").val(response.thirdPartyFC);
+                    }
+                    if (response.uppcbcod != null || response.uppcbbod != null || response.uppcbtss != null || response.uppcbfc != null) {
+                        $("#UPPCBForm").css("display", "block");
+                        $("#UPPCBCheck").prop("checked", true);
+                        $("#UPPCBCOD").val(response.uppcbcod);
+                        $("#UPPCBBOD").val(response.uppcbbod);
+                        $("#UPPCBTSS").val(response.uppcbtss);
+                        $("#UPPCBFC").val(response.uppcbfc);
+                    }
+                    $("#ComplaintReceived").val(response.complaintReceived);
+                    $("#ComplaintResolved").val(response.complaintResolved);
+                    $('#Submit').val('Update');
+
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+
+
+</script>

@@ -1,0 +1,33 @@
+﻿@model ErrorViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Error";
+}
+<link href="~/assets/scss/icons/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .error-body h1 {
+        font-size: 19px;
+        font-weight: 900;
+        line-height: 20px;
+    }
+</style>
+
+<body oncontextmenu="return false" oncopy="return false" onpaste="return false">
+<div class=" page-wrapper error-page">
+    <div class="error-body text-center">
+        <div class="text-right mt-5 mr-5">
+            <a href="/Home/logout" class="btn btn-primary btn-sm"><i class="fa fa-sign-in"> Login</i></a>
+        </div>
+        <img width="350px" src="~/assets/images/500error.png" />
+       
+        <h1 class="error-title">
+            Woops! <br>Something went wrong :(
+        </h1>
+        <h2 class="error-subtitle">
+            Have you tried turning it off and on again?
+        </h2>
+    </div>
+</div>
+
+</body>

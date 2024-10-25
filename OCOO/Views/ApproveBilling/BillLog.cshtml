@@ -1,0 +1,78 @@
+﻿@model OCOO.Models.ApproveBilling
+@{
+    ViewData["Title"] = "BillLog";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+    .table td {
+        padding: 10px 10px;
+        vertical-align: middle;
+        text-align: right;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Bill Approval History</h3>
+        </div>
+        <div class="col-md-6 align-self-right"></div>
+    </div>
+    <div class="container-fluid">
+        <div class="collapse" id="searchblock">
+            <div class="card">
+                <input type="hidden" id="firmtemp" value="@TempData["firm"]" />
+                <input type="hidden" id="stptemp" value="@TempData["stp"]" />
+                <form asp-controller="ApproveBilling" asp-action="BillLog">
+                </form>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mb-3">
+        </div>
+        <div class="card">
+            <form asp-action="STCRequestList">
+                <div class="card-body p-3 pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-hover footable">
+                            <thead>
+                                <tr>
+                                    <th>SN.</th>
+                                    <th>Attachment</th>
+                                    <th>Remarks</th>
+                                    <th>Approved By</th>
+                                    <th>Approved Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@(i + 1)</td>
+                                            <td class="text-center nowrap">
+                                                <a target="_blank" href="@Model.dtDetails.Rows[i]["Doc_Url"].ToString()" alt="Document Image" title="Click and see covering letter"><i class="fa fa-file" aria-hidden="true"></i></a>
+                                            </td>
+                                            <td class="text-center nowrap">@Model.dtDetails.Rows[i]["Remarks"].ToString()</td>
+                                            <td class="text-center nowrap">@Model.dtDetails.Rows[i]["ApprName"].ToString()</td>
+                                            <td class="text-center nowrap">@Model.dtDetails.Rows[i]["ApprovedDate"].ToString()</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

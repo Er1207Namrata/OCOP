@@ -1,0 +1,422 @@
+﻿@model OCOO.Models.DailyCapacity
+@{
+    ViewData["Title"] = "STC Daily Capacity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .buttn {
+        width: 100%;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">STP Daily Capacity</h3>
+       
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row p-3">
+                    <div class="col-md-3">
+                        <label>Zone</label>
+                        @Html.DropDownListFor(m => m.Fk_DistrictId, new SelectList(ViewBag.ddlDivision, "Value", "Text"), new {@class = "form-control", @onchange="return GetBlock()"})
+                    </div>
+                    <div class="col-md-3">
+                        <label>Block</label>
+                        @Html.DropDownListFor(m => m.Fk_BlockId, new SelectList(ViewBag.ddlBlock, "Value", "Text"), new {@class = "form-control"})
+                    </div>
+                    <div class="col-md-2">
+                        <label>From Date</label>
+                        <input class="form-control" type="date" asp-for="FromDate" placeholder="From Date" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>To Date</label>
+                        <input class="form-control" type="date" asp-for="ToDate" placeholder="To Date" />
+                    </div>
+                    <div class="col-md-2 p-4">
+                        <input type="submit" name="Submit" onclick="return showForm();" class="btn btn-info" />
+                        <input type="submit" name="Upload Documents" onclick="return fShowUploadDocument();" class="btn btn-info" />
+                    </div>
+                </div>
+                <form asp-action="STCDailyCapacity" method="post" id="STPForm">
+                    <input type="hidden" asp-for="IsPermanent" />
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 150px;">Date</th>
+                                    <th>Amount Of 72 MLD STP</th>
+                                    <th>Flow Capacity</th>
+                                    <th>Flow Actual Achived</th>
+                                    <th>Treated For Payment MLD</th>
+                                    <th>Fix Charge As Per CB</th>
+                                    <th>Fix Charge As Per Actual</th>
+                                    <th>Variable Charges As Per CB</th>
+                                    <th>Variable Charges As per Actual</th>
+                                    <th>BOD Reported Value</th>
+                                    <th>BOD 50</th>
+                                    <th>BOD LD</th>
+                                    <th>COD Reported Value</th>
+                                    <th>COD 15</th>
+                                    <th>COD LD</th>
+                                    <th>TSS Reported Value</th>
+                                    <th>TSS 25</th>
+                                    <th>TSS LD</th>
+                                    <th>FC Reported Value</th>
+                                    <th>FC 10</th>
+                                    <th>FC LD</th>
+                                    <th>After Deducted Para Amt</th>
+                                    <th>LD</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        int srno = 1;
+                                        if (Model.dtDetails.Rows[0]["Flag"].ToString() == "0")
+                                        {
+                                            DateTime currentDate = DateTime.Now;
+                                            List<DateTime> datesInMonth = new List<DateTime>();
+                                            DateTime firstDayOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+                                            DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+                                            for (DateTime date = firstDayOfMonth; date <= lastDayOfMonth; date = date.AddDays(1))
+                                            {
+                                                DateTime dateOnly = date.Date;
+                                                datesInMonth.Add(dateOnly);
+                                            }
+
+                                            foreach (DateTime date in datesInMonth)
+                                            {
+                                                string dt = "EntryDate_" + srno;
+                                                string AmountOf72MLDStp = "AmountOf72MLDStp_" + srno;
+                                                string FlowCapacity = "FlowCapacity_" + srno;
+                                                string FlowActualAchived = "FlowActualAchived_" + srno;
+                                                string TreatedForPaymentMLD = "TreatedForPaymentMLD_" + srno;
+                                                string FixChargeAsPerCB = "FixChargeAsPerCB_" + srno;
+                                                string FixChargeAsPerActual = "FixChargeAsPerActual_" + srno;
+                                                string VariableChargesAsPerCB = "VariableChargesAsPerCB_" + srno;
+                                                string VariableChargesAsperActual = "VariableChargesAsperActual_" + srno;
+                                                string BODReportedValue = "BODReportedValue_" + srno;
+                                                string BOD50 = "BOD50_" + srno;
+                                                string BODLD = "BODLD_" + srno;
+                                                string CODReportedValue = "CODReportedValue_" + srno;
+                                                string COD15 = "COD15_" + srno;
+                                                string CODLD = "CODLD_" + srno;
+                                                string TSSReportedValue = "TSSReportedValue_" + srno;
+                                                string TSS25 = "TSS25_" + srno;
+                                                string TSSLD = "TSSLD_" + srno;
+                                                string FCReportedValue = "FCReportedValue_" + srno;
+                                                string FC10 = "FC10_" + srno;
+                                                string FCLD = "FCLD_" + srno;
+                                                string AfterDeductedParaAmt = "AfterDeductedParaAmt_" + srno;
+                                                string LD = "LD_" + srno;
+                                                <tr>
+                                                    <td><input class="input-box" type="hidden" name="@dt" id="@dt" value="@date.ToString("dd/MM/yyyy")" style="display:none;" /><span>@date.ToString("dd/MM/yyyy")</span></td>
+                                                    <td><input class="input-box" type="text" onkeypress="return isNumberKey(event)" id="@AmountOf72MLDStp" name="@AmountOf72MLDStp" onchange="return Calculate(@srno)"></td>
+                                                    <td><input class="input-box" type="text" onkeypress="return isNumberKey(event)" id="@FlowCapacity" name="@FlowCapacity" onchange="return Calculate(@srno)"></td>
+                                                    <td><input class="input-box" type="text" onkeypress="return isNumberKey(event)" id="@FlowActualAchived" name="@FlowActualAchived" onchange="return Calculate(@srno)"></td>
+                                                    <td><input class="input-box" type="text" id="@TreatedForPaymentMLD" name="@TreatedForPaymentMLD" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@FixChargeAsPerCB" name="@FixChargeAsPerCB" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@FixChargeAsPerActual" name="@FixChargeAsPerActual" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@VariableChargesAsPerCB" name="@VariableChargesAsPerCB" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@VariableChargesAsperActual" name="@VariableChargesAsperActual" readonly></td>
+                                                    <td><input class="input-box" type="text" onkeypress="return isNumberKey(event)" id="@BODReportedValue" name="@BODReportedValue"></td>
+                                                    <td><input class="input-box" type="text" id="@BOD50" name="@BOD50" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@BODLD" name="@BODLD" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@CODReportedValue" name="@CODReportedValue"></td>
+                                                    <td><input class="input-box" type="text" id="@COD15" name="@COD15" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@CODLD" name="@CODLD" readonly></td>
+                                                    <td><input class="input-box" type="text" onkeypress="return isNumberKey(event)" id="@TSSReportedValue" name="@TSSReportedValue"></td>
+                                                    <td><input class="input-box" type="text" id="@TSS25" name="@TSS25" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@TSSLD" name="@TSSLD" readonly></td>
+                                                    <td><input class="input-box" type="text" onkeypress="return isNumberKey(event)" id="@FCReportedValue" name="@FCReportedValue"></td>
+                                                    <td><input class="input-box" type="text" id="@FC10" name="@FC10" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@FCLD" name="@FCLD" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@AfterDeductedParaAmt" name="@AfterDeductedParaAmt" readonly></td>
+                                                    <td><input class="input-box" type="text" id="@LD" name="@LD" readonly></td>
+                                                </tr>
+                                                srno++;
+                                            }
+                                            <input type="hidden" id="Count" name="Count" value="@srno">
+                                        }
+                                        else
+                                        {
+                                            <input type="hidden" asp-for="UniqueId" value="@Model.dtDetails.Rows[0]["UniqueId"].ToString()" />
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                string dt = "EntryDate_" + srno;
+                                                string AmountOf72MLDStp = "AmountOf72MLDStp_" + srno;
+                                                string FlowCapacity = "FlowCapacity_" + srno;
+                                                string FlowActualAchived = "FlowActualAchived_" + srno;
+                                                string TreatedForPaymentMLD = "TreatedForPaymentMLD_" + srno;
+                                                string FixChargeAsPerCB = "FixChargeAsPerCB_" + srno;
+                                                string FixChargeAsPerActual = "FixChargeAsPerActual_" + srno;
+                                                string VariableChargesAsPerCB = "VariableChargesAsPerCB_" + srno;
+                                                string VariableChargesAsperActual = "VariableChargesAsperActual_" + srno;
+                                                string BODReportedValue = "BODReportedValue_" + srno;
+                                                string BOD50 = "BOD50_" + srno;
+                                                string BODLD = "BODLD_" + srno;
+                                                string CODReportedValue = "CODReportedValue_" + srno;
+                                                string COD15 = "COD15_" + srno;
+                                                string CODLD = "CODLD_" + srno;
+                                                string TSSReportedValue = "TSSReportedValue_" + srno;
+                                                string TSS25 = "TSS25_" + srno;
+                                                string TSSLD = "TSSLD_" + srno;
+                                                string FCReportedValue = "FCReportedValue_" + srno;
+                                                string FC10 = "FC10_" + srno;
+                                                string FCLD = "FCLD_" + srno;
+                                                string AfterDeductedParaAmt = "AfterDeductedParaAmt_" + srno;
+                                                string LD = "LD_" + srno;
+
+                                                <tr>
+                                                    <td><input type="hidden" class="input-box" name="@dt" id="@dt" value="@Model.dtDetails.Rows[i]["EntryDate"].ToString()" style="display:none;" /><span>@Model.dtDetails.Rows[i]["EntryDate"].ToString()</span></td>
+
+                                                    @if (Model.dtDetails.Rows[i]["SavePermanent"].ToString() == "True")
+                                                    {
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["AmountOf72MLDStp"].ToString()" onkeypress="return isNumberKey(event)" id="@AmountOf72MLDStp" name="@AmountOf72MLDStp" readonly></td>
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["FlowCapacity"].ToString()" onkeypress="return isNumberKey(event)" id="@FlowCapacity" name="@FlowCapacity" readonly></td>
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["FlowActualAchived"].ToString()" onkeypress="return isNumberKey(event)" id="@FlowActualAchived" name="@FlowActualAchived" readonly></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["AmountOf72MLDStp"].ToString()" onkeypress="return isNumberKey(event)" id="@AmountOf72MLDStp" name="@AmountOf72MLDStp" onchange="return Calculate(@srno)"></td>
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["FlowCapacity"].ToString()" onkeypress="return isNumberKey(event)" id="@FlowCapacity" name="@FlowCapacity" onchange="return Calculate(@srno)"></td>
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["FlowActualAchived"].ToString()" onkeypress="return isNumberKey(event)" id="@FlowActualAchived" name="@FlowActualAchived" onchange="return Calculate(@srno);"></td>
+                                                    }
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["TreatedForPaymentMLD"].ToString()" id="@TreatedForPaymentMLD" name="@TreatedForPaymentMLD" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["FixChargeAsPerCB"].ToString()" id="@FixChargeAsPerCB" name="@FixChargeAsPerCB" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["FixChargeAsPerActual"].ToString()" id="@FixChargeAsPerActual" name="@FixChargeAsPerActual" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["VariableChargesAsPerCB"].ToString()" id="@VariableChargesAsPerCB" name="@VariableChargesAsPerCB" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["VariableChargesAsperActual"].ToString()" id="@VariableChargesAsperActual" name="@VariableChargesAsperActual" readonly></td>
+                                                    @if (Model.dtDetails.Rows[i]["SavePermanent"].ToString() == "True")
+                                                    {
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["BODReportedValue"].ToString()" onkeypress="return isNumberKey(event)" id="@BODReportedValue" name="@BODReportedValue" readonly></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["BODReportedValue"].ToString()" onkeypress="return isNumberKey(event)" id="@BODReportedValue" name="@BODReportedValue"></td>
+                                                    }
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["BOD50"].ToString()" id="@BOD50" name="@BOD50" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["BODLD"].ToString()" id="@BODLD" name="@BODLD" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["CODReportedValue"].ToString()" id="@CODReportedValue" name="@CODReportedValue"></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["COD15"].ToString()" id="@COD15" name="@COD15" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["CODLD"].ToString()" id="@CODLD" name="@CODLD" readonly></td>
+                                                    @if (Model.dtDetails.Rows[i]["SavePermanent"].ToString() == "True")
+                                                    {
+                                                        <td><input type="text" value="@Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()" onkeypress="return isNumberKey(event)" id="@TSSReportedValue" name="@TSSReportedValue" readonly></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()" onkeypress="return isNumberKey(event)" id="@TSSReportedValue" name="@TSSReportedValue"></td>
+                                                    }
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["TSS25"].ToString()" id="@TSS25" name="@TSS25" readonly></td>
+                                                    <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["TSSLD"].ToString()" id="@TSSLD" name="@TSSLD" readonly></td>
+                                                    @if (Model.dtDetails.Rows[i]["SavePermanent"].ToString() == "True")
+                                                    {
+                                                        <td><input type="text" value="@Model.dtDetails.Rows[i]["FCReportedValue"].ToString()" onkeypress="return isNumberKey(event)" id="@FCReportedValue" name="@FCReportedValue" readonly></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><input type="text" value="@Model.dtDetails.Rows[i]["FCReportedValue"].ToString()" onkeypress="return isNumberKey(event)" id="@FCReportedValue" name="@FCReportedValue"></td>
+                                                    }
+                                                </tr>
+                                                srno++;
+                                            }
+                                            <input type="hidden" id="Count" name="Count" value="@srno">
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row d-flex justify-content-end">
+                        <div class="col-md-4 d-flex justify-content-end pt-3">
+                            <input type="submit" name="btnsubmit" id="btnsubmit" onclick="return confirm('are you sure to save details?')" value="Save as Draft" class="btn btn-info mr-2 buttn" />
+                            <input type="button" name="btnFinal" id="btnFinal" onclick="return funcConfirm()" value="Save & Send for Approval" class="btn btn-success buttn" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="txtDocumentsForm" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <form asp-action="UploadDocuments" asp-controller="Firm" enctype="multipart/form-data">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Documents</h5>
+                    <a href="#" class="btn-close" data-dismiss="modal">
+                       <i class="fa fa-close"></i>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 p-4">
+                            <input type="hidden" name="UniqueId" />
+                            <input type="file" asp-for="CoveringLetter" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                        <div class="col-md-6 p-4">
+                            <input type="file" asp-for="InspectionReport" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                        <div class="col-md-6 p-4">
+                            <input type="file" asp-for="TPIReports" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                        <div class="col-md-6 p-4">
+                            <input type="file" asp-for="LDSheet" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                        <div class="col-md-6 p-4">
+                            <input type="file" asp-for="OtherDocuments" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                        <div class="col-md-6 p-4">
+                            <input type="submit" class="btn btn-info" value="Save" name="btnSubmit" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#IsPermanent').val($('#btnsubmit').val());
+        $('#STPForm').hide();
+    });
+
+    function showForm() {
+        if ($('#Fk_DistrictId').val() == '0') {
+            $('#Fk_DistrictId').focus();
+            return false;
+        }
+        if ($('#Fk_BlockId').val() == '0') {
+            $('#Fk_BlockId').focus();
+            return false;
+        }
+        //console.log($('#FromDate').val());
+        if ($('#FromDate').val() == '' || $('#FromDate').val() == null) {
+            $('#FromDate').focus();
+            return false;
+        }
+        if ($('#ToDate').val() == '' || $('#ToDate').val() == null) {
+            $('#ToDate').focus();
+            return false;
+        }
+        let txtFromDate = $('#FromDate').val();
+        $('#STPForm').show();
+    }
+
+
+    function GetBlock(fk_DesignationId) {
+        let txtDepartmentId = $("#Fk_DistrictId").val();
+        $.ajax({
+            url: '/Firm/GetBlockByDistrict',
+            type: 'GET',
+            data: { Id: txtDepartmentId },
+            success: function (response) {
+                if (response != null) {
+                    let v = "";
+                    $.each(response, function (i, v1) {
+                        v += "<option value=" + v1.value + ">" + v1.text + "</option>";
+                    });
+                    $("#Fk_BlockId").html(v);
+                    //if (fk_DesignationId != null && fk_DesignationId != '0') {
+                    //    $("#Fk_DesignationId").val(fk_DesignationId);
+                    //}
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+        if (txtDepartmentId == '1' || txtDepartmentId == '2') {
+            $('#dist').show();
+        }
+        else {
+            $('#dist').hide();
+        }
+    }
+
+    function funcConfirm() {
+        $('#IsPermanent').val($('#btnFinal').val());
+        $('#btnsubmit').trigger('click');
+    }
+
+    function Calculate(sn) {
+        let txtB6 = $('#AmountOf72MLDStp_' + sn).val(); //Treated For Payment MLD
+        let txtC6 = $('#FlowCapacity_' + sn).val(); // Flow Capacity
+        let txtD6 = $('#FlowActualAchived_' + sn).val(); // Flow Actual Achived
+        if (txtB6 !== '' && txtC6 !== '' && txtD6 !== '') {
+            let txtE6 = Math.min(txtD6, txtC6); // Treated For Payment MLD
+            let txtF6 = txtB6 * 60 / 100; // FixChargeAsPerCB
+            let txtG6 = (txtF6 * txtE6) / txtC6; // FixChargeAsPerActual
+            let txtH6 = (txtB6 * 40) / 100 // VariableChargesAsPerCB
+            let txtI6 = (txtH6 * txtE6) / txtC6; // VariableChargesAsperActual
+            let txtJ6 = $('#BODReportedValue_' + sn).val();
+            let txtK6 = (txtI6 * 50) / 100; // BOD50
+            let txtL6; // BODLD
+            if (txtK6 > 10) {
+                //txtL6 = Math.max($B$34 * 0.1 /100, 1000);
+            } else {
+                txtL6 = 0;
+            };
+            let txtM6 = $('#CODReportedValue_' + sn).val(); // CODReportedValue
+            let txtN6 = (txtI6 * 15) / 100; // COD15
+            let txtO6; // CODLD
+            if (txtM6 > 100) {
+                //txtO6 = Math.max($B$34*0.1/100, 1000);
+            }
+            else {
+                txtO6 = 0;
+            };
+            let txtP6 = $('#TSSReportedValue_' + sn).val(); // TSSReportedValue
+            let txtQ6 = (txtI6 * 25) / 100; // TSS25
+            let txtR6; // TSSLD
+            if (txtP6 > 10) {
+                //txtR6 = Math.max($B$34 * 0.1 / 100, 10000)
+            }
+            else {
+                txtR6 = 0;
+            };
+            let txtS6 = $('#FCReportedValue_' + sn).val(); // FCReportedValue
+            let txtT6 = (txtI6 * 10) / 100; // FC10
+            let txtU6; // FCLD
+            if (txtS6 > 1000) {
+                //txtU6 = Math.max($B$34*0.1/100, 10000);
+            }
+            else {
+                txtU6 = 0;
+            };
+            let txtV6 = txtT6 + txtQ6 + txtN6 + txtK6; // AfterDeductedParaAmt
+            let txtW6 = txtU6 + txtR6 + txtO6 + txtL6; // LD
+            $('#TreatedForPaymentMLD_' + sn).val(txtE6);
+            $('#FixChargeAsPerCB_' + sn).val(txtF6);
+            $('#FixChargeAsPerActual_' + sn).val(txtG6);
+            $('#VariableChargesAsPerCB_' + sn).val(txtH6);
+            $('#VariableChargesAsperActual_' + sn).val(txtI6);
+            $('#BOD50_' + sn).val(txtK6);
+            $('#BODLD_' + sn).val(txtL6);
+            $('#CODReportedValue_' + sn).val(txtM6);
+            $('#COD15_' + sn).val(txtN6);
+            $('#CODLD_' + sn).val(txtO6);
+            $('#TSS25_' + sn).val(txtQ6);
+            $('#TSSLD_' + sn).val(txtR6);
+            $('#FC10_' + sn).val(txtT6);
+            $('#FCLD_' + sn).val(txtU6);
+            $('#AfterDeductedParaAmt_' + sn).val(txtV6);
+            $('#LD_' + sn).val(txtW6);
+        }
+
+
+    }
+
+    function fShowUploadDocument() {
+        $('#txtDocumentsForm').modal('show');
+    }
+</script>

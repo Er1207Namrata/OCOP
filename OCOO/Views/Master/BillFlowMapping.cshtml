@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "BillFlowMapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .bill-flow-mapping td {
+        padding: 0px 9px !important;
+        border: none !important;
+    }
+
+    .width5 {
+        width: 5% !important;
+    }
+
+    .width10 {
+        width: 10% !important;
+    }
+
+    .width15 {
+        width: 15% !important;
+    }
+
+    .width20 {
+        width: 20% !important;
+    }
+</style>
+
+<script src="~/app/billflowmappingmaster.js"></script>
+<script src="~/app/directive/loadingbuttondirective.js"></script>
+<div ng-controller="BillFlowMappingMasterController">
+
+    <div class="page-wrapper">
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor">Bill Flow Mapping</h3>
+            </div>
+        </div>
+        <div class="container-fluid">
+
+            <div class="card">
+                <form asp-action="SaveBillFlowMapping" name="billflowmappingmasterForm" novalidate>
+                    <div class="card-body pb-20">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Zone</label>
+                                <select class="form-control" name="ZoneId" id="ZoneId" ng-model="ZoneId" ng-options="x.zoneId as x.zone for x in EmployeeZoneList" required ng-change="GetEmployeeDropdown()">
+                                    <option value="" disabled selected>Select Zone</option>
+                                </select>
+                                <div ng-show="billflowmappingmasterForm.ZoneId.$error.required && (billflowmappingmasterForm.ZoneId.$touched || FormSubmitted)">
+                                    <span class="text-danger">Please select a zone.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Department</label>
+                                <select class="form-control" name="DepartmentId" id="DepartmentId" ng-model="DepartmentId" ng-options="x.departmentId as x.departmentName for x in DepartmentList" ng-change="GetEmployeeDropdown(); GetDesignationDropdown(DepartmentId)">
+                                    <option value="" selected>All</option>
+                                </select>
+                                <div ng-show="billflowmappingmasterForm.DepartmentId.$error.required && (billflowmappingmasterForm.DepartmentId.$touched || FormSubmitted)">
+                                    <span class="text-danger">Please select a department.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Designation</label>
+                                <select class="form-control" name="DesignationId" id="DesignationId" ng-model="DesignationId" ng-options="x.designationId as x.designationName for x in DesignationList" ng-change="GetEmployeeDropdown()">
+                                    <option value="" selected>All</option>
+                                </select>
+                                <div ng-show="billflowmappingmasterForm.DesignationId.$error.required && (billflowmappingmasterForm.DesignationId.$touched || FormSubmitted)">
+                                    <span class="text-danger">Please select a designation.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row" ng-show="ZoneId>0">
+                            <div class="col-md-12">
+                                <table class="table table-responsive-sm bill-flow-mapping">
+                                    <thead>
+                                        <tr ng-if="(_BillFlowMappedEmployees.length<1) && FormSubmitted">
+                                            <td colspan="7">
+                                                <span class="text-danger float-left">Please choose at least one employee.</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="width5">SN </th>
+                                            <th class="width20">Designation </th>
+                                            <th class="width20">Office </th>
+                                            <th class="width20">Department </th>
+                                            <th class="width20">Employee </th>
+                                            <th class="width10">Forward </th>
+                                            <th class="width15">Document Verification</th>
+                                            <th class="width10">Final Approval</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody ng-show="ToForwardEmployeeList.length>0">
+                                        <tr ng-repeat="(index, employee) in ToForwardEmployeeList">
+                                            <td>{{index + 1}}</td>
+                                            <td>{{employee.designation}}</td>
+                                            <td>{{employee.office}}</td>
+                                            <td>{{employee.department}}</td>
+                                            <td>{{employee.name}}</td>
+                                            <td>
+                                                <div class="forward-employee-card">
+                                                    <div class="input-group">
+                                                        <input type="checkbox" ng-click="forwardcheckboxChanged(employee.employeeId)" ng-model="forward[employee.employeeId]" employee-id="{{employee.employeeId}}" name="forward{{employee.employeeId}}" id="forward{{employee.employeeId}}">
+                                                        <label for="forward{{employee.employeeId}}" ng-click="forwardcheckboxChanged(employee.employeeId)"></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="document-employee-card">
+                                                    <div class="input-group">
+                                                        <input type="checkbox" ng-disabled="true" ng-change="checkboxChanged('M')" ng-model="document[employee.employeeId]" employee-id="{{employee.employeeId}}" name="document{{employee.employeeId}}" id="document{{employee.employeeId}}">
+                                                        <label for="document{{employee.employeeId}}" ng-click="checkboxChanged('M')"></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="final-employee-card" ng-show="employee.designationId==7 || employee.designationId==3">
+                                                    <div class="input-group">
+                                                        <input ng-disabled="true" type="checkbox" ng-change="checkboxChanged('M')" ng-model="final[employee.employeeId]" employee-id="{{employee.employeeId}}" name="final{{employee.employeeId}}" id="final{{employee.employeeId}}">
+                                                        <label for="final{{employee.employeeId}}" ng-click="checkboxChanged('M')"></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                    <tfoot ng-show="ToForwardEmployeeList.length<1">
+                                        <tr>
+                                            <td colspan="7" class="text-center text-danger">
+                                                No employees have been mapped for it yet.
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <div ng-if="1==2">
+                                <div class="col-md-6">
+                                    <h5>Mark employee</h5>
+                                    <div class="col-md-12">
+                                        <div class="input-group">
+                                            <input ng-click="CheckUncheckAll('M')" type="checkbox" ng-model="MarkEmployeeAll" employee-id="--" name="MarkEmployeeAll" id="MarkEmployeeAll">
+                                            <label for="MarkEmployeeAll"></label>
+                                            <input type="hidden" name="AllMarkEmployee" id="AllMarkEmployee" value="AllMarkEmployee">All
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" ng-repeat="employee in MarkEmployeeList">
+                                        <div class="mark-employee-card">
+                                            <div class="input-group">
+                                                <input type="checkbox" ng-change="checkboxChanged('M')" ng-model="markedEmployees[employee.employeeId]" employee-id="{{employee.employeeId}}" name="MarkEmployee{{employee.employeeId}}" id="MarkEmployee{{employee.employeeId}}">
+                                                <label for="MarkEmployee{{employee.employeeId}}" ng-click="checkboxChanged('M')"></label>  {{employee.name}}-<small>({{employee.department}}-{{employee.designation}})</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h5>To forward employee</h5>
+                                    <div class="col-md-12">
+                                        <div class="input-group">
+                                            <input ng-click="CheckUncheckAll('F')" type="checkbox" ng-model="ForwardEmployeeAll" employee-id="--" name="ForwardEmployeeAll" id="ForwardEmployeeAll">
+                                            <label for="ForwardEmployeeAll"></label>
+                                            <input type="hidden" name="AllMarkForwardEmployee" id="AllForwardEmployee" value="AllForwardEmployee"> All
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" ng-repeat="employee in ToForwardEmployeeList">
+                                        <div class="forward-employee-card">
+                                            <div class="input-group">
+                                                <input type="checkbox" ng-change="checkboxChanged('F')" ng-model="forwardedEmployees[employee.employeeId]" employee-id="{{employee.employeeId}}" name="ToForwardEmployee{{employee.employeeId}}" id="ToForwardEmployee{{employee.employeeId}}">
+                                                <label for="ToForwardEmployee{{employee.employeeId}}"></label> {{employee.name}}-<small>({{employee.department}}-{{employee.designation}})</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer" ng-show="ZoneId>0">
+
+                            <button type="button" class="btn btn-xs btn-sm btn-secondary" ng-click="Reset()"><i class="fa fa-refresh"></i> Reset</button>
+                            <button type="button" class="btn btn-xs btn-sm btn-success" ng-click="Save()"><i class="fa fa-save"></i> Save</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

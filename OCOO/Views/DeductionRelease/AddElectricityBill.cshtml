@@ -1,0 +1,133 @@
+﻿@model OCOO.Models.FirmMasters.Deduction
+@{
+    ViewData["Title"] = "AddElectricityBill";
+    Layout = "~/Views/Shared/_FirmLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Add/Update Electricity Bill</h3>
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right ml-1"><a href="/DeductionRelease/GetelectricityBillList?id=@Crypto.Encrypt(Model.Pk_STPId)" class="btn btn-sm btn-warning btn-xs" title="Back"><i class="fa fa-arrow-left"></i> Back</a></span>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card p-3">
+            <form asp-action="AddElectricityBill" asp-controller="DeductionRelease" method="post">
+                <div class="row">
+                    <input type="hidden" asp-for="PK_ElectricityId" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>STP <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.Pk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new { @class = "form-control stpreadonly", @OnChange = "return fbindIPS()", @readonly = "true" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Name Of IPS/SPS/STP</label>
+                        @Html.DropDownListFor(m => m.PK_IPS, new SelectList(ViewBag.ddlIPS, "Value", "Text"), new { @class = "form-control SPSreadonly" })
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Month Start Date <span class="text-danger">*</span></label>
+                            <input type="text" readonly asp-for="MonthStartDate" class="form-control mydatepicker" placeholder="dd/mm/yyyy" onchange="return addOneMonth()" />
+
+                        </div>
+                    </div>
+
+                    @* <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Electricity Bill Month <span class="text-danger">*</span></label>
+                            <input type="month" asp-for="MonthStartDate" class="form-control" placeholder="MMM-yyyy" />
+                        </div>
+                    </div> *@
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Month End Date <span class="text-danger">*</span></label>
+                            <input type="text" readonly asp-for="MonthEndDate" class="form-control mydatepicker" placeholder="dd/mm/yyyy" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @* <div class="form-group">
+                        <label>Electricity Cut Start Time <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" asp-for="ElectricityCutStartTime" placeholder="Enter Electricity Cut Start Time" />
+                        </div> *@
+                        <div class="form-group">
+                            <label>Month Start Meter Reading <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onchange="return fTotal()" asp-for="StartMeterReading" placeholder="Month Start Meter Reading " onkeypress="return isNumberKey(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @* <div class="form-group">
+                        <label>Electricity Cut End Time <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" asp-for="ElectricityCutEndTime" placeholder="Enter Electricity Cut End Time" onkeypress="return isNumberKey(this) " />
+                        </div> *@
+                        <div class="form-group">
+                            <label>Month End Meter Reading <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onchange="return fTotal()" asp-for="EndMeterReading" placeholder="Month End Meter Reading" onkeypress="return isNumberKey(this)" />
+                            <b id="Showmsgmeter" class="text-danger"></b>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total Electricity Unit for the Month <span class="text-danger">*</span></label>
+                            <input type="text" readonly class="form-control" asp-for="ElectricityUnit" placeholder="Total Electricity Unit for the Month" onkeypress="return isNumberKey(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total Amount <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="UnitRate" placeholder="Total Amount" onkeypress="return isNumberKey(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Fix Charges <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="FixCharges" placeholder="Fix Charges" onkeypress="return isNumberKey(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Other Charges <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="OtherCharges" placeholder="Other Charges" onkeypress="return isNumberKey(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Late Payment/Penalty <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="Penalty" placeholder="Late Payment/Penalty" onkeypress="return isNumberKey(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Remark</label>
+                            <textarea class="form-control" asp-for="Remark" id="txtRemark"> </textarea>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="update" value="@TempData["ElectricitySubmit"]" />
+                <div class="text-right">
+                    @if (@TempData["ElectricitySubmit"] == "Update")
+                    {
+                        <button type="submit" class="btn btn-success btn-sm" id="submit" onclick="return ValidateForm();" value="Update" name="btnSubmit"><i class="fa fa-save"> Update</i></button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-success btn-sm" id="submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save"> Save</i></button>
+                    }
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script src="~/script/electricitybill.js?@DateTime.Now.Ticks"></script>
+<script>
+    $(document).ready(function () {
+        fbindIPS();
+    });
+</script>
+

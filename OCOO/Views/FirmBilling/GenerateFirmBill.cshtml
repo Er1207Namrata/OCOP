@@ -1,0 +1,200 @@
+﻿@model OCOO.Models.FirmBilling
+@{
+    ViewData["Title"] = "STCRequestList";
+    Layout = "~/Views/Shared/_FirmLayout.cshtml";
+}
+<style>
+    .table th, .table thead th {
+        color: #000;
+        border: 0px;
+        background: #ebebeb !important;
+    }
+
+    
+</style>
+<script src="~/script/generatefirmbill.js"></script>
+@* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> *@
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Generate Bill-@Context.Session.GetString("Zone") Zone (@Model.Fk_MonthId-@Model.Year)</h3>
+
+        </div>
+        <div class="col-md-6 align-self-center">
+            <a href="/FirmBilling/FirmBillingRequest" class="btn btn-warning ml-2 float-right btn-sm"><i class="fa fa-arrow-left"></i> Back</a>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+                <div class="card p-3">
+                    <div class="table-responsive">
+
+                        <table class="table table-striped">
+                            <tr>
+                                <th style="width:20%;">Zone</th>
+                                <td style="width:30%;">@Model.Fk_ZoneId</td>
+                                <th style="width:20%;">Firm</th>
+                                <td style="width:30%;">@Model.Firm</td>
+                            </tr>
+                            <tr>
+                                <th style="width:20%;">Billing Month</th>
+                                <td style="width:30%;">@Model.Fk_MonthId</td>
+                                <th>Billing Year</th>
+                                <td>@Model.Year</td>
+                            </tr>
+                            <tr>
+                                <th>Capacity</th>
+                                <td>@Model.Capacity</td>
+                                <th>Actual Achived</th>
+                                <td>@Model.Actual_Achieved</td>
+                            </tr>
+                            <tr>
+                                <th>Treated For Payment</th>
+                                <td>@Model.Treated_for_Payement</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>   
+        <div class="card p-3">
+            <form asp-action="GenerateFirmBill" asp-controller="FirmBilling" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="IsFinalSave" />
+                <input type="hidden" asp-for="Fk_FirmId" value="@Model.Fk_FirmId" />
+                <input type="hidden" asp-for="Fk_BillId" value="@Model.Fk_BillId" />
+               
+                <input type="hidden" name="tokenNo" id="tokenNo" value="@ViewBag.TOkenNo" />
+                <input type="hidden" asp-for="DocumentTypeId" id="PK_PrcDocDetId" value="@Model.DocumentTypeId" />
+                <h3>Upload Documents</h3>
+                <div class="row">
+                    <input type="hidden" name="Pk_FirmId" value="@Context.Session.GetString("Pk_UserId")" />
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Covering Letter <span class="text-danger">*</span></label>
+                            <input type="file" asp-for="CoveringLetter" onchange="return ValidateFiles(this)" class="form-control" />
+                            <b class="text-danger">Please Upload only JPG,JPEG,PNG,PDF and file size only 5MB Allow !</b>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Invoice Date<span class="text-danger">*</span></label>
+                            <input type="text" readonly asp-for="BillingDate" class="form-control" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>                                      
+                    <div class="card" style="border: 1px solid #bdb7b7;">
+                       <div class="card-body">
+                            <div class="row card-header" style="border-bottom: 1px solid #bdb7b7;">
+                                <div class="col-md-6">
+                                    <h3>TPI Report</h3>
+                                </div>
+                                
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Upload Document <span class="text-danger">*</span></label>
+                                        <input type="file" asp-for="TPIReports" onchange="return fvalidateTPIReport(this)" multiple class="form-control" />
+                                        <b class="text-danger">Please Upload only JPG,JPEG,PNG,PDF and file size only 5MB Allow !</b>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Remark</label>                                      
+                                        <input type="text" asp-for="Remark" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-1" style="text-align:end; padding-top: 25px;">
+                                    <input type="button" id="Save" onclick="return fTPIDocvalidation()" value="Add" class="btn btn-success btn-sm btn-xs" />
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-condensed table-hover" id="Tpi_Description">
+                                   <thead>
+                                    <tr>
+                                        <th>Document <i class="mdi mdi-unfold-more"></i></th>
+                                        <th>Remark <i class="mdi mdi-unfold-more"></i></th>
+                                        <th style="width:14%;">Action</th>
+                                    </tr>
+                                   </thead>
+                                   <tbody>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>  
+                    </div>                                                              
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total complaints received in 24 hours<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(this)" asp-for="ComplaintsReceived24" placeholder="Total complaints received in 24 hours" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total complaints resolved in 24 hours<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(this)" asp-for="ComplaintsResolved24" placeholder="Total complaints resolved in 24 hours" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total complaints received in billing month<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(this)" asp-for="ComplaintsReceivedInBillingMonth" onchange="return fComplaintBalance()" placeholder="Total complaints received in billing month" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total complaints resolved in billing month<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(this)" onchange="return fComplaintBalance()" asp-for="ComplaintsResolvedInBillingMonth" placeholder="Total complaints resolved in billing month" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>The number of complaints on which LD will be applicable<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" onkeypress="return isNumberKey(this)" asp-for="LDBondedComplaints" placeholder="The number of complaints on which LD will be applicable" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Balance Complaints<span class="text-danger">*</span></label>
+                            <input type="text" asp-for="BalanceComplaints" readonly class="form-control" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Remark<span class="text-danger">*</span></label>
+                            <textarea asp-for="Remarks" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="checkbox" asp-for="Isdeclaration" id="Isdeclaration" />
+                            <label style="padding-top:3px;" for="Isdeclaration">It is hereby declared that the details mentioned here/above are true and correct.</label>
+                        </div>
+                    </div>
+                    <input type="hidden" asp-for="TPIReportsCount" id="TPIReportsCount" />
+                    <input type="hidden" asp-for="LDReportCount" />
+                    <input type="hidden" asp-for="OtherDocumentsCount" />
+                    <div class="col-md-12 p-4 text-right">
+                        <a href="/FirmBilling/FirmBillingRequest" class="btn btn-danger m10r btn-sm btn-xs"><i class="fa fa-times"></i> Cancel</a>
+                        @*    <button type="submit" class="btn btn-sm btn-xs btn-primary m10r" id="Submit" onclick="return ValidateForm();" value="Save As Draft" name="btnSubmit"><i class="fa fa-save"></i> Save As Draft</button> *@
+                        <button type="submit" class="btn btn-sm btn-xs btn-success" id="Submit" onclick="return ValidateGenerateForm();" value="Generate Bill"><i class="mdi mdi-file-check"></i> Generate Bill</button>
+                        @* <a href="/FirmBilling/STPBillingRequest" class="btn btn-danger">Cancel</a>*@
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

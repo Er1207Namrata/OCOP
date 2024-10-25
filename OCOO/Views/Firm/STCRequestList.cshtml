@@ -1,0 +1,233 @@
+﻿@model OCOO.Models.DailyCapacity
+@{
+    ViewData["Title"] = "STCRequestList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-4 align-self-center">
+            <h3 class="text-themecolor">STC Request List</h3>
+
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="STCRequestList">
+                <div class="card-body p-3 pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Month Name</th>
+                                    <th>Year</th>
+                                    <th>Status</th>
+                                    <th>View Details</th>
+                                    <th>Upload Documents</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td class="text-center">@(i + 1)</td>
+                                                    <td class="text-center">@Model.dtDetails.Rows[i]["MonthName"].ToString()</td>
+                                                    <td class="text-center">@Model.dtDetails.Rows[i]["CurrentYear"].ToString()</td>
+                                                    <td class="text-center">
+                                                        @if (Model.dtDetails.Rows[i]["Status"].ToString() == "Pending")
+                                                        {
+                                                            <span class="badge badge-warning">@Model.dtDetails.Rows[i]["Status"].ToString()</span>
+                                                        }
+                                                        else if (Model.dtDetails.Rows[i]["Status"].ToString() == "Approved")
+                                                        {
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["Status"].ToString()</span>
+                                                        }
+                                                        else if (Model.dtDetails.Rows[i]["Status"].ToString() == "Declined")
+                                                        {
+                                                            <span class="badge badge-danger">@Model.dtDetails.Rows[i]["Status"].ToString()</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center"><a href="/Firm/GetFirmRequest?Id=@OCOO.Models.Crypto.Encrypt(@Model.dtDetails.Rows[i]["UniqueId"].ToString())"><i class="fa fa-eye"></i> View Details</a></td>
+                                                    <td class="text-center"><a href="#" onclick="return fShowUploadDocument(@Model.dtDetails.Rows[i]["UniqueId"].ToString());"><i class="fa fa-upload"></i> Upload Documents</a></td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @* <div class="alert alert-warning text-center">No Record Found</div> *@
+                                            @* <tr>
+                                <td colspan="6" class="text-center">No Record Found!</td>
+                                </tr> *@
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+<div id="txtDocumentsForm" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <form asp-action="UploadSTPDocuments" enctype="multipart/form-data">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Documents</h5>
+                    <a href="#" class="btn-close" data-dismiss="modal">
+                        <i class="fa fa-close"></i>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped footable" id="tblDocumentsDetails">
+                        <thead>
+                            <tr>
+                                <th style="min-width: 150px;">Sn</th>
+                                <th>Documents</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <input type="hidden" name="Fk_UniqueId" id="UniqueId" value="" />
+                                <td>1</td>
+                                <td id="txtCoveringLetter">
+                                    <label>Covering Letter</label>
+                                    <input type="file" asp-for="CoveringLetter" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                </td>
+                                <td style="padding-top:46px;">
+                                    <a href="#" id="CoveringLetterURL" style="display:none;"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td id="txtInspectionReport">
+                                    <label>Inspection Report</label>
+                                    <input type="file" asp-for="InspectionReport" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                </td>
+                                <td style="padding-top:46px;">
+                                    <a href="#" target="_blank" style="display:none;" id="InspectionReportURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td id="txtTPIReports">
+                                    <label>TPI Reports</label>
+                                    <input type="file" asp-for="TPIReports" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                </td>
+                                <td style="padding-top:46px;">
+                                    <a href="#" target="_blank" style="display:none;" id="TPIReportsURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td id="txtLDSheet">
+                                    <label>LD Sheet</label>
+                                    <input type="file" asp-for="LDSheet" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                </td>
+                                <td style="padding-top:46px;">
+                                    <a href="#" target="_blank" style="display:none;" id="LDSheetURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td id="txtOtherDocument">
+                                    <label>Other Documents</label>
+                                    <input type="file" asp-for="OtherDocuments" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                </td>
+                                <td style="padding-top:46px;">
+                                    <a href="#" target="_blank" style="display:none;" id="OtherDocumentsURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;">
+                                    <input type="submit" style="margin-top:28px;" class="btn btn-info" value="Save" onclick="return fValidateDocumentForm()" name="btnUpload" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function fValidateDocumentForm() {
+        if ($("#CoveringLetter").val() != '' || $("#InspectionReport").val() != '' || $("#TPIReports").val() != '' || $("#LDSheet").val() != '' | $("#OtherDocuments").val() != '') {
+            $("#CoveringLetter").focus();
+            return true;
+        }
+        else {
+            fShowToastalert('Please upload minimum one documents!')
+            return false;
+        }
+
+    }
+
+    //function fShowUploadDocument(txtUniqueId) {
+    //    $("#UniqueId").val(txtUniqueId);
+    //    $("#CoveringLetter").val('');
+    //    $("#InspectionReport").val('');
+    //    $("#TPIReports").val('');
+    //    $("#LDSheetURL").val('');
+    //    $("#OtherDocuments").val('');
+    //    $('#txtDocumentsForm').modal('show');
+    //}
+
+
+    function fShowUploadDocument(txtUniqueId) {
+        $("#CoveringLetterURL").css({ "display": "none" })
+        $("#InspectionReportURL").css({ "display": "none" })
+        $("#TPIReportsURL").css({ "display": "none" })
+        $("#LDSheetURL").css({ "display": "none" })
+        $("#OtherDocumentsURL").css({ "display": "none" })
+        $.ajax({
+            url: '/Firm/GetDocumentDetails',
+            type: 'GET',
+            data: { Id: txtUniqueId },
+            success: function (response) {
+                if (response != null) {
+                    $("#UniqueId").val(txtUniqueId);
+                    $('#Pk_DocumentId').val(response.pk_DocumentId);
+                    $('#Fk_UniqueId').val(response.fk_UniqueId);
+                    $("#CoveringLetterURL").prop("href", response.coveringLetterURL);
+                    $("#InspectionReportURL").prop("href", response.inspectionReportURL);
+                    $("#TPIReportsURL").prop("href", response.tpiReportsURL);
+                    $("#LDSheetURL").prop("href", response.ldSheetURL);
+                    $("#OtherDocumentURL").prop("href", response.otherDocumentsURL);
+                    if (response.coveringLetterURL != null) {
+                        $("#CoveringLetterURL").css({ "display": "block" })
+                    }
+                    if (response.inspectionReportURL != null) {
+                        $("#InspectionReportURL").css({ "display": "block" })
+                    }
+                    if (response.tpiReportsURL != null) {
+                        $("#TPIReportsURL").css({ "display": "block" })
+                    }
+                    if (response.ldSheetURL != null) {
+                        $("#LDSheetURL").css({ "display": "block" })
+                    }
+                    if (response.otherDocumentsURL != null) {
+                        $("#OtherDocumentsURL").css({ "display": "block" })
+                    }
+                }
+                $('#txtDocumentsForm').modal('show');
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+</script>

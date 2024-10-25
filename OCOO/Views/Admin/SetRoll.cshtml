@@ -1,0 +1,219 @@
+﻿@model OCOO.Models.SetPermission
+@{
+    ViewData["Title"] = "SetRoll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Set Role</h3>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="SetRoll" method="post" enctype="multipart/form-data">
+
+                <div class="card-body pb-0">
+
+                    <div class="row">
+
+                        <div class="col-md-5">
+                            <div class="basic-form">
+                                <label>User Type <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(m => m.Fk_EmpId, new SelectList(ViewBag.ddlUser, "Value", "Text"), new{@class="form-control"})
+                            </div>
+                            <input type="hidden" value="@ViewBag.FK_EmployeeId" id="ViewBag_FK_EmployeeId" />
+                            <input type="hidden" value="@ViewBag.FK_MenuId" id="ViewBag_FK_MenuId" />
+
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="control-label">Menu <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.MenuId, new SelectList(ViewBag.ddlMenu, "Value", "Text"), new{@class="form-control"})
+                            @* <select class="form-control" asp-for="MenuId">
+                            <option value="0">Select</option>
+                            </select>*@
+                        </div>
+
+                        <div class="col-md-2 mt-4">
+
+                            <input type="submit" class="btn btn-primary  btn-xs btn-sm" id="getDetails" value="Get Details" name="GetDetails" onclick="return fvalidateunit()">
+
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table" id="myTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Sub Menu Name</th>
+                                    <th>
+                                        <input type="checkbox" id="select-all" class="filled-in chk-col-amber" />
+                                        <label style="padding-top:3px;" for="select-all"></label>
+
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.lstPermission != null)
+                                    {
+                                        int i = 0;
+                                        foreach (var item in Model.lstPermission)
+                                        {
+                                            <tr>
+                                                <td>@(i + 1)</td>
+                                                <td>
+                                                    @item.SubMenuName
+                                                </td>
+                                                <td>
+                                                    <input type="hidden" name="hdMenuId_@i" id="hdMenuId_@i" value="@item.MenuId">
+                                                    <input type="hidden" name="hdSubMenuId_@i" id="hdSubMenuId_@i" value="@item.SubMenuId">
+                                                    <input type="hidden" name="hdLoginId_@i" id="hdLoginId_@i" value="@item.Fk_EmpId">
+                                                    <input type="checkbox" name="chkSelect_@i" id="chkSelect_@i" @item.SelectedValue class="filled-in chk-col-amber" />
+                                                    <label style="padding-top:3px;" for="chkSelect_@i"></label>
+                                                </td>
+                                            </tr>
+                                            i++;
+                                        }
+                                        <input type="hidden" id="hdRows" name="hdRows" value="@i" />
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                        <br />
+                        <div class="col-md-12 d-flex justify-content-end">
+                            @if (Model != null)
+                            {
+
+                                <input type="submit" class="btn btn-primary  btn-xs btn-sm" value="Set Permission" name="Submit" id="Submit" onclick="return fvalidateunit()">
+
+
+                            }
+
+                        </div>
+                        <br /><br />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(window).on("load", function () {
+
+        var ViewBag_FK_EmployeeId = $("#ViewBag_FK_EmployeeId").val();
+        var ViewBag_FK_MenuId = $("#ViewBag_FK_MenuId").val();
+
+        if (ViewBag_FK_EmployeeId == undefined || ViewBag_FK_EmployeeId == NaN || ViewBag_FK_EmployeeId == "" || ViewBag_FK_EmployeeId == null) {
+            ViewBag_FK_EmployeeId = 0;
+        }
+        if (ViewBag_FK_MenuId == undefined || ViewBag_FK_MenuId == NaN || ViewBag_FK_MenuId == "" || ViewBag_FK_MenuId == null) {
+            ViewBag_FK_MenuId = 0;
+        }
+
+        BindMenu(ViewBag_FK_EmployeeId, ViewBag_FK_MenuId);
+    });
+    function fvalidateunit() {
+        if ($('#Fk_EmpId').val() == 0) {
+            $('#Fk_EmpId').focus();
+            return false;
+        }
+        if ($('#MenuId').val() == 0) {
+            $('#MenuId').focus();
+            return false;
+        }
+    };
+    function BindMenu(EmpID, MenueId) {
+
+
+        if (EmpID == 0) {
+
+            EmpID = $('#Fk_EmpId').val();
+        }
+
+        if (parseInt(EmpID) == 0) {
+            return false;
+        }
+        $.ajax({
+            url: '/Home/BindMenu1',
+            type: 'GET',
+            data: { Division: EmpID },
+            async: false,
+            success: function (response) {
+
+                if (response.bindList.length > 0) {
+
+                    $("#MenuId").empty(); // clear before appending new list
+                    for (var i = 0; i < response.bindList.length; i++) {
+                        $('#MenuId').append('<option value="' + response.bindList[i].id + '">' + response.bindList[i].text + '</option>');
+                    }
+
+                    if (parseInt(MenueId) > 0) {
+                        $('#MenuId').val(MenueId);
+                    }
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#divload").css({ 'display': 'none' });
+    });
+
+    $("#select-all").click(function () {
+        if (this.checked) {
+
+            $(':checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $(':checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    });
+
+                //function BindMenu() {
+                //    var Division;
+                //    ;
+                //    Division = $('#Fk_EmpId').val();
+
+                //    $.ajax({
+                //        url: '/Home/BindMenu1',
+                //        type: 'GET',
+                //        data: { Division: Division },
+                //        async: false,
+                //        success: function (response) {
+                //
+                //            if (response != null) {
+
+                //                $("#MenuId").empty(); // clear before appending new list
+                //                for (var i = 0; i < response.bindList.length; i++) {
+                //                    $('#MenuId').append('<option value="' + response.bindList[i].id + '">' + response.bindList[i].text + '</option>');
+                //                }
+
+
+                //            }
+                //            else {
+                //                alert('Something went wrong!');
+                //            }
+                //        }, error: function () {
+                //            alert('Something went wrong!');
+                //        }
+                //    });
+                //}
+</script>

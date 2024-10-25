@@ -1,0 +1,441 @@
+.header-top {
+    background: #dd2904;
+}
+
+    .header-top ul {
+        margin-bottom: 0;
+        padding: 0;
+    }
+
+        .header-top ul li {
+            display: inline-block;
+            position: relative;
+            color: #971313;
+            text-decoration: none;
+            padding: 0 4px;
+        }
+
+            .header-top ul li a {
+                display: inline-block;
+                text-align: center;
+                color: #ffffff;
+                text-decoration: none;
+            }
+
+                .header-top ul li a:hover {
+                    text-decoration: none;
+                    color: #ffffff;
+                }
+
+            .header-top ul li a {
+                padding: 0px 6px;
+                display: block;
+            }
+
+            .header-top ul li:last-child a {
+                padding-right: 0;
+            }
+
+            .header-top ul li a:after {
+                content: '';
+                background: #dbdbdb;
+                width: 1px;
+                height: 30px;
+                position: absolute;
+                right: -5px;
+                top: -4px;
+            }
+
+            .header-top ul li:last-child a:after {
+                display: none;
+            }
+
+.owl-theme .owl-dots {
+    position: absolute;
+    left: 48%;
+    bottom: 15px;
+}
+
+.profileimg {
+    max-width: 120px;
+    height: 120px;
+    margin: 0px auto;
+    border: 1px solid #d8d8d8;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+}
+
+.marque_news {
+    background: #ff7b3f;
+    color: #fff;
+    height: 35px;
+    padding: 5px 0 0 0;
+    margin-bottom: -7px;
+}
+
+select#change_lan {
+    margin-left: 10px;
+}
+
+.myTicker3 ul {
+    padding: 0;
+    width: 100%;
+}
+
+.myTicker3 li {
+    width: 100%;
+    list-style: none;
+}
+
+.newsGroup {
+    clear: both;
+    padding: 10px;
+    border-bottom: 1px solid #d8d8d8;
+    width: 100%;
+}
+
+.newsData {
+    width: calc(100% - 85px);
+    display: inline-block;
+    float: left;
+    text-align: left;
+}
+
+    .newsData a {
+        color: #000;
+    }
+
+.newsDate {
+    display: inline-block;
+    width: 70px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    float: left;
+    text-align: center;
+    margin-right: 10px;
+    border-radius: 4px;
+    color: #fff;
+    background: #000;
+    margin-top: 6px;
+    border: 1px solid #ffffff;
+    line-height: 18px;
+}
+
+    .newsDate span {
+        display: block;
+        width: 100%;
+        font-size: 18px;
+        font-weight: normal;
+        text-transform: none;
+        color: #fff;
+        border-radius: 0 0 3px 3px;
+        background: #000;
+        padding: 5px 0px;
+    }
+
+
+.dataBox {
+    padding: 30px 10px 20px;
+    width: 100%;
+    text-align: center;
+    min-height: 172px;
+    border-radius: 10px;
+}
+
+    .dataBox h2 {
+        color: #fff;
+        text-align: center;
+        font-weight: bolder;
+        margin: 0px;
+    }
+
+    .dataBox span {
+        color: #fff;
+    }
+
+section.section.section-no-border {
+    border: 0;
+    margin: 0px !important;
+}
+
+.acc h5 {
+    margin: 0px;
+}
+
+.counters a:hover {
+    text-decoration: none;
+}
+
+.acc {
+    margin: 5px 0px;
+}
+
+.bg-1 {
+    background: #0e3270;
+}
+
+.bg-2 {
+    background: #de350b;
+}
+
+.bg-3 {
+    background: #5243aa;
+}
+
+.bg-4 {
+    background: #0052cc;
+}
+
+.bg-5 {
+    background: #00a3bf;
+}
+
+.bg-6 {
+    background: #08b279;
+}
+
+.bg-7 {
+    background: #ff991f;
+}
+
+.bg-8 {
+    background: #3c5581;
+}
+
+.bg-9 {
+    background: #4700d8;
+}
+
+.bg-10 {
+    background: #cf4b2a;
+}
+
+.bg-11 {
+    background: #47398a;
+}
+
+.bg-12 {
+    background: #2584ff;
+}
+
+.bg-13 {
+    background: #00bad6;
+}
+
+.bg-14 {
+    background: #009e5d;
+}
+
+.bg-15 {
+    background: #cda000;
+}
+
+.bg-16 {
+    background: #971313;
+}
+
+.bg-17 {
+    background: #961515;
+}
+
+.bg-18 {
+    background: #111;
+}
+
+.accordion.accordion-modern-status > .card .card-header a {
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+}
+
+#accordion_division .card-body {
+    padding: 20px 0px 0px 20px;
+}
+
+.accordion.accordion-modern-status > .card + .card {
+    margin-top: 5px;
+}
+
+.bgimglight .owl-carousel .owl-item img {
+    border-radius: 20px;
+}
+
+ul.nav-list li {
+    background: #f8f8f8;
+    margin-bottom: 1px;
+}
+
+.hirarchy-chart h4 {
+    font-size: 14px
+}
+
+.fa-solid, .fas {
+    font-weight: 900;
+    color: #ffffff;
+}
+
+section.leader {
+    background: #fffdf6;
+    padding: 0px 0px 19px 0px;
+    margin-top: -20px;
+}
+
+.leader {
+    background-image: url(../images/body.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    padding: 80px 0px;
+}
+
+.leader1 {
+    background-image: url(../images/black-mamba.png) !important;
+    padding: 17px 0;
+}
+
+.linkstitle1:before {
+    width: 25px;
+    height: 25px;
+    border-radius: 3px;
+    background-color: #58b5a8;
+    margin: 0px auto;
+    content: "";
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: -12px;
+    transform: rotate(45deg);
+}
+
+.linkstitle1:after {
+    content: "";
+    position: absolute;
+    right: 0;
+    left: 0;
+    margin: 0px auto;
+    bottom: 0px;
+    height: 1px;
+    width: 15%;
+    background-color: #58b5a8;
+}
+
+.newcm .depdiv {
+    display: block;
+    width: 100%;
+    background-color: #fff;
+    /* border-radius: 22px; */
+    padding: 12px 8px;
+    /* height: 145px; */
+    margin-bottom: 30px;
+    /* background-image: linear-gradient( 35deg, #ffe3e9 10%, #fff9e5 100%); */
+    border: 1px dashed #ccc;
+    /* border-image: linear-gradient(45deg,red,blue) 10; */
+    text-align: center;
+    border-radius: 10px;
+}
+
+.newcm .dep-name {
+    /* padding-left: 12px; */
+    font-size: 15px;
+    padding-top: 10px;
+}
+
+.leader2 {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+    .leader2 .depdiv .dep-logo {
+        width: 38%;
+    }
+
+    .leader2 .depdiv .dep-logo, .leader2 .depdiv .dep-name {
+        display: table-cell;
+        vertical-align: top;
+    }
+
+    .leader2 .depdiv .dep-name {
+        padding-left: 12px;
+        font-size: 15px;
+    }
+
+    .leader2 .depdiv {
+        display: block;
+        width: 100%;
+        background-color: #fff;
+        /* border-radius: 22px; */
+        padding: 16px 13px;
+        margin-bottom: 30px;
+        /* background-image: linear-gradient( 35deg, #ffe3e9 10%, #fff9e5 100%); */
+        border: 1px dashed #ccc;
+        /* border-image: linear-gradient(45deg,red,blue) 10; */
+        border-radius: 10px;
+    }
+
+.linkstitle1 {
+    text-align: center;
+    font-size: 2em;
+    font-weight: 800;
+    color: #000;
+    position: relative;
+    top: auto;
+    padding-bottom: 15px;
+    margin-bottom: 49px;
+    padding-top: 40px;
+}
+
+    .linkstitle1 span {
+        color: #005fa1;
+        font-size: 41px;
+    }
+
+.namami-text {
+    text-align: justify;
+}
+
+html .bg-color-primary, html .bg-primary {
+    background-color: #0375bc !important;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.detaildd {
+    text-align: center;
+}
+
+b, strong {
+    font-weight: 700 !important;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 1px solid #dee2e6;
+    background: #0375bc;
+    color: #fff;
+}
+
+.breadcrumb {
+    margin: 0px;
+    padding-bottom: 10px;
+}
+
+.nowrap {
+    white-space: nowrap !important
+}
+.clickable{
+    cursor:pointer !important;
+}
+.Notclickable {
+    cursor:not-allowed !important;
+}
+.ReportFooter{
+    background-color:#d8d8d8 !important;
+    font-weight:bold !important;
+
+}

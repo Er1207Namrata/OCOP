@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Bill Document";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .not-allowed {
+        cursor: not-allowed !important;
+    }
+</style>
+<script src="~/app/ProccedBillProcess.js"></script>
+<div ng-controller="ProccedBillProcessController">
+    <div class="page-wrapper">
+
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor">Bill document Verification</h3>
+                <p>
+                </p>
+            </div>
+            <div class="col-md-6 align-self-right">
+                <a href="javascript:history.back()" class="btn btn-sm btn-warning text-white float-right"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
+                <span class="float-right" style="margin-right:10px !important"><a data-toggle="collapse" href="#BillDetailArea" title="Search" role="button" aria-expanded="true" aria-controls="BillDetailArea" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Bill </a></span>
+            </div>
+        </div>
+
+
+        @if (ViewBag.DesignationId == 1 && ViewBag.DepartmentId == 4)
+        {
+            if (ViewBag.Status == "Pending")
+            {
+                <input type="hidden" name="BillId" id="BillId" value="@ViewBag.BillId" />
+                <div class="container-fluid">
+                    <div class="collapse" id="BillDetailArea">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table warning-bordered-table">
+                                            <tr>
+                                                <td colspan="6" class="text-center"><p class="font-weight-bold">{{BillDetails.headerText}}</p></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Firm Name</b></td>
+                                                <td>{{BillDetails.firmName}}</td>
+                                                <td><b> Bill No.</b></td>
+                                                <td>{{BillDetails.billNo}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Bill Date</b></td>
+                                                <td>{{BillDetails.billDate}}</td>
+                                                <td><b>Fuel Charges</b></td>
+                                                <td>{{BillDetails.fuelCharges}}</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><b>Net LD Charges</b></td>
+                                                <td>{{BillDetails.netLDCharges}}</td>
+                                                <td><b>Grand Total</b></td>
+                                                <td>{{BillDetails.grandtotal}}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>
+                                {{BillDetails.headerText}}
+                            </h4>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form name="BillDocumentVerificationForm">
+
+                                        <table class="table warning-bordered-table">
+
+                                            <tr>
+                                                <th>SN.</th>
+                                                <th>Document</th>
+                                                <th>File</th>
+                                                <th style="max-width:200px;">Remarks</th>
+                                                <th class="text-center">Status</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                            <tr ng-repeat="(index, x) in BillDetails.billDocuments" ng-form="BillDocumentVerificationForm.rowForm_{{index}}">
+                                                <td>{{index + 1}}</td>
+                                                <td><a class="text-dark" href="{{x.doc_Url}}" download="{{x.doc_Url}}" target="_blank" title="Click and download {{x.uploadDocName}}"> {{x.uploadDocName}} </a></td>
+                                                <td>
+                                                    <a class="text-dark" href="{{x.doc_Url}}" download="{{x.doc_Url}}" target="_blank" title="Click and download {{x.uploadDocName}}">
+                                                        <i class="fa fa-download text-info"></i>
+                                                    </a>
+                                                </td>
+                                                <td style="max-width:200px;">
+                                                    <input ng-show="x.status=='Pending'" class="form-control" style="font-size:12px;" type="text" placeholder="Remarks" ng-model="x.remarks" name="remarks" ng-required="true" ng-minlength="3"><br>
+                                                    <p ng-show="x.status!='Pending'"> {{x.remarks}}</p>
+                                                    <span ng-show="BillDocumentVerificationForm.rowForm_{{index}}.remarks.$error.required && !BillDocumentVerificationForm.rowForm_{{index}}.remarks.$pristine" class="text-danger">Remark is required.</span>
+                                                    <span ng-show="BillDocumentVerificationForm.rowForm_{{index}}.remarks.$error.minlength" class="text-danger">Remark must be at least 3 characters long.</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <label ng-if="x.status=='Pending'" class="label label-warning text-white"><i class="fa fa-clock-o" aria-hidden="true"></i> {{x.status}}</label>
+                                                    <label ng-if="x.status=='Approved'" class="label label-success text-white"><i class="fa fa-check-circle"></i> {{x.status}}</label>
+                                                    <label ng-if="x.status=='Declined'" class="label label-danger text-white"><i class="fa fa-times-circle"></i> {{x.status}}</label>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div ng-if="x.status=='Pending'">
+                                                        <button ng-click="ProcceedFileVerification('Approved', x.id, x.remarks,index)" type="button" class="btn btn-xs btn-success text-white"><i class="fa fa-check-circle"></i> Approve</button>
+                                                        <button ng-click="ProcceedFileVerification('Declined', x.id, x.remarks,index)" type="button" class="btn btn-xs btn-danger text-white"><i class="fa fa-times-circle"></i> Decline</button>
+                                                    </div>
+                                                    <div ng-if="x.status!='Pending'">
+                                                        <button type="button" class="btn btn-xs btn-secondary text-white not-allowed" disabled><i class="fa fa-check-circle"></i> Approve</button>
+                                                        <button type="button" class="btn btn-xs btn-secondary text-white not-allowed" disabled><i class="fa fa-times-circle"></i> Decline</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </form>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mb-3">
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <center class="mt-5">
+                                    <p class="text-danger">@(ViewBag.Status != "Invalid" ? "This bill is already processed from your end." : "Invalid request.") </p>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <center class="mt-5">
+                                <p class="text-danger">Sorry, you are not allowed to access this page </p>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,337 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "ManageFirm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Firm List</h3>
+
+
+        </div>
+        <div class="col-md-6 align-self-right text-right">
+            <span class=""><a href="#" onclick="return ShowPopup();" id="btn" class="btn btn-xs btn-sm  btn-success fUserPermission" title="Add New"><i class="fa fa-plus mdi-18px"></i> Add New Firm</a></span>
+            <span class=""><a data-toggle="collapse" title="Search" href="#searchblock" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-sm btn-primary"><i class="fa fa-filter"></i></a></span>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="collapse" id="searchblock">
+            <div class="card p-3">
+                <form asp-action="ManageFirm">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Zone</label>
+                            @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control", @onchange="return fGetSTPName()"  })
+                        </div>
+                        @* <div class="col-md-3">
+                        <label>City</label>
+                        <select asp-for="Pk_CityId" class="form-control">
+                        <option value="0">--Select--</option>
+                        </select>
+                        </div>*@
+                        @*    <div class="col-md-3">
+                        <label>STP Name</label>
+                        @Html.DropDownListFor(m => m.STPName, new SelectList(ViewBag.ddlSTPCapacity, "Value", "Text"), new {@class = "form-control"})
+                        </div>*@
+                        <div class="col-md-3 mt-4">
+                            <div class="form-group mt-2">
+                                <button type="submit" class="btn btn-primary  btn-xs btn-sm " value="Search" name="btnSubmit"><i class="fa fa-search"></i> Search</button>
+                                <button type="reset" class="btn btn-secondary   btn-xs btn-sm"><i class="fa fa-refresh"></i>     Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <form asp-action="ManageFirm">
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Zone</th>
+                                    <th>Firm Name</th>
+                                    <th>GST No.</th>
+                                    <th>Contact Person</th>
+                                    <th>Login Id</th>
+                                    <th>Password</th>
+                                    <th>Mobile No</th>
+                                    <th>Gmail</th>
+                                    <th class="tdaction">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+
+                                                    <td>@Model.dtDetails.Rows[i]["Zone"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["FirmName"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["GSTNo"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ContactPerson"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["LoginId"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Password"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["MobileNo"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["EmailId"].ToString()</td>
+                                                    <td>
+                                                        <a href="#" data-bs-toggle="modal" onclick="return EditForm(@Model.dtDetails.Rows[i]["Pk_FirmId"].ToString());" data-bs-target="#exampleModal" class="text-primary fUserPermission">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a href="/Admin/FirmMasterDelete?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_FirmId"].ToString())" id="btnDelete" class="text-danger fUserPermission" onclick="return confirm('are you sure to delete this record?')" ToolTip="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="10" class="text-center bg-white">
+                                                    <div class="alert alert-warning text-center">
+                                                        No Records Found !!
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <form asp-action="FirmRegistration" asp-controller="Admin" method="post">
+        <div id="txtDetails" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Firm Registration</h5>
+                        <a href="#" class="btn-close" data-dismiss="modal">
+                            <i class="fa fa-close"></i>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Offer/Zone<span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control", @Id="Pk_ZoneId1"  })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Firm Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="FirmName" placeholder="Enter Firm Name" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode == 32)" />
+                                    <input type="hidden" class="form-control" asp-for="Pk_FirmId" placeholder="Enter First Name" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Password<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="Password" placeholder="Enter Password" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger  btn-xs btn-sm "><i class="fa fa-times"></i> Cancel</button>
+                        <button type="submit" class="btn btn-success  btn-xs btn-sm " id="Submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save">Save</i></button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+<script>
+
+    function fGetSTPName() {
+        let txtId = $("#Pk_ZoneId").val();
+        $.ajax({
+            url: '/Admin/GetSTPName',
+            type: 'Get',
+            data: { Id: txtId },
+            success: function (response) {
+                if (response != null) {
+                    let v = "";
+                    $.each(response, function (i, v1) {
+                        v += "<option value=" + v1.value + ">" + v1.text + "</option>";
+                    });
+                    $("#STPName").html(v);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+    function ShowPopup() {
+
+        $("#Pk_ZoneId1").val('');
+        $("#STPName1").val(0);
+        $("#Pk_FirmId").val('');
+        $("#FirmName").val('');
+        $("#ContactPerson").val('');
+        //$("#LastName").val('');
+        //$("#EmailId").val('');
+        $("#MobileNo").val('');
+
+        //$("#PinCode").val('');
+        $("#Address").val('');
+        $("#Password").val(generateRandomNumber());
+        $('#txtDetails').modal('show');
+        $("#Submit").val('Submit');
+        // $("#Submit").css("background", "green");
+        $("#Submit").html('<i class="fa fa-save"></i>  Save');
+
+
+    }
+
+    function ValidateForm() {
+        if ($("#Pk_ZoneId1").val() == null || $("#Pk_ZoneId1").val() == '0') {
+            $("#Pk_ZoneId1").focus();
+            return false;
+        }
+        // if ($("#STPName1").val() == null || $("#STPName1").val() == '0') {
+        //     $("#STPName1").focus();
+        //     return false;
+        // }
+        if ($("#FirmName").val() == null || $("#FirmName").val() == '') {
+            $("#FirmName").focus();
+            return false;
+        }
+        // if ($("#ContactPerson").val() == null || $("#ContactPerson").val() == '') {
+        //     $("#ContactPerson").focus();
+        //     return false;
+        // }
+
+        // if ($("#MobileNo").val() == null || $("#MobileNo").val() == '') {
+        //     $("#MobileNo").focus();
+        //     return false;
+        // }
+
+        // if ($("#Address").val() == null || $("#Address").val() == '') {
+        //     $("#Address").focus();
+        //     return false;
+        // }
+        if ($("#Password").val() == null || $("#Password").length() >= 6) {
+            $("#Password").focus();
+            return false;
+        }
+    }
+
+    function EditForm(txtId) {
+        $.ajax({
+            url: '/Admin/FirmDetails',
+            type: 'GET',
+            data: { Id: txtId },
+            success: function (response) {
+                //console.log(response);
+                if (response != null) {
+                    $("#Pk_FirmId").val(response.pk_FirmId);
+                    $("#FirmName").val(response.firmName);
+                    $("#ContactPerson").val(response.contactPerson);
+                    //$("#LastName").val(response.lastName);
+                    //$("#EmailId").val(response.emailId);
+                    $("#MobileNo").val(response.mobileNo);
+                    //$("#Pk_CityId1").val(response.fk_DistrictId);
+                    //$("#PinCode").val(response.pinCode);
+                    $("#Address").val(response.address);
+                    $("#Password").val(response.password);
+                    $("#Pk_ZoneId1").val(response.pk_ZoneId);
+                    $("#STPName1").val(response.fk_STPId);
+                    $("#Submit").val('Update');
+                    $("#Submit").html('<i class="fa fa-save"></i>  Update');
+
+                    //$("#Submit").css("background", "red");
+                    fGetCity1()
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+        $('#txtDetails').modal('show');
+    }
+
+    function fGetCity() {
+        let txtId = $("#Pk_ZoneId").val();
+        $.ajax({
+            url: '/Admin/GetCityByZoneId',
+            type: 'Get',
+            data: { Id: txtId },
+            success: function (response) {
+                var v = "";
+                $.each(response, function (i, v1) {
+                    v += "<option value=" + v1.pk_CityId + ">" + v1.city + "</option>";
+                });
+                $("#Pk_CityId").html(v);
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+    function fGetCity1() {
+        let txtId = $("#Pk_ZoneId1").val();
+
+        $.ajax({
+            url: '/Admin/GetCityByZoneId',
+            type: 'Get',
+            data: { Id: txtId },
+            success: function (response) {
+                var v = "";
+                $.each(response, function (i, v1) {
+                    v += "<option value=" + v1.pk_CityId + ">" + v1.city + "</option>";
+                });
+                $("#Pk_CityId1").html(v);
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+
+                    //function fGetSTPName1() {
+                    //    let txtId = $("#Pk_ZoneId1").val();
+
+                    //    $.ajax({
+                    //        url: '/Admin/GetSTPName',
+                    //        type: 'Get',
+                    //        data: { Id: txtId },
+                    //        success: function (response) {
+                    //            var v = "";
+                    //            $.each(response, function (i, v1) {
+                    //                v += "<option value=" + v1.value + ">" + v1.text + "</option>";
+                    //            });
+                    //            $("#STPName1").html(v);
+                    //        },
+                    //        error: function () {
+
+                    //        }
+                    //    })
+                    //}
+</script>

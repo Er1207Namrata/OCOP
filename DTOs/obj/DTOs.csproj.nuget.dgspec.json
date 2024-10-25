@@ -1,0 +1,98 @@
+{
+  "format": 1,
+  "restore": {
+<<<<<<< HEAD
+    "D:\\Repositories\\OCOO\\DTOs\\DTOs.csproj": {}
+  },
+  "projects": {
+    "D:\\Repositories\\OCOO\\DTOs\\DTOs.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Repositories\\OCOO\\DTOs\\DTOs.csproj",
+        "projectName": "DTOs",
+        "projectPath": "D:\\Repositories\\OCOO\\DTOs\\DTOs.csproj",
+        "packagesPath": "C:\\Users\\Piyush\\.nuget\\packages\\",
+        "outputPath": "D:\\Repositories\\OCOO\\DTOs\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Piyush\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
+    "D:\\Maqsood\\OCOO\\DTOs\\DTOs.csproj": {}
+  },
+  "projects": {
+    "D:\\Maqsood\\OCOO\\DTOs\\DTOs.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Maqsood\\OCOO\\DTOs\\DTOs.csproj",
+        "projectName": "DTOs",
+        "projectPath": "D:\\Maqsood\\OCOO\\DTOs\\DTOs.csproj",
+        "packagesPath": "C:\\Users\\sileo\\.nuget\\packages\\",
+        "outputPath": "D:\\Maqsood\\OCOO\\DTOs\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\sileo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+>>>>>>> OCOP-UAT
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Http.Features": {
+              "target": "Package",
+              "version": "[5.0.17, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+<<<<<<< HEAD
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300\\RuntimeIdentifierGraph.json"
+=======
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202\\RuntimeIdentifierGraph.json"
+>>>>>>> OCOP-UAT
+        }
+      }
+    }
+  }
+}

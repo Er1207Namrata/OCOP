@@ -1,0 +1,56 @@
+﻿@model OCOO.Models.Menu
+
+@if (Context.Session.GetString("Fk_UsertypeId") == "1" || Context.Session.GetString("Fk_UsertypeId") == "4")
+{
+    @if (Context.Session.GetObjectFromJson<Menu>("_menu").menuList != null && Context.Session.GetObjectFromJson<Menu>("_submenu").subMenuList != null)
+    {
+
+        @foreach (var item in Context.Session.GetObjectFromJson<Menu>("_menu").menuList)
+        {
+            if (item.IsDropdown == "N")
+            {
+                <li>
+                    <a class="waves-effect waves-dark" href="@item.Url" aria-expanded="false">
+                        <i class="@item.Icon"></i>
+                        <span class="hide-menu"> @item.MenuName</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="@item.Url" aria-expanded="false">
+                        <i class="@item.Icon"></i><span class="hide-menu"> @item.MenuName</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        @foreach (var item1 in Context.Session.GetObjectFromJson<Menu>("_submenu").subMenuList)
+                        {
+                            if (int.Parse(item.MenuId) == int.Parse(item1.Fk_MenuId))
+                            {
+                                <li>
+                                    <a href="@item1.Url">
+                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i>&nbsp;
+                                        @item1.SubMenuName
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                    </ul>
+                </li>
+
+            }
+
+        }
+
+        <li>
+            <a class="waves-effect waves-dark" href="~/Admin/UserManual" aria-expanded="false"><i class="mdi mdi-file-document"></i><span class="hide-menu">User Manual</span></a>
+
+        </li>
+    }
+}
+
+
+
+
+

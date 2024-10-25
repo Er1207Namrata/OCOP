@@ -1,0 +1,87 @@
+﻿@model OCOO.Models.FirmDetails
+
+@{
+    ViewData["Title"] = "STPList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">STP List</h3>
+
+        </div>
+
+    </div>
+    <div class="container-fluid">
+
+
+        <div class="card-body pb-20">
+            <div class="row">
+                @if (Model != null)
+                {
+                    if (Model.dtDetails != null)
+                    {
+                        if (Model.dtDetails.Rows.Count > 0)
+                        {
+                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                            {
+
+                                <a style="cursor:pointer" href="@Model.Url?Id=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_Stp_Id"].ToString())">
+                                    <div class="col-md-3">
+                                        <div class="card card-outline-inverse">
+                                            <div class="card-header" style="padding: 0.75rem 1.25rem;background-color: #21aee4;">
+                                                <h5 class="m-b-0 text-white">@Model.dtDetails.Rows[i]["StpName"].ToString() </h5>
+                                            </div>
+                                            <div class="card-body" style="padding:20px 10px !important">
+                                                <h3>
+                                                    @Model.dtDetails.Rows[i]["CityName"].ToString()
+                                                </h3>
+
+                                                <p class="card-text pb-1">
+                                                    Capacity : @Model.dtDetails.Rows[i]["Capacity"].ToString() &nbsp;&nbsp;
+                                                    Meter Load : @Model.dtDetails.Rows[i]["ElectricityMeterLoad"].ToString()
+                                                </p>
+                                               
+                                                <a href="@Model.Url?Id=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_Stp_Id"].ToString())">
+                                                    @if (Model.dtDetails.Rows[i]["UpdatedBy"].ToString() == "")
+                                                    {
+                                                        if (@Model.dtDetails.Rows[i]["UpdatedOn"].ToString()=="")
+                                                        {
+                                                            <i class="card-title" style="color:#6ab84d">
+                                                                &nbsp;
+                                                            </i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="card-title" style="color:#6ab84d">
+                                                                Last Updated on @Model.dtDetails.Rows[i]["UpdatedOn"].ToString()
+                                                            </i>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="card-title" style="color:#6ab84d">
+                                                            Last Updated on @Model.dtDetails.Rows[i]["UpdatedOn"].ToString() by @Model.dtDetails.Rows[i]["UpdatedBy"].ToString()
+                                                        </i>
+                                                    }
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning text-center">No Record Found</div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+
+
+    </div>
+</div>

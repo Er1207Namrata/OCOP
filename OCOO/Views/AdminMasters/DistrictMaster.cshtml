@@ -1,0 +1,144 @@
+﻿@model OCOO.Models.Distric
+@{
+    ViewData["Title"] = "DistrictMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">District</h3>
+
+        </div>
+        @*<div class="col-md-6 align-self-right">
+            <span class="float-right"><a href="#" onclick="return ShowDistricPopup();" id="btn" class="btn  btn-xs btn-sm btn-success fUserPermission" title="Add New"><i class="fa fa-plus mdi-18px"></i> Department</a></span>
+
+        </div>*@
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="">
+                <div class="card-body p-3 pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>District</th>
+                                    <th>Division</th>
+                                   
+                                   
+                                    <th class="tdaction">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["DistrictName"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["DivisionName"].ToString()</td>
+                                                    <td>
+                                                       @* <a href="#" data-bs-toggle="modal" onclick="return EditDistric(@Model.dtDetails.Rows[i]["Pk_DepartmentId"].ToString(),'@Model.dtDetails.Rows[i]["DepartmentName"].ToString()')" data-bs-target="#exampleModal" class="text-primary fUserPermission">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>*@
+                                                        <button class="text-primary fUserPermission border-0" disabled>
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                        <button class="text-danger fUserPermission border-0" disabled>
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                        @*<a href="/AdminMasters/DeleteDistric?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_DistrictId"].ToString())" id="btnDelete" class="text-danger fUserPermission" onclick="return confirm('are you sure to delete this record?')" ToolTip="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>*@
+                                                    </td>
+                                                </tr>
+
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-center bg-white">
+                                                    <div class="alert alert-warning text-center">
+                                                        No Records Found !!
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <form asp-action="DistricMaster" asp-controller="AdminMasters">
+        <div id="modelDistric" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add/Update Distric</h5>
+                        <a href="#" class="btn-close" data-dismiss="modal">
+                            <i class="fa fa-close"></i>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Division <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="DistricName" placeholder="Enter Department" />
+                                <input type="hidden" asp-for="Pk_DistricId" />
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger   btn-xs btn-sm"><i class="fa fa-times"></i> Cancel</button>
+                        <button type="submit" class="btn btn-success  btn-xs btn-sm " id="submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save"></i> Save</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+
+    function ShowDistricPopup() {
+
+        $('#modelDistric').modal('show');
+        $("#Pk_DistricId").val(0);
+        $("#DistricName").val("");
+        $("#submit").val('Submit');
+        $("#submit").html('<i class="fa fa-save"></i>  Save');
+
+    }
+
+
+    function ValidateForm() {
+        if ($("#DistricName").val() == '' || $("#DistricName").val() == null) {
+            $("#DistricName").focus();
+            return false;
+        }
+    }
+
+    function EditDistric(Pk_DepartmentId, DepartmentName) {
+        $("#Pk_DistricId").val(Pk_DepartmentId);
+        $("#DistricName").val(DepartmentName);
+        $("#submit").val('Update');
+        $("#submit").html('<i class="fa fa-save"></i>  Update');
+        $('#modelDivision').modal('show');
+    }
+</script>

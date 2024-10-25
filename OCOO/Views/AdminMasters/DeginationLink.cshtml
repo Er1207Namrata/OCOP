@@ -1,0 +1,140 @@
+﻿@model OCOO.Models.Degination
+@{
+    ViewData["Title"] = "DeginationLink";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Designation Link</h3>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body pb-0">
+                <form asp-action="DeginationLink" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Department  <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(m => m.Fk_DepartmentId, new SelectList(ViewBag.ddlDepartmentType, "Value", "Text"), new { @class = "form-control",@onchange="return GetDesignation();"})
+                                <input type="hidden" value="@ViewBag.Pk_DepartmentId" id="ViewBag_Pk_DepartmentId" />
+
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-4">
+
+                            <input type="submit" class="btn btn-primary" id="getDetails" value="Get Details" name="GetDetails" onclick="return fGetvalidate()">
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+
+                <form asp-action="DeginationLink" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table" id="myTable">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Designation Name<span class="text-danger">*</span></th>
+                                            <th>
+                                                <input type="checkbox" id="select-all" class="filled-in chk-col-amber" />
+                                                <label style="padding-top:3px;" for="select-all"></label>
+
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null)
+                                        {
+                                            if (Model.lstDegination != null)
+                                            {
+                                                int i = 1;
+                                                foreach (var item in Model.lstDegination)
+                                                {
+                                                    <tr>
+                                                        <td>@(i + 1)</td>
+                                                        <td>
+                                                            @item.DesignationName
+                                                        </td>
+                                                        <td>
+
+                                                            <input type="hidden" asp-for="Fk_DepartmentId" id="Pk_DeptId">
+                                                            <input type="hidden" name="hdDesignationId_@i" id="hdDesignationId_@i" value="@item.Pk_DesignationId">
+                                                            <input type="checkbox" name="chkSelect_@i" id="chkSelect_@i" @item.SelectedValue class="filled-in chk-col-amber" />
+                                                            <label style="padding-top:3px;" for="chkSelect_@i"></label>
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                                <input type="hidden" id="hdRows" name="hdRows" value="@i" />
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                                <br />
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-center">
+                            @if (Model != null && Model.lstDegination != null && Model.lstDegination.Count > 0)
+                            {
+
+                                <input type="submit" class="btn btn-success" value="Submit" name="btnSubmit" id="Submit" onclick="return fvalidate()">
+                            }
+
+
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $("#select-all").click(function () {
+        if (this.checked) {
+
+            $(':checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $(':checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    });
+
+    $("#Fk_DepartmentId").change(function () {
+        var Fk_DepartmentId = $('#Fk_DepartmentId option:selected').val()
+        $('#Pk_DeptId').val(Fk_DepartmentId)
+    });
+    function fvalidate() {
+        var CheckBoxzone = $("input[type='checkbox']:checked").length
+
+        if (CheckBoxzone <= 0) {
+            fShowToastalert("Please select designation")
+            return false;
+        }
+    }
+    function fGetvalidate() {
+
+
+        if ($('#Fk_DepartmentId').val() == "" || $('#Fk_DepartmentId').val() == "0") {
+            $('#Fk_DepartmentId').focus()
+            return false;
+        }
+    }
+
+</script>

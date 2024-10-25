@@ -1,0 +1,98 @@
+﻿@model OCOO.Models.FirmBilling
+@{
+    ViewData["Title"] = "STCRequestList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-4 align-self-center">
+            <h3 class="text-themecolor">Generate Bill</h3>
+
+        </div>
+        <div class="col-md-4 align-self-center">
+            <h3 class="text-themecolor">(Zone-@Context.Session.GetString("Zone"))</h3>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+
+        <div class="card">
+            <form asp-action="STCRequestList">
+                <div class="card-body pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    @* <th>STP</th> *@
+                                    <th>Month</th>
+                                    <th>Year</th>
+                                    <th>Firm</th>
+                                    <th>Status</th>
+                                    <th>View Details</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["BillingMonth"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["BillingYear"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["FirmName"].ToString()</td>
+                                                    <td>
+                                                        @if (Model.dtDetails.Rows[i]["BillStatus"].ToString() == "Pending")
+                                                        {
+                                                            <span class="badge badge-info">@Model.dtDetails.Rows[i]["BillStatus"].ToString()</span>
+                                                        }
+                                                        else if (Model.dtDetails.Rows[i]["BillStatus"].ToString() == "InProcess")
+                                                        {
+                                                            <span class="badge badge-warning">@Model.dtDetails.Rows[i]["BillStatus"].ToString()</span>
+                                                        }
+                                                        else if (Model.dtDetails.Rows[i]["BillStatus"].ToString() == "Paid")
+                                                        {
+                                                            <span class="label label-success">@Model.dtDetails.Rows[i]["BillStatus"].ToString()</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <a href="/FirmBilling/FirmBillingDetails?mth=@Crypto.Encrypt(@Model.dtDetails.Rows[i]["PK_FbillId"].ToString())&&yr=@Crypto.Encrypt(@Model.dtDetails.Rows[i]["BillingYear"].ToString())&&mn=@Crypto.Encrypt(@Model.dtDetails.Rows[i]["BillingMonth"].ToString())">View Details</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/FirmBilling/GenerateFirmBill?SData=@Crypto.Encrypt(@Model.dtDetails.Rows[i]["Pk_FirmId"].ToString())&&MData=@Crypto.Encrypt(@Model.dtDetails.Rows[i]["PK_FbillId"].ToString())&&YData=@Crypto.Encrypt(@Model.dtDetails.Rows[i]["BillingYear"].ToString())&&IData=@Crypto.Encrypt(@Model.dtDetails.Rows[i]["BillingMonth"].ToString())">Generate Bill</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="7" class="text-center">No Record Found</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+@{
+    Html.RenderPartial("_ViewInvoicebillDetail");
+
+}
+
+<script src="~/script/viewbilldetails.js"></script>
+

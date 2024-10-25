@@ -1,0 +1,467 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "STCRequestList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .table th, .table thead th {
+        color: #000;
+        border: 0px;
+        background: #ebebeb !important;
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Generate Bill-@Context.Session.GetString("Zone") Zone (@Model.Fk_MonthId-@Model.Year)</h3>
+
+        </div>
+
+        <div class="col-md-6 align-self-center">
+            <a href="/Firm/STPBillingRequestList" class="btn btn-warning ml-2 float-right">Back</a>
+        </div>
+        <br />
+
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="col-12">
+
+                    <div class="card p-3">
+                        <div class="table-responsive">
+
+                            <table class="table table-striped">
+                                @*  <tr>
+                                <td>STP Details</td>
+                                </tr>*@
+                                <tr>
+                                    <th style="width:20%;">STP Name</th>
+                                    <td style="width:30%;">@Model.STPName</td>
+                                    <th style="width:20%;">Billing Month</th>
+                                    <td style="width:30%;">@Model.Fk_MonthId</td>
+                                </tr>
+                                <tr>
+                                    <th>Billing Year</th>
+                                    <td>@Model.Year</td>
+                                    <th>Capacity</th>
+                                    <td>@Model.Capacity</td>
+                                </tr>
+                                @*    <tr>
+                                <td>Flow</td>
+                                </tr>
+                                *@
+                                <tr>
+                                    <th>Actual Achived</th>
+                                    <td>@Model.Actual_Achieved</td>
+
+                                    <th>Treated For Payment</th>
+                                    <td>@Model.Treated_for_Payement</td>
+                                </tr>
+
+                                @*  <tr>
+                                <td>Fix Charge</td>
+                                </tr>*@
+
+                                <tr>
+                                    <th>As Per CB (60%)</th>
+                                    <td>@Model.AsPerCBFixCharges_60</td>
+                                    <th>As Per Actual (60%)</th>
+                                    <td>@Model.AsPerActual_FixCharges_60</td>
+                                </tr>
+                                @* <tr>
+                                <td>Variable Cost (40%)</td>
+                                </tr>*@
+                                <tr>
+                                    <th>As Per CB (40%)</th>
+                                    <td>@Model.AsPerCBFixCharges_40</td>
+                                    <th>As Per Actual (40%)</th>
+                                    <td>@Model.AsPerActual_FixCharges_40</td>
+                                </tr>
+                                @*   <tr>
+                                <td>BOD</td>
+                                </tr>*@
+                                <tr>
+                                    <th>BOD Reported Value</th>
+                                    <td>@Model.BODReportedValue</td>
+                                    <th>BOD(50%)</th>
+                                    <td>@Model.BODAmount</td>
+
+                                </tr>
+                                <tr>
+                                    <th>Treated BOD For Payment</th>
+                                    <td>@Model.Treated_for_Payement</td>
+                                    <th>BOD LD</th>
+                                    <td>@Model.BODLDAmount</td>
+                                </tr>
+
+                                @* <tr>
+                                <td>COD</td>
+                                </tr>*@
+                                <tr>
+
+                                    <th>COD Reported Value</th>
+                                    <td>@Model.CODReportedValue</td>
+                                    <th>COD(15%)</th>
+                                    <td>@Model.CODAmount</td>
+                                </tr>
+
+
+                                @* <tr>
+                                <td>TSS</td>
+                                </tr>*@
+                                <tr>
+                                    <th>COD LD</th>
+                                    <td>@Model.CODLDAmount</td>
+                                    <th>TSS Reported Value</th>
+                                    <td>@Model.TSSReportedValue</td>
+                                </tr>
+
+                                <tr>
+                                    <th>TSS(25%)</th>
+                                    <td>@Model.TSSAmount</td>
+                                    <th>TSS LD</th>
+                                    <td>@Model.TSSReportedValue</td>
+                                </tr>
+
+                                @*  <tr>
+                                <td>FC</td>
+                                </tr>*@
+                                <tr>
+
+                                    <th>FC Reported Value</th>
+                                    <td>@Model.FCReportedValue</td>
+                                    <th>FC(10%)</th>
+                                    <td>@Model.FCAmount</td>
+                                </tr>
+
+                                @* <tr>
+                                <td></td>
+                                </tr>*@
+                                <tr>
+                                    <th>FC LD</th>
+                                    <td>@Model.FCLDAmount</td>
+                                    <th>Varified MLD</th>
+                                    <td>@Model.TotalVerifiedAmount</td>
+
+                                </tr>
+                                <tr>
+                                    <th>Total LD Amount</th>
+                                    <td>@Model.TotalLDAmount</td>
+                                </tr>
+                            </table>
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+                @*     <div class="card p-3">
+                <h3 class="text-center">STP Details</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">STP Name</th>
+                <td style="width:35%;">@Model.STPName</td>
+                <th style="width:15%;">Billing Month</th>
+                <td style="width:35%;">@Model.Fk_MonthId</td>
+                </tr>
+
+                <tr>
+                <th style="width:15%;">Billing Year</th>
+                <td style="width:35%;">@Model.Year</td>
+                </tr>
+                </table>
+                </div>
+                <h3 class="text-center">Flow</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">Capacity</th>
+                <td style="width:35%;">@Model.Capacity</td>
+                <th style="width:15%;">Actual Achived</th>
+                <td style="width:35%;">@Model.Actual_Achieved</td>
+                </tr>
+
+                <tr>
+                <th style="width:15%;">Treated For Payment</th>
+                <td style="width:35%;">@Model.Treated_for_Payement</td>
+                </tr>
+                </table>
+                </div>
+
+                <h3 class="text-center">Fix Charge</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">As Per CB</th>
+                <td style="width:35%;">@Model.AsPerCBFixCharges_60</td>
+                <th style="width:15%;">As Per Actual</th>
+                <td style="width:35%;">@Model.AsPerActual_FixCharges_60</td>
+                </tr>
+                </table>
+                </div>
+
+                <h3 class="text-center">Variable Cost (40%)</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">As Per CB</th>
+                <td style="width:35%;">@Model.AsPerCBFixCharges_40</td>
+                <th style="width:15%;">As Per Actual</th>
+                <td style="width:35%;">@Model.AsPerActual_FixCharges_40</td>
+                </tr>
+                </table>
+                </div>
+
+                <h3 class="text-center">BOD</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">Reported Value</th>
+                <td style="width:35%;">@Model.BODReportedValue</td>
+                <th style="width:15%;">50%</th>
+                <td style="width:35%;">@Model.BODAmount</td>
+                </tr>
+                <tr>
+                <th style="width:15%;">LD</th>
+                <td style="width:35%;">@Model.BODLDAmount</td>
+                </tr>
+                </table>
+                </div>
+
+                <h3 class="text-center">COD</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">Reported Value</th>
+                <td style="width:35%;">@Model.CODReportedValue</td>
+                <th style="width:15%;">15%</th>
+                <td style="width:35%;">@Model.CODAmount</td>
+                </tr>
+                <tr>
+                <th style="width:15%;">LD</th>
+                <td style="width:35%;">@Model.CODLDAmount</td>
+                </tr>
+                </table>
+                </div>
+
+                <h3 class="text-center">TSS</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">Reported Value</th>
+                <td style="width:35%;">@Model.TSSReportedValue</td>
+                <th style="width:15%;">25%</th>
+                <td style="width:35%;">@Model.TSSAmount</td>
+                </tr>
+                <tr>
+                <th style="width:15%;">LD</th>
+                <td style="width:35%;">@Model.TSSReportedValue</td>
+                </tr>
+                </table>
+                </div>
+
+                <h3 class="text-center">FC</h3>
+                <div class="table-responsive">
+                <table class="table">
+                <tr>
+                <th style="width:15%;">Reported Value</th>
+                <td style="width:35%;">@Model.FCReportedValue</td>
+                <th style="width:15%;">10%</th>
+                <td style="width:35%;">@Model.FCAmount</td>
+                </tr>
+                <tr>
+                <th style="width:15%;">LD</th>
+                <td style="width:35%;">@Model.FCLDAmount</td>
+                </tr>
+                </table>
+                </div>
+
+                <table class="table">
+                <tr>
+                <th style="width:15%;">Varified MLD</th>
+                <td style="width:35%;">@Model.TotalVerifiedAmount</td>
+                <th style="width:15%;">LD</th>
+                <td style="width:35%;">@Model.TotalLDAmount</td>
+                </tr>
+                </table>
+
+                </div>*@
+            </div>
+        </div>
+        <div class="card p-3">
+            <form asp-action="GenerateBill" asp-controller="Firm" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="IsFinalSave" />
+                <input type="hidden" asp-for="Fk_STPId" value="@Model.Fk_STPId" />
+                <input type="hidden" asp-for="PK_InvId" value="@Model.PK_InvId" />
+                <h3>Upload Documents</h3>
+                <div class="row">
+                    <input type="hidden" name="Pk_FirmId" value="@Context.Session.GetString("Pk_UserId")" />
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Covering Letter <span class="text-danger">*</span></label>
+                            <input type="file" asp-for="CoveringLetter" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Inspection Report <span class="text-danger">*</span></label>
+                            <input type="file" asp-for="InspectionReport" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>TPI Reports <span class="text-danger">*</span></label>
+                            <input type="file" asp-for="TPIReports" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>LD Sheet <span class="text-danger">*</span></label>
+                            <input type="file" asp-for="LDSheet" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Other Documents  <span class="text-danger">*</span></label>
+                            <input type="file" asp-for="OtherDocuments" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Invoice Date</label>
+                            <input type="text" readonly asp-for="BillingDate" value="@ViewBag.BillingDate" onchange="return fCheckGeneratedBill()" class="form-control mydatepicker" />
+                            <b><span id="msg" class="text-danger"></span></b>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Remark</label>
+                            <textarea asp-for="Remarks" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="checkbox" asp-for="Isdeclaration" id="Isdeclaration" />
+                            <label style="padding-top:3px;" for="Isdeclaration">It is hereby declared that the details mentioned here/above are true and correct.</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 p-4 text-right">
+                        <input type="submit" class="btn btn-primary" id="Submit" onclick="return ValidateForm();" value="Save As Draft" name="btnSubmit" />
+                        <input type="submit" class="btn btn-warning" id="Submit" onclick="return ValidateGenerateForm();" value="Generate Bill" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ValidateGenerateForm() {
+
+
+        if ($("#CoveringLetter").val() == null || $("#CoveringLetter").val() == '') {
+            $("#CoveringLetter").focus();
+            return false;
+        }
+        if ($("#InspectionReport").val() == null || $("#InspectionReport").val() == '') {
+            $("#InspectionReport").focus();
+            return false;
+        }
+        if ($("#TPIReports").val() == null || $("#TPIReports").val() == '') {
+            $("#TPIReports").focus();
+            return false;
+        }
+        if ($("#LDSheet").val() == null || $("#LDSheet").val() == '') {
+            $("#LDSheet").focus();
+            return false;
+        }
+
+        if ($("#OtherDocuments").val() == null || $("#OtherDocuments").val() == '') {
+            $("#OtherDocuments").focus();
+            return false;
+        }
+
+        if ($("#Isdeclaration").is(":checked") == false) {
+            fShowToastalert("Please! check verify condition checkbox")
+            $("#Isdeclaration").focus();
+            return false;
+        }
+        $("#IsFinalSave").val(true);
+        var result = window.confirm("If you submit once, you will not be able to edit again.");
+        if (result == false) {
+            $("#IsFinalSave").val(false);
+            return false;
+        }
+
+
+    }
+    function ValidateForm() {
+
+        if ($("#CoveringLetter").val() == null || $("#CoveringLetter").val() == '') {
+            $("#CoveringLetter").focus();
+            return false;
+        }
+        if ($("#InspectionReport").val() == null || $("#InspectionReport").val() == '') {
+            $("#InspectionReport").focus();
+            return false;
+        }
+        if ($("#TPIReports").val() == null || $("#TPIReports").val() == '') {
+            $("#TPIReports").focus();
+            return false;
+        }
+        if ($("#LDSheet").val() == null || $("#LDSheet").val() == '') {
+            $("#LDSheet").focus();
+            return false;
+        }
+        if ($("#OtherDocuments").val() == null || $("#OtherDocuments").val() == '') {
+            $("#OtherDocuments").focus();
+            return false;
+        }
+
+        $("#IsFinalSave").val(false);
+
+    }
+
+    function fCheckGeneratedBill() {
+        $('input[type="submit"]').attr('disabled', false);
+        $('input[type="submit"]').css('cursor', 'pointer');
+        $('#msg').text('');
+        let txtDate = $("#BillingDate").val();
+        let txtFk_STPId = $("#Fk_STPId").val();
+
+        $.ajax({
+            url: '/Firm/CheckGeneratedBill',
+            type: 'GET',
+            data: { billDate: txtDate, Fk_STPId: txtFk_STPId },
+            success: function (response) {
+                //console.log(response)
+                if (response !== null) {
+                    if (response.status === '1') {
+                        $('input[type="submit"]').attr('disabled', 'disabled');
+                        $('input[type="submit"]').css('cursor', 'not-allowed');
+                        $('#msg').text(response.message);
+                        fShowToastalert(response.message);
+                    }
+                    else if (response.status === '2') {
+                        $('input[type="submit"]').attr('disabled', 'disabled');
+                        $('input[type="submit"]').css('cursor', 'not-allowed');
+                        $('#msg').text(response.message);
+                        fShowToastalert(response.message);
+                    }
+                    else {
+
+                    }
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+</script>

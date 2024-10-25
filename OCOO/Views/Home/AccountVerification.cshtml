@@ -1,0 +1,346 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "Account Verification";
+    Layout = ""; /*"~/Views/Shared/_HomeLayout.cshtml";*/
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Basic -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> Official Website: OCOP Uttar Pradesh Lucknow</title>
+    <meta name="keywords" content="OCOP Uttar Pradesh Lucknow" />
+    <meta name="description" content="OCOP Uttar Pradesh Lucknow">
+    <meta name="author" content="OCOP">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/img/favicon.ico" type="image/x-icon" />
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <!-- Web Fonts  -->
+    <link id="googleFonts" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800%7CShadows+Into+Light%7CPlayfair+Display:400&display=swap" rel="stylesheet" type="text/css">
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="~/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/vendor/animate/animate.compat.css">
+    <link rel="stylesheet" href="~/vendor/simple-line-icons/css/simple-line-icons.min.css">
+    <link rel="stylesheet" href="~/vendor/owl.carousel/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/vendor/owl.carousel/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/vendor/magnific-popup/magnific-popup.min.css">
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="~/css/theme.css">
+    <link rel="stylesheet" href="~/css/theme-elements.css">
+    <!-- Skin CSS -->
+    <link id="skinCSS" rel="stylesheet" href="~/css/skins/skin-corporate-8.css">
+    <!-- Theme Custom CSS -->
+    <link rel="stylesheet" href="~/css/custom.css">
+    <!-- Head Libs -->
+    <script src="~/vendor/modernizr/modernizr.min.js"></script>
+    <!--bootstrap-->
+    <link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .marque_news span {
+            padding: 0px 10px;
+        }
+    </style>
+</head>
+<body data-plugin-page-transition oncontextmenu="return false" oncopy="return false" onpaste="return false">
+
+    <div class="body">
+        <header id="header" data-plugin-options="{'stickyEnabled': true, 'stickyEnableOnBoxed': true, 'stickyEnableOnMobile': false, 'stickyStartAt': 164, 'stickySetTop': '-115px', 'stickyChangeLogo': false}">
+            <div class="header-body border-0">
+
+                <div class="header-container container">
+                    <div class="header-row">
+                        <div class="header-column justify-content-start justify-content-md-left order-1 order-md-2">
+                            <div class="header-row">
+                                <div class="header-logo">
+                                    <a href="index.html">
+                                        <img width="250" alt="Logo" src="~/img/OCOP.svg">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="header-column justify-content-end w-50 order-2 order-md-3">
+                            <div class="header-row">
+                                <div class="header-logo">
+                                    <img src="~/img/logo-ocop.png" alt="Logo">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div role="main" class="main">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 bg-white" style="background: #f4f4f4 !important;">
+                        <h2 class="text-center">&nbsp;</h2>
+                        <p class="text-center p-1">Hi <b>@Model.Name</b> please update your email address and password.</p>
+                        <form method="post">
+                            <div style="padding:20px 40px">
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>Official Email Id<span class="text-danger"></span></label>
+                                        <input asp-for="LoginId" class="form-control" type="text" placeholder="User Name">
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="LoginId" data-valmsg-replace="false" style="display:none">Invalid Login ID</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>New Password <span class="text-danger"></span></label>
+                                        @*<input asp-for="Password" class="form-control" type="Password" placeholder="Password">*@
+                                       
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" asp-for="Password" placeholder="**********" aria-label="********" aria-describedby="basic-addon2">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2"><i id="eyeid" class="fa fa-eye" onclick="return togglePasswordVisibility()"></i></span>
+                                            </div>
+                                        </div>
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="Password" data-valmsg-replace="false" style="display:none">Invalid New Password</span>
+
+                                    
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>Confirm Password <span class="text-danger"></span></label>
+                                        @*<input asp-for="NewPassword" class="form-control" type="password" placeholder="New Password" onblur="return checkPasswordStrength()">*@
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" asp-for="NewPassword" placeholder="**********" aria-label="********" aria-describedby="basic-addon2">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2"><i id="eyeconid" class="fa fa-eye" onclick="return togglePasswordVisibilityconfirm()"></i></span>
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="NewPassword" data-valmsg-replace="false" style="display:none">Invalid Confirm Password</span>
+                                    </div>
+                                </div>
+                                <div class="form-group text-center mb-2">
+
+                                    <button class="btn btn-info btn-block text-uppercase waves-effect waves-light" id="btnLogin" onclick="return UpdateAccount()" name="btnLogin" type="button" value="Log In">Update</button>
+                                </div>
+                                <span class="text-danger">@TempData["LoginMessage"]</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Vendor -->
+    <script src="~/vendor/plugins/js/plugins.min.js"></script>
+
+    <script src="~/js/examples/examples.carousels.js"></script>
+    <!-- Theme Base, Components and Settings -->
+    <script src="~/js/theme.js"></script>
+
+    <!-- Theme Custom -->
+    <script src="~/js/custom.js"></script>
+
+    <!-- Theme Initialization Files -->
+    <script src="~/js/theme.init.js"></script>
+    <script src="~/js/jquery.easy-ticker.min.js"></script>
+
+
+    <script>
+        function checkPasswordStrength() {
+            debugger
+            var password = $('#NewPassword').val();
+            if (password != undefined && password != '') {
+                const lengthRegex = /.{8,}/;
+                const lowercaseRegex = /[a-z]/;
+                const uppercaseRegex = /[A-Z]/;
+                const digitRegex = /\d/;
+                const specialCharRegex = /[!@@#$%^&*]/;
+                const isLengthValid = lengthRegex.test(password);
+                const hasLowercase = lowercaseRegex.test(password);
+                const hasUppercase = uppercaseRegex.test(password);
+                const hasDigit = digitRegex.test(password);
+                const hasSpecialChar = specialCharRegex.test(password);
+                if (isLengthValid && hasLowercase && hasUppercase && hasDigit && hasSpecialChar)
+                    return true;
+                else {
+                    alert("Use a combination of uppercase and lowercase letters. \nInclude numbers and special characters such as !, @@, #, $, etc.\nAvoid using easily guessable information like your name, birthdate, or common words.\nMake it at least 8 characters long");
+                    return false;
+                }
+            }
+
+        }
+  
+
+        function togglePasswordVisibility() {
+            var passwordField = document.getElementById("Password");
+            var eyeIcon = document.getElementById("eyeid");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.className = "fa fa-eye-slash";
+                        
+            } else {
+                passwordField.type = "password";
+                eyeIcon.className = "fa fa-eye";
+            }
+        }
+        function togglePasswordVisibilityconfirm()
+        {
+            var passwordField = document.getElementById("NewPassword");
+            var eyeIcon = document.getElementById("eyeconid");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.className = "fa fa-eye-slash";
+
+            } else {
+                passwordField.type = "password";
+                eyeIcon.className = "fa fa-eye";
+            }
+        }
+    </script>
+
+
+
+    <script>
+
+        function fCheck() {
+            debugger
+            let email = $("#EmailId").val();
+            if (email != null || email != "") {
+                $.ajax({
+                    url: '/Admin/CheckEmailId',
+                    type: 'GET',
+                    data: { Id: email },
+                    success: function (response) {
+
+                        if (response != null) {
+                            if (response.flag == "0") {
+                                (response.message)
+                                $("#EmailId").val("")
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        fShowToasterror(error);
+                    }
+                });
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var myET = $('.myTicker').easyTicker({
+                direction: 'up',
+                easing: 'swing',
+                speed: 'slow',
+                interval: 2000,
+                height: 'auto',
+                visible: 1,
+                mousePause: true,
+                autoplay: true,
+                controls: {
+                    up: '.up',
+                    down: '.down',
+                    toggle: '.toggle',
+                    stopText: 'Stop !!!'
+                },
+                callbacks: {
+                    before: function (ul, li) {
+                        $(li).css('color', 'red');
+                    },
+                    after: function (ul, li) {
+                    },
+                    finish: function (a) {
+                    }
+                }
+            }).data('easyTicker');
+            var ticker3 = $('.myTicker3').easyTicker().data('easyTicker');
+            $('.up3').click(function () {
+                ticker3.up();
+            });
+        });
+
+        function fCheck() {
+            let email = $("#EmailId").val();
+            if (email != null || email != "") {
+                $.ajax({
+                    url: '/Admin/CheckEmailId',
+                    type: 'GET',
+                    data: { Id: email },
+                    success: function (response) {
+
+                        if (response != null) {
+                            if (response.flag == "0") {
+                                fShowToastalert(response.message)
+                                $("#EmailId").val("")
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        fShowToasterror(error);
+                    }
+                });
+            }
+        }
+
+
+        function UpdateAccount() {
+            debugger;
+            var password = $('#Password').val();
+            var newpassword = $('#NewPassword').val();
+            if ($('#Password').val() == "" || $('#Password').val() == null) {
+                alert("Please enter new password");
+                $('#Password').focus();
+                return false;
+            }
+            if ($('#NewPassword').val() == "" || $('#NewPassword').val() == null || $('#NewPassword').val() == undefined) {
+                alert("Please enter confirm password");
+                $('#NewPassword').focus();
+                return false;
+            }
+            if(password!=newpassword)
+            {
+                alert("Did't match the password,please enter the correct password");
+                $('#NewPassword').focus();
+                $('#NewPassword').val('');
+                return false;
+            }
+            let LoginId = $("#LoginId").val();
+            let Password = $("#Password").val();
+            let NewPassword = $("#NewPassword").val();
+            if (LoginId != null || LoginId != "") {
+                $.ajax({
+                    url: '/Home/UpdateAccountVerification',
+                    type: 'GET',
+                    data: { LoginId, Password, NewPassword },
+                    success: function (response) {
+                        console.log(response);
+                        if (response != null) {
+                            alert(response.message);
+                            if (response.flag == "1") {
+                                window.location.href = '/Home/Login';
+                                console.log(response)
+                            }
+                        }
+                        else {
+                            alert('Something went wrong!');
+                        }
+                    },
+                    error: function (error) {
+
+                    }
+                });
+            }
+        }
+
+    </script>
+
+</body>
+</html>
+
+

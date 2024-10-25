@@ -1,0 +1,548 @@
+﻿@{
+    ViewData["Title"] = "Process Bill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    ol li, a {
+        cursor: pointer !important;
+    }
+
+    /* .officerGrid span {
+        padding: 1px 2px !important;
+        line-height: 13px !important;
+        color: #ffffff !important;
+        font-weight: 300 !important;
+        border-radius: 3px !important;
+        font-size: 60% !important;
+    } */
+</style>
+<script src="~/app/ProccedBillProcess.js"></script>
+<div ng-controller="ProccedBillProcessController">
+    <input type="hidden" id="DesignationId" value="@ViewBag.DesignationId" name="@ViewBag.DesignationId" />
+    <input type="hidden" id="IsPrimary" value="@ViewBag.IsPrimary" name="@ViewBag.IsPrimary" />
+    <div class="page-wrapper">
+
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor">Process Bill</h3>
+                <p>
+                </p>
+            </div>
+            <div class="col-md-6 align-self-right">
+                <a href="javascript:history.back()" class="btn btn-sm btn-warning text-white float-right"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a> &nbsp;
+                <span class="float-right" style="margin-right:10px !important"><a data-toggle="collapse" href="#BillDetailArea" title="Search" role="button" aria-expanded="true" aria-controls="BillDetailArea" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Bill </a></span> &nbsp; &nbsp;
+
+                @if (ViewBag.DesignationId == 1)
+                {
+                    @if (ViewBag.FirmVerified == "Pending" || (ViewBag.BillApprovalLevel == "2" && ViewBag.ZoneId == "4") && ViewBag.FirmVerified != "Assigned")
+                    {
+                        <a href="javascript:void(0)" data="@ViewBag.EncryptedBillId" data-toggle="modal" data-target="#AssignToFirmModal" class="btn btn-sm btn-dark text-white float-right" style="margin-right:10px"><i class="fa fa-tasks" aria-hidden="true"></i> Assign to firm  &nbsp;</a>
+                    }
+                    else if (ViewBag.FirmVerified == "Not allowed")
+                    {
+                        <button type="button" disabled class="btn btn-sm btn-dark text-white float-right" style="margin-right:10px; cursor:not-allowed" data-toggle="tooltip" data-placement="bottom" title="Sorry, you cannot assign to firm this bill because it has not been forwarded to the Junior Engineer (JE) yet.">
+                            <i class="fa fa-tasks" aria-hidden="true"></i> Assign to firm  &nbsp;
+                        </button>
+                    }
+                    else if (ViewBag.FirmVerified == "JEs not approved")
+                    {
+                        <button type="button" disabled class="btn btn-sm btn-dark text-white float-right" style="margin-right:10px; cursor:not-allowed" data-toggle="tooltip" data-placement="bottom" title="Sorry, you cannot assign this bill to the firm because it is pending approval from the Junior Engineer (JE).">
+                            <i class="fa fa-tasks" aria-hidden="true"></i> Assign to firm  &nbsp;
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" disabled class="btn btn-sm btn-dark text-white float-right" style="margin-right:10px; cursor:not-allowed" data-toggle="tooltip" data-placement="bottom" title="Already assigned to firm."><i class="fa fa-tasks" aria-hidden="true"></i> Assign to firm  &nbsp;</button>
+                    }
+
+                    @if (ViewBag.IsBillApprovalDocumentAttached < 1 || 1 == 1)
+                    {
+                        <a href="/Bill/BillApprovalDocument?id=@ViewBag.EncryptedBillId" class="btn btn-sm btn-info text-white float-right" style="margin-right:10px"><i class="fa fa-paperclip" aria-hidden="true"></i> Bill Approval Attachment  &nbsp;</a>
+                    }
+                    else
+                    {
+                        <button disabled class="btn btn-xs btn-info float-right" style="margin-right:10px; cursor:not-allowed;" title="You have already attached files."><i class="fa fa-paperclip" aria-hidden="true"></i> Bill Approval Attachment  &nbsp;</button>
+                    }
+                }
+            </div>
+        </div>
+
+
+        @if (ViewBag.Status == "Pending")
+        {
+            <input type="hidden" name="BillId" id="BillId" value="@ViewBag.BillId" />
+            <div class="container-fluid">
+                <div class="collapse" id="BillDetailArea">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table warning-bordered-table">
+                                        <tr>
+                                            <td colspan="6" class="text-center"><p class="font-weight-bold">{{BillDetails.headerText}}</p></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Firm Name</b></td>
+                                            <td>{{BillDetails.firmName}}</td>
+                                            <td><b> Bill No.</b></td>
+                                            <td>{{BillDetails.billNo}}</td>
+                                            <td rowspan="3">
+                                                <ol>
+                                                    <li ng-repeat="x in BillDetails.billDocuments"><a class="text-dark" href="{{x.doc_Url}}" download="{{x.doc_Url}}" target="_blank" title="Click and download {{x.uploadDocName}}"><i ng-class="getFileIconClass(x.doc_Url)"></i> {{x.uploadDocName}} </a> </li>
+                                                </ol>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Bill Date</b></td>
+                                            <td>{{BillDetails.billDate}}</td>
+                                            <td><b>Fuel Charges</b></td>
+                                            <td>{{BillDetails.fuelCharges}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><b>Net LD Charges</b></td>
+                                            <td>{{BillDetails.netLDCharges}}</td>
+                                            <td><b>Grand Total</b></td>
+                                            <td>{{BillDetails.grandtotal}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mb-3">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="p-10"><i class="fa fa-forward" aria-hidden="true"></i> Forward with recommendation</h6>
+                                <ul class="nav nav-tabs" role="tablist" ng-if="1==2">
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#MarkTab" role="tab">
+                                            <i class="fa fa-arrows" aria-hidden="true"></i> Mark
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#ForwordTab" role="tab">
+                                            <i class="fa fa-forward" aria-hidden="true"></i> Forward with recommendation
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" ng-if="1==2">
+                                        <a class="nav-link" data-toggle="tab" href="#DeclineTab" role="tab">
+                                            <i class="fa fa-times" aria-hidden="true"></i> Decline with observation
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body p-t-0">
+                                <hr />
+
+                                @if (ViewBag.FirmVerified == "JEs not approved")
+                                {
+                                    <center class="my-5">
+                                        <img width="150" src="~/assets/images/svgexport-37.svg" />
+                                        <h4 class="mt-4">
+                                            <img width="25" src="~/assets/images/forward.png" />
+                                            Bill has forwarded to junior engineer's (JE) and is awaiting the junior engineer's report.
+                                        </h4>
+                                    </center>
+                                }
+
+                                else if (ViewBag.BillApprovalLevel == "2" && ViewBag.ZoneId == "4" && ViewBag.FirmVerified == "Pending")
+                                {
+                                    <center class="my-5">
+                                        <img width="150" src="~/assets/images/immigration.png" />
+                                        <h4 class="mt-4">
+                                            <img width="25" src="~/assets/images/checkedicon.png" /> All officer has submitted their report. You may now assign this bill to the firm.
+                                        </h4>
+                                    </center>
+                                }
+
+                                else if (ViewBag.FirmVerified == "Pending")
+                                //else if (ViewBag.BillApprovalLevel == "2")
+                                {
+                                    <center class="my-5">
+                                        <img width="150" src="~/assets/images/immigration.png" />
+                                        <h4 class="mt-4">
+                                            <img width="25" src="~/assets/images/checkedicon.png" /> All junior engineer's (JE) reports have been submitted. You may now assign this bill to the firm.
+                                        </h4>
+                                    </center>
+                                }
+                                else if (ViewBag.FirmVerified == "Assigned")
+                                {
+                                    <center class="my-5">
+                                        <img width="150" src="~/assets/images/waiting-list.png" />
+                                        <h4 class="mt-4">
+                                            This bill has been forwared to the firm for the verification process. We are currently awaiting the firm's response. After that, you can be able to proceed with further processing.
+                                        </h4>
+                                    </center>
+                                }
+                                else if ((ViewBag.DesignationId == 3 || ViewBag.DesignationId == 7) && ViewBag.IsChiefEngineerApprovalEnable == "NO")
+                                {
+                                    <center class="my-5">
+                                        <img width="150" src="~/assets/images/regulation.png" />
+                                        <h4>Apologies, but I am unable to verify at this time!</h4>
+                                        <p class="mt-4">
+                                            This bill has already been forwarded to additional officers, and we are currently awaiting their reports. Once we receive them, we will proceed with the further process. you can see current pending status on the previous page.
+                                        </p>
+                                    </center>
+                                }
+                                else
+                                {
+                                    <div class="tab-content">
+                                        <div class="tab-pane" id="MarkTab" role="tabpanel">
+                                            <form id="MarkedForm" name="MarkedForm" novalidate>
+
+                                                <div class="row">
+                                                    @* <div class="col-md-{{MarkEmployeeList.length <1?12:6}}"> *@
+                                                    <div class="col-md-4">
+                                                        <div class="col-md-12" ng-show="(CheckedEmployees.length <1 ) && FormSubmitted">
+                                                            <span class="text-danger">Please choose at least one employee.</span>
+                                                        </div>
+                                                        <div ng-repeat="employee in MarkEmployeeList">
+                                                            <div class="mark-employee-card">
+                                                                <div class="input-group">
+                                                                    <input type="checkbox" ng-change="checkboxChanged('M')" ng-model="markedEmployees[employee.employeeId]" employee-id="{{employee.employeeId}}" name="MarkEmployee{{employee.employeeId}}" id="MarkEmployee{{employee.employeeId}}">
+                                                                    <label for="MarkEmployee{{employee.employeeId}}" ng-click="checkboxChanged('M')"></label>  {{employee.name}}-<small>({{employee.department}}-{{employee.designation}})</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div ng-show="MarkEmployeeList.length <1">
+                                                            <span class="text-danger">All employees have been marked, or no employees have been mapped for it yet. </span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Covering Letter<span id="" class="text-danger">*</span></label>
+                                                            <input type="file" class="form-control" ng-model="UploadCoveringLetter" name="UploadCoveringLetter" id="UploadCoveringLetter" ng-change="CheckFile()" onchange="return ValidateFiles(this)" />
+                                                            <div ng-show="!IsUploadCoveringLetterAttached && FormSubmitted">
+                                                                <span class="text-danger">Please upload a covering letter.</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>LD Letter <small class="text-dark">(Note: In case amount has to be with held other than LD)</small> </label>
+                                                            <input type="file" ng-model="LDUploadLetter" class="form-control" name="LDUploadLetter" id="LDUploadLetter" onchange="return ValidateFiles(this)" />
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Remarks<span id="" class="text-danger">*</span></label>
+                                                            <textarea class="form-control" ng-model="Remarks" name="Remarks" placeholder="Remarks" required>Please proceed to bill</textarea>
+                                                            <div ng-show="MarkedForm.Remarks.$error.required && (MarkedForm.Remarks.$touched || FormSubmitted)">
+                                                                <span class="text-danger">Please enter remark.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-md-4">
+                                                        <small>Reforward</small>
+                                                        <div class="col-md-12" ng-show="(CheckedEmployees.length <1 ) && FormSubmitted">
+                                                            <span class="text-danger">Please choose at least one employee.</span>
+                                                        </div>
+                                                        <div ng-repeat="employee in MarkEmployeeList">
+                                                            <div class="mark-employee-card">
+                                                                <div class="input-group">
+                                                                    <input type="checkbox" ng-change="checkboxChanged('M')" ng-model="markedEmployees[employee.employeeId]" employee-id="{{employee.employeeId}}" name="MarkEmployee{{employee.employeeId}}" id="MarkEmployee{{employee.employeeId}}">
+                                                                    <label for="MarkEmployee{{employee.employeeId}}" ng-click="checkboxChanged('M')"></label>  {{employee.name}}-<small>({{employee.department}}-{{employee.designation}})</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div ng-show="MarkEmployeeList.length <1">
+                                                            <span class="text-danger">All employees have been marked, or no employees have been mapped for it yet. </span>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <input type="checkbox" id="Isdeclaration" name="Isdeclaration" value="true" ng-model="Isdeclaration" required>
+                                                            <label style="padding-top:3px;" for="Isdeclaration"><span class="text-danger">* </span><small> It is hereby declared that the details mentioned here/above are true and correct.</small></label>
+                                                            <div ng-show="MarkedForm.Isdeclaration.$error.required && (MarkedForm.Isdeclaration.$touched || FormSubmitted)">
+                                                                <span class="text-danger">Declaration is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-{{MarkEmployeeList.length <1?6:12}} text-right mb-3">
+                                                        <button class="btn btn-info btn-sm" ng-click="resetForm()"><i class="fa fa-refresh"></i> Reset</button>
+                                                        <button class="btn btn-success btn-sm" ng-click="Save()" ng-disabled="MarkEmployeeList.length < 1"><i class="fa fa-save"></i> Save</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="tab-pane active" id="ForwordTab" role="tabpanel">
+                                            <form id="ForwardForm" name="ForwardForm" novalidate>
+                                                <div class="row">
+
+
+                                                    <div class="col-md-12">
+                                                        <p class="btn btn-secondary btn-sm text-center" style="width:100%;">Forward Employees</p>
+                                                        <div class="col-md-12">
+                                                            <table class="table table-responsive-lg officerGrid Forward-employee-card">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>All</th>
+                                                                        <th>Officer</th>
+                                                                        <th>Designation/Department</th>
+                                                                        <th>City</th>
+                                                                        <th>STP's</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr ng-repeat="employee in ToForwardEmployeeList">
+                                                                        <td>
+                                                                            <div class="input-group">
+                                                                                <input type="checkbox" ng-change="ForwardcheckboxChanged('M')" ng-model="markedEmployees[employee.employeeId]" employee-id="{{employee.employeeId}}" name="Forward{{employee.employeeId}}" id="Forward{{employee.employeeId}}">
+                                                                                <label for="Forward{{employee.employeeId}}" ng-click="ForwardcheckboxChanged('M')"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>{{employee.name}}</td>
+                                                                        <td>
+                                                                            <span class="label label-info">{{employee.designation}}</span><br />
+                                                                            <span class="label label-primary">{{employee.department}}</span>
+                                                                        </td>
+                                                                        <td>{{employee.city}} </td>
+                                                                        <td> {{employee.stPs}}</td>
+                                                                    </tr>
+                                                                </tbody>
+
+                                                            </table>
+                                                        </div>                                                        
+                                                    </div>
+
+                                                   @*  <div class="col-md-{{ToForwardEmployeeList.length >1 && ReforwardEmployeeList.length >1 ?4:6}}">
+                                                        <p class="btn btn-secondary btn-sm text-center" style="width:50%;">Forward Employees</p>
+                                                        <div class="col-md-12" ng-show="(CheckedForwardEmployeeList.length <1 ) && ForwardFormSubmitted && Status=='show'">
+                                                            <span class="text-danger">Please choose at least one employee.</span>
+                                                        </div>
+                                                        <div ng-repeat="employee in ToForwardEmployeeList">
+                                                            <div class="Forward-employee-card">
+                                                                <div class="input-group">
+                                                                    <input type="checkbox" ng-change="ForwardcheckboxChanged('M')" ng-model="markedEmployees[employee.employeeId]" employee-id="{{employee.employeeId}}" name="Forward{{employee.employeeId}}" id="Forward{{employee.employeeId}}">
+                                                                    <label for="Forward{{employee.employeeId}}" ng-click="ForwardcheckboxChanged('M')"></label>  {{employee.name}}-<small>({{employee.department}}-{{employee.designation}})</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div ng-show="ToForwardEmployeeList.length <1 && !BillDetails.isFinalApprovalAllow && 1==2">
+                                                            <span class="text-danger">All employees have been forwarded, or no employees have been mapped for it yet. </span>
+                                                        </div>
+                                                    </div> *@
+                                                    @if (ViewBag.FirmVerified == "Verified")
+                                                    {
+                                                        @if (ViewBag.DesignationId == 1)
+                                                        {
+                                                            <div class="col-md-{{ToForwardEmployeeList.length >1 && ReforwardEmployeeList.length >1 ?4:6}}">
+                                                                <p class="btn btn-secondary btn-sm text-center" style="width:50%;" data-toggle="tooltip" data-placement="bottom" title="The bill has already been signed by the below employies. You may now proceed to re-forward it. Thank you.">Reforward Employees</p>
+                                                                <div ng-repeat="employee in ReforwardEmployeeList">
+                                                                    <div class="ReForward-employee-card">
+                                                                        <div class="input-group">
+                                                                            <input type="checkbox" ng-change="ReForwardcheckboxChanged('M')" ng-model="ReForwardmarkedEmployees[employee.employeeId]" employee-id="{{employee.employeeId}}" name="ReForward{{employee.employeeId}}" id="ReForward{{employee.employeeId}}">
+                                                                            <label for="ReForward{{employee.employeeId}}" ng-click="ReForwardcheckboxChanged('M')"></label>  {{employee.name}}-<small>({{employee.department}}-{{employee.designation}})</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    <div class="col-md-{{ToForwardEmployeeList.length >1 && ReforwardEmployeeList.length >1 ?4:6}}">
+                                                        <div class="form-group" ng-show="1==2">
+                                                            <label>Status<span id="" class="text-danger">*</span></label>
+                                                            <select class="form-control" name="Status" id="Status" ng-model="Status" required ng-change="ChangeForwardFormStatus(Status)">
+                                                                <option value="" ng-disabled="true">--Status--</option>
+                                                                <option value="Verified" selected>Verified</option>
+                                                                <option value="Paid">Paid</option>
+                                                            </select>
+
+                                                            <div ng-show="ForwardForm.Status.$error.required && (ForwardForm.Status.$touched || ForwardFormSubmitted)">
+                                                                <span class="text-danger">Please select status.</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>LD Letter</label>
+                                                            <input type="file" class="form-control" ng-model="ForwardUploadCoveringLetter" name="ForwardUploadCoveringLetter" id="ForwardUploadCoveringLetter" ng-change="CheckFile()" onchange="return fvalidateTPIReport(this)" />
+                                                            @*  <div ng-show="!IsForwardUploadCoveringLetterAttached && ForwardFormSubmitted">
+                                                    <span class="text-danger">Please upload a LD letter.</span>
+                                                    </div> *@
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Other Letter <small class="text-dark">(Note: In case amount has to be with held other than LD)</small> </label>
+                                                            <input type="file" ng-model="ForwardLDUploadLetter" class="form-control" name="ForwardLDUploadLetter" id="ForwardLDUploadLetter" onchange="return fvalidateTPIReport(this)" />
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Remarks<span id="" class="text-danger">*</span></label>
+                                                            <textarea class="form-control" ng-model="Remarks" name="Remarks" placeholder="Remarks" required>Please proceed to bill</textarea>
+                                                            <div ng-show="ForwardForm.Remarks.$error.required && (ForwardForm.Remarks.$touched || ForwardFormSubmitted)">
+                                                                <span class="text-danger">Please enter remark.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if (ViewBag.FirmVerified == "Verified" && ViewBag.DesignationId == 1)
+                                                    {
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <input type="checkbox" id="IsVerified" name="IsVerified" ng-model="IsVerified">
+                                                                <label class="text-success" style="padding-top:3px;" for="IsVerified"><small> Verified.</small></label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="IsVerified" name="IsVerified" ng-model="IsVerified" style="display:none">
+                                                    }
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <input type="checkbox" id="Isdeclaration" name="Isdeclaration" value="true" ng-model="Isdeclaration" required>
+                                                            <label style="padding-top:3px;" for="Isdeclaration"><span class="text-danger">* </span><small> It is hereby declared that the details mentioned here/above are true and correct.</small></label>
+                                                            <div ng-show="ForwardForm.Isdeclaration.$error.required && (ForwardForm.Isdeclaration.$touched || ForwardFormSubmitted)">
+                                                                <span class="text-danger">Declaration is required.</span>
+                                                            </div>
+                                                            <div style="display:none;" id="firmVerify">
+                                                                <span class="text-danger">Firm has not been verified yet so you can't proceed further.</span>
+                                                            </div>
+                                                            <div style="display:none;" id="firmVerifydec">
+                                                                <span class="text-danger">Declaration is required.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-{{ToForwardEmployeeList.length <1?6:12}} text-right mb-3">
+                                                        <button class="btn btn-secondary btn-sm" ng-click="resetForwardForm()"><i class="fa fa-refresh"></i> Reset</button>
+                                                        @*<button class="btn btn-success btn-sm" ng-click="SaveForwardForm()" ng-disabled="Status != 'Paid' && ToForwardEmployeeList.length > 1 && !BillDetails.isFinalApprovalAllow"><i class="fa fa-save"></i> Save</button>*@
+                                                        <button class="btn btn-success btn-sm" ng-click="SaveForwardForm()"><i class="fa fa-save"></i> Save</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="tab-pane" id="DeclineTab" role="tabpanel">
+                                            <form id="DeclineForm" name="DeclineForm" novalidate>
+                                                <div class="row">
+                                                    <div class="col-md-{{ToDeclineEmployeeList.length <1?12:6}}">
+                                                        <div class="col-md-12" ng-show="(CheckedEmployees.length <1 ) && DeclineFormSubmitted">
+                                                            <span class="text-danger">Please choose at least one employee.</span>
+                                                        </div>
+                                                        <div ng-repeat="employee in ToDeclineEmployeeList">
+                                                            <div class="decline-employee-card">
+                                                                <div class="input-group">
+                                                                    <input type="checkbox" ng-change="checkboxChanged('M')" ng-model="declineemployee[employee.employeeId]" employee-id="{{employee.employeeId}}" name="declineemployee{{employee.employeeId}}" id="declineemployee{{employee.employeeId}}">
+                                                                    <label for="declineemployee{{employee.employeeId}}" ng-click="checkboxChanged('M')"></label>  {{employee.name}}-<small>({{employee.department}}-{{employee.designation}})</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div ng-show="ToDeclineEmployeeList.length<1">
+                                                            <span class="text-danger">This bill have not forwarded to any employee yet. </span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Upload Covering Letter<span id="" class="text-danger">*</span></label>
+                                                            <input type="file" class="form-control" ng-model="declineUploadCoveringLetter" name="declineUploadCoveringLetter" id="declineUploadCoveringLetter" ng-change="CheckFile()" onchange="return fvalidateTPIReport(this)" />
+                                                            <div ng-show="!IsDeclineUploadCoveringLetterAttached && DeclineFormSubmitted">
+                                                                <span class="text-danger">Please upload a covering letter.</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Remarks<span id="" class="text-danger">*</span></label>
+                                                            <textarea class="form-control" ng-model="DeclineRemarks" name="DeclineRemarks" placeholder="Remarks" required>Please proceed to bill</textarea>
+                                                            <div ng-show="DeclineForm.DeclineRemarks.$error.required && (DeclineForm.DeclineRemarks.$touched || DeclineFormSubmitted)">
+                                                                <span class="text-danger">Please enter remark.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <input type="checkbox" id="DeclineFormIsdeclaration" name="DeclineFormIsdeclaration" value="true" ng-model="DeclineFormIsdeclaration" required>
+                                                            <label style="padding-top:3px;" for="DeclineFormIsdeclaration"><span class="text-danger">* </span><small> It is hereby declared that the details mentioned here/above are true and correct.</small></label>
+                                                            <div ng-show="DeclineForm.DeclineFormIsdeclaration.$error.required && (DeclineForm.DeclineFormIsdeclaration.$touched || DeclineFormSubmitted)">
+                                                                <span class="text-danger">Declaration is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-{{ToDeclineEmployeeList.length <1?6:12}} text-right mb-3">
+                                                        <button class="btn btn-info btn-sm" ng-click="resetForm()"><i class="fa fa-refresh"></i> Reset</button>
+                                                        <button class="btn btn-success btn-sm" ng-click="DeclineFormSave()" ng-disabled="ToDeclineEmployeeList.length<1"><i class="fa fa-save"></i> Save</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            @if (ViewBag.DesignationId == 1)
+            {
+                <div class="modal fade" id="AssignToFirmModal" role="dialog">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Forward to firm</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <textarea class="form-control" rows="5" placeholder="Remark" ng-model="AssignToFirmRemark" id="AssignToFirmRemark"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="checkbox" id="AssignToFirmDeclineFormIsdeclaration" name="AssignToFirmDeclineFormIsdeclaration" value="true" ng-model="AssignToFirmDeclineFormIsdeclaration" required>
+                                            <label style="padding-top:3px;" for="AssignToFirmDeclineFormIsdeclaration"><span class="text-danger">* </span><small> It is hereby declared that the details mentioned here/above are true and correct.</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button class="btn btn-success btn-sm" ng-click="AssignToFirm()"><i class="fa fa-save"></i> Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <center class="mt-5">
+                                <center class="my-5">
+                                    <img width="150" src="~/assets/images/svgexport-37.svg" />
+                                    <h4 class="mt-4">@(ViewBag.Status != "Invalid" ? "This bill is already processed from your end." : "Invalid request.")</h4>
+                                </center>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+
+
+</div>

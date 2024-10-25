@@ -1,0 +1,391 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "Employee Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    th [type=checkbox] + label:before, [type=checkbox]:not(.filled-in) + label:after {
+        border: 1px solid #fff;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Officer Registration</h3>
+
+        </div>
+        <div class="col-md-6 align-self-center">
+            <a href="/Admin/GetEmployeeList" class="btn btn-sm  btn-xs btn-warning ml-2 float-right"><i class="fa fa-arrow-left"></i> Back</a>
+        </div>
+
+    </div>
+    
+
+
+    <div class="container-fluid">
+        <div class="card p-3">
+            <form asp-action="EmployeeRegistration" asp-controller="Admin">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>First Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="FirstName" placeholder="Enter First Name" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode == 32)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Middle Name</label>
+                            <input type="text" class="form-control" asp-for="MiddleName" placeholder="Enter middle Name" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode == 32)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="LastName" placeholder="Enter Last Name" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode == 32)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Designation <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.Fk_DesignationId, new SelectList(ViewBag.ddlDesignation, "Value", "Text"), new { @class = "form-control"})
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Office</label>
+                            <input type="text" class="form-control" asp-for="Office" placeholder="Enter Office Name" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode == 32)" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Department <span class="text-danger">*</span></label>
+                            <input type="hidden" asp-for="Pk_EmployeeId" />
+                            @Html.DropDownListFor(m => m.Fk_DepartmentId, new SelectList(ViewBag.ddlDepartment, "Value", "Text"), new { @class = "form-control"})
+                        </div>
+                    </div>
+
+                    <input type="hidden" asp-for="Count" />
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>City <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.Pk_CityId, new SelectList(ViewBag.ddlCity, "Value", "Text"), new { @class = "form-control"  })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Email Id <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" onchange="return fCheck()" asp-for="EmailId" placeholder="Enter Email Id" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Mobile No <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" maxlength="10" asp-for="MobileNo" placeholder="Enter Mobile No" onkeypress="return isNumberKey(event)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Password <span class="text-danger">*</span></label>
+
+                            <div class="input-group mb-3">
+                                <input type="password" class="form-control" readonly asp-for="Password" placeholder="**********" aria-label="********" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2"><i id="eyeconid" class="fa fa-eye" onclick="return fPasswordVisibility()"></i></span>
+                                </div>
+                            </div>
+                            @*<input type="text" class="form-control" readonly asp-for="Password" placeholder="Enter Password" />*@
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Address <span class="text-danger">*</span></label>
+                            <textarea type="text" class="form-control" asp-for="Address"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12" id="ZoneBind">
+                        <div class="row mt-2">
+                            <div class="col-lg-12 mb-2">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered" id="MyList">
+                                        <thead>
+                                            <tr>
+
+                                                <th>Sn</th>
+                                                <th>Zone <span class="text-danger">*</span></th>
+                                                <th>
+                                                    <div class="input-group">
+
+                                                       @* <input class="text-center " type="checkbox" id="select-all" style="background:#fff" />
+                                                        <label style="padding-top:3px;" for="select-all"></label>&nbsp;*@
+                                                       @* all*@
+                                                       Select
+                                                    </div>
+                                                </th>
+
+
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-right">
+                    <button type="submit" class="btn btn-success  btn-xs btn-sm" id="btnSubmit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function ValidateForm() {
+        if ($("#FirstName").val() == '' || $("#FirstName").val() == null) {
+            $("#FirstName").focus();
+            return false;
+        }
+        if ($("#LastName").val() == '' || $("#LastName").val() == null) {
+            $("#LastName").focus();
+            return false;
+        }
+        if ($("#Fk_DesignationId").val() == 0 || $("#Fk_DesignationId").val() == null) {
+            $("#Fk_DesignationId").focus();
+            return false;
+        }
+        if ($("#Office").val() == '' || $("#Office").val() == null) {
+            $("#Office").focus();
+            return false;
+        }
+        if ($("#Fk_DepartmentId").val() == 0 || $("#Fk_DepartmentId").val() == null) {
+            $("#Fk_DepartmentId").focus();
+            return false;
+        }
+        if ($("#Fk_DesignationId").val() == 0 || $("#Fk_DesignationId").val() == null) {
+            $("#Fk_DesignationId").focus();
+            return false;
+        }
+
+        if ($("#Pk_CityId").val() == 0 || $("#Pk_CityId").val() == null) {
+            $("#Pk_CityId").focus();
+            return false;
+        }
+
+        if ($("#EmailId").val() == '' || $("#EmailId").val() == null) {
+            $("#EmailId").focus();
+            return false;
+        }
+        const email = $("#EmailId").val();
+        if (validateEmail(email)) {
+        } else {
+            fShowToastalert("Please Enter valid Email Id !")
+            $("#EmailId").focus();
+            return false;
+        }
+
+        if ($("#MobileNo").val() == '' || $("#MobileNo").val() == null) {
+            $("#MobileNo").focus();
+            return false;
+        }
+        const phoneNumber = $("#MobileNo").val();
+        if (validateIndianPhoneNumber(phoneNumber)) {
+        } else {
+            fShowToastalert("Please Enter valid Mobile No !")
+            $("#MobileNo").focus();
+            return false;
+        }
+        //if ($("#PinCode").val() == '' || $("#PinCode").val() == null) {
+        //    $("#PinCode").focus();
+        //    return false;
+        //}
+        if ($("#Address").val() == '' || $("#Address").val() == null) {
+            $("#Address").focus();
+            return false;
+        }
+        if ($("#Password").val() == '' || $("#Password").val() == null) {
+            $("#Password").focus();
+            return false;
+        }
+
+        if (@Context.Session.GetString("Fk_UsertypeId") =='1')
+        {
+            var CheckBoxzone = $("input[type='checkbox']:checked").length
+
+            if (CheckBoxzone <= 0) {
+                fShowToastalert("Please select zone")
+                return false;
+            }
+        }
+        
+
+    }
+
+
+
+    $(document).ready(function () {
+        debugger;
+        var hashValue
+        var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        var urlparam = url[0].split('=');
+        if (urlparam[0] == 'id') {
+            $('#EmailId').prop('readonly', true);
+        }
+        else {
+            $('#EmailId').prop('readonly', false);
+
+        }
+
+
+      var userAdmin = @Context.Session.GetString("Pk_UserId")
+            $("#Password").val("123456");
+      if(userAdmin == "1"){
+            //$("#Password").val(generateRandomNumber());
+           
+            var table = $('#MyList').DataTable({ retrieve: true, "paging": false, bFilter: false, bInfo: false, "ordering": false, }).clear();
+            $.ajax({
+                url: '/Admin/GetZoneData',
+                type: 'GET',
+                data: { Id: $("#Pk_EmployeeId").val() },
+                success: function (response) {
+                    debugger
+                    if (response != null) {
+                        let count = 0;
+
+                        for (var i = 0; i < response.length; i++) {
+                            count++;
+                            var RowsData = $('<tr>' +
+                                '<td>' + (i + 1) + '</td>' +
+                                '<td>' + response[i].textZone + '</td>' +
+                                '<td><div class="input-group">' +
+                                '<input type="checkbox" class="single-checkbox Quantity' + i + '" name="CHECKBOX_' + i + '" id="Quantity' + i + '" ' + response[i].selectedValue + '/>' +
+                                '<label for="Quantity' + i + '"></label>' +
+                                '<input type="hidden" name="Pk_Id_' + i + '" id="Quantity' + i + '_hidden" value="' + response[i].valueZone + '" />' +
+                                '</div></td>' +
+                                '</tr>');
+
+                            table.row.add(RowsData).draw(false);
+                        }
+                        $("#Count").val(count);
+                        $('.single-checkbox').on('change', function () {
+                            $('.single-checkbox').not(this).prop('checked', false);
+                        });
+                    }else{
+                    
+                    }
+                },
+                error: function (error) {
+                    fShowToasterror(error);
+                }
+            });
+      }
+      else{
+            $('#ZoneBind').css("display","none")
+            $("#Count").val(0);
+      }
+
+
+        var abc = $("#Pk_EmployeeId").val()
+        if ($("#Pk_EmployeeId").val() == '' || $("#Pk_EmployeeId").val() == '0') {
+
+            $("#btnSubmit").val("Submit")
+            $("#btnSubmit").html('<i class="fa fa-save"></i>  Save');
+
+            $("#btnSubmit").addClass("btn-success");
+        }
+        else {
+            $("#btnSubmit").val("Update")
+            $("#btnSubmit").html('<i class="fa fa-save"></i>  Update');
+
+            //$("#btnSubmit").addClass("btn-danger");
+
+        }
+    });
+    $("#select-all").click(function () {
+        if (this.checked) {
+
+            $(':checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $(':checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    });
+
+
+
+    function GetDesignation() {
+
+        let txtDepartmentId = $("#Fk_DepartmentId").val();
+        $.ajax({
+            url: '/Admin/GetDesignationByDepartment',
+            type: 'GET',
+            data: { Id: txtDepartmentId },
+            success: function (response) {
+
+                if (response != null) {
+                    let v = "";
+                    $.each(response, function (i, v1) {
+                        v += "<option value=" + v1.value + ">" + v1.text + "</option>";
+                    });
+                    $("#Fk_DesignationId").html(v);
+                    if (fk_DesignationId != null && fk_DesignationId != '0') {
+                        $("#Fk_DesignationId").val(fk_DesignationId);
+                    }
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+
+
+    }
+    function fCheck() {
+        let email = $("#EmailId").val();
+        if (email != null || email != "") {
+            $.ajax({
+                url: '/Admin/CheckEmailId',
+                type: 'GET',
+                data: { Id: email },
+                success: function (response) {
+
+                    if (response != null) {
+                        if (response.flag == "0") {
+                            fShowToastalert(response.message)
+                            $("#EmailId").val("")
+                        }
+                    }
+                },
+                error: function (error) {
+                    fShowToasterror(error);
+                }
+            });
+        }
+    }
+    function fPasswordVisibility() {
+        var passwordField = document.getElementById("Password");
+        var eyeIcon = document.getElementById("eyeconid");
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.className = "fa fa-eye-slash";
+
+        } else {
+            passwordField.type = "password";
+            eyeIcon.className = "fa fa-eye";
+        }
+    }
+
+</script>

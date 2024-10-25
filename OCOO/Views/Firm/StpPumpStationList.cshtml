@@ -1,0 +1,505 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "StpPumpStationList";
+    Layout = "~/Views/Shared/_FirmLayout.cshtml";
+}
+<style>
+    .table-responsive {
+        height: calc(100vh - 200px);
+        overflow: auto;
+    }
+
+    table thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    table {
+        border-collapse: unset !important;
+        width: 100% !important;
+    }
+
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .table td {
+        padding: 10px 10px;
+        vertical-align: middle;
+        text-align: right;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Sub Pumping Station</h3>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <a href="#" id="btn" class="btn btn-sm btn-success" title="Add SPS/IPS" onclick="AddOpenPopup(@ViewBag.FK_STPId);"><i class="fa fa-plus mdi-18px"></i> Add SPS/IPS</a>
+            <button id="export-excel" class="btn btn-sm btn-success ml-2 float-right" value="Sub Pumping Station" title="Export to excel"><i class="fa fa-file-excel-o mdi-18px" aria-hidden="true"></i></button>
+        </div>
+       
+
+    </div>
+    <div class="container-fluid">
+        <div class="card mb-0">
+            <div class="card-body p-3">
+                <div class="table-responsive" id="data-table">
+                    <table class="table footable table-striped table-hover" cellspacing="0" cellpadding="0" border="0">
+                        <thead>
+
+
+                            @if (Model.dtDetails != null)
+                            {
+                                <tr>
+                                    <th colspan="11" style="font-size:20px;"><span>@Model.dtDetails.Rows[0]["StpName"].ToString()</span></th>
+                                </tr>
+
+                            }
+                            <tr>
+                                <th>Sn.</th>
+                                <th>MPS/SPS/IPS</th>
+                                <th> Name of STP/MPS/SPS/IPS discharging directly </th>
+                                <th>Electricity  Meter Load</th>
+                                <th>Electricity Account No.</th>
+                                <th>Billing Cycle</th>
+                                <th>Peak Discharge Discharge</th>
+                                <th>Peak Designed factor</th>
+                                <th>Drain</th>
+                                <th>Sewer</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                if (Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                                {
+
+                                    for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@(i + 1)</td>
+                                            <td>@Model.dtDetails.Rows[i]["Name"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["ParentName"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["MeterLoad"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AccountNo"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["BillingCycle"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["PeekDesignedDischarge"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["PeekDesignedFactor"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["DrainageName"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["SewerLength"].ToString()</td>
+                                            <td>
+                                                <a href="#" onclick="GetEdit('@Model.dtDetails.Rows[i]["Pk_Id"].ToString()','@Model.dtDetails.Rows[i]["Fk_StpId"].ToString()')"> <i class="fa fa-edit"></i></a>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="11" class="alert alert-warning text-center">No Record Found</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*modal EditSTPP Pump*@
+<form asp-action="StpRegistration" asp-controller="STP" id="SPSForm">
+    <div id="EditSPSModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit SPS/IPS</h5>
+                    <a href="#" class="btn-close" data-dismiss="modal">
+                        <i class="fa fa-close"></i>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <label data-toggle="tooltip" data-original-title="Name of pumping station/STP to which this pumping station shall be discharging directly" class="title1">Name of pumping station/STP to which this<span class="text-danger">*</span> pumping station shall be discharging directly</label>
+                            <select name="PumpingStationName" class="form-control" id="textPumpingStationName">
+                                <option value="0">--select--</option>
+                            </select>
+
+                            <input type="hidden" class="fspsclear" name="Pk_Id" id="textPk_Id" />
+                            <input type="hidden" name="Fk_STPId" id="textFk_STPId" />
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Meter Load<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control fspsclear" name="SubStationMeterLoad" placeholder="Enter Meter Load" id="textSubStationMeterLoad" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>UPPCL Electricity Account Number <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control fspsclear" maxlength="10" name="SubAccountNo" id="textSubAccountNo" placeholder="Enter UPPCL Electricity Account Number" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label data-toggle="tooltip" data-original-title="UPPCL Electricity Bill Cycle(start date of every month)" class="title1">UPPCL Electricity Bill Cycle(start date of every<span class="text-danger">*</span> month)</label>
+                            <input type="text" class="form-control fspsclear" maxlength="2" max="31" name="SubPumpingBillCycle" id="textSubPumpingBillCycle" placeholder="Enter  UPPCL Electircity Bill Cycle(start date of every month) " />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Peak Design Discharge <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control fspsclear" name="SubPeakDischarge" id="textSubPeakDischarge" placeholder="Enter Peak Design Discharge" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Peak Factor <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control fspsclear" name="SubPeakFactor" id="textSubPeakFactor" placeholder="Enter Peak Factor" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Name of SPS/IPS<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control fspsclear" name="SPSName" id="textSPSName" placeholder="Name of SPS/IPS" />
+
+                        </div>
+                        <div class="col-md-12 mt-2 dvMainSPS">
+                            <div class="row">
+                                <div class="col-md-6 pt-4 bg-light-info">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="SubIsDrain" />
+                                        <label for="SubIsDrain" style="font-size: 12px;">Flow From Drain</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 bg-light-info d-none" id="SubMainDrainNameBox">
+                                    <div class="form-group d-flex mt-3">
+                                        <label>Main Drain Name<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control fspsclear" name="SubDrainageName" id="SubDrainageName" placeholder="Enter drain name " />
+                                        <span class="float-right" title="Add New"><a id="btnAddSubDrain" onclick="return fAddSubDrain();" class="btn btn-success ml-2 text-white"><i class="fa fa-plus mdi-18px"></i></a></span>
+                                    </div>
+                                    <label id="SubDrainList"></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 bg-light-primary pt-4">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="SubIsSewer" />
+                                        <label for="SubIsSewer" style="font-size: 12px;">Flow From Sewer</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 bg-light-primary d-none" id="SubMainSewerLengthBox">
+                                    <div class="form-group d-flex mt-3">
+                                        <label>Main Sewer Length(K.M.)<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control fspsclear" onkeypress="return isNumberKey(event)" name="SubSewerLength" id="SubSewerLength" placeholder="Enter sewer length " />
+                                        <span class="float-right"><a id="btnAddSubSewer" onclick="return fAddSubSewer();" class="btn btn-success ml-2 text-white"><i class="fa fa-plus mdi-18px"></i></a></span>
+                                    </div>
+                                    <label id="SubSewerList"></label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm btn-xs waves-effect text-left" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+                    <button type="button" class="btn btn-success btn-sm btn-xs" id="submit" onclick="return fGetSave();" value="Submit" name="btnSubmit"> <i class="fa fa-save"> Save</i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="~/script/showtestingagency.js"></script>
+<script src="~/script/year.js"></script>
+<script>
+    //$(document).ready(function () {
+    //    document.getElementById('export-excel').addEventListener('click', function () {
+    //        // Get table data
+    //        var table = document.getElementById('data-table');
+    //        var data = XLSX.utils.table_to_sheet(table);
+
+    //        // Create a workbook
+    //        var wb = XLSX.utils.book_new();
+    //        XLSX.utils.book_append_sheet(wb, data, 'Sheet1');
+
+    //        // Export the workbook as a downloadable Excel file
+    //        XLSX.writeFile(wb, 'Sub Pumping Station Report.xlsx');
+    //    });
+    //})
+
+
+    function fGetSPS_IPS(Pk_Id, Fk_StpId) {
+        $.ajax({
+            url: '/Firm/GetSPS_IPSDropDown',
+            method: 'GET',
+            data: { FK_STPId: Fk_StpId },
+            async: false,
+            success: function (data) {
+                var dropdown = $('#textPumpingStationName');
+                dropdown.empty();
+                $.each(data, function (index, item) {
+                    dropdown.append($('<option>', {
+                        value: item.value,
+                        text: item.text
+                    }));
+                });
+
+                if (parseInt(Pk_Id) > 0) {
+                    $('#textPumpingStationName').val(Pk_Id);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+    function GetEdit(Pk_Id, Fk_StpId) {
+
+
+        fclearSPS();
+        $.ajax({
+            url: '/Firm/EditStpPumpStation',
+            type: 'Get',
+            data: { Pk_Id: Pk_Id, Fk_StpId: Fk_StpId },
+            success: function (response) {
+               
+                if (response != null) {
+
+                    $("#submit").text("Update");
+
+                    fGetSPS_IPS(response.fk_ParentId, Fk_StpId);
+                    $('#textPk_Id').val(response.pk_Id);
+                    $('#textFk_STPId').val(response.fk_STPId);
+                    $('#textSubStationMeterLoad').val(response.electricityMeterLoad);
+                    $('#textSubAccountNo').val(response.accountNo);
+                    $('#textSubPumpingBillCycle').val(response.billingCycle);
+                    $('#textSubPeakDischarge').val(response.peekDesignedDischarge);
+                    $('#textSubPeakFactor').val(response.peekDesignedFactor);
+                    $('#textSPSName').val(response.name);
+                    if (response.sewerLength != null && response.sewerLength != '') {
+                        $('#SubIsSewer').prop("checked", true);
+                        $('#SubMainSewerLengthBox').addClass('d-block');
+                        $('#SubSewerLength').val("");
+                        // $("#SubSewerList").val(response.sewerLength);
+                        $("#SubSewerList").text("");
+                        let txtSubSewerList = $("#SubSewerList");
+
+                        txtSubSewerList.append(response.sewerLength);
+                    }
+                    if (response.drainageName != null && response.drainageName != '') {
+                        $('#SubIsDrain').prop("checked", true)
+                        $('#SubMainDrainNameBox').addClass('d-block');
+                        $('#SubDrainageName').val("");
+                        $('#SubDrainList').text("");
+                        let txtSubDrainList = $("#SubDrainList");
+
+                        txtSubDrainList.append(response.drainageName);
+
+                    }
+                    $('#EditSPSModal').modal('show');
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+    $('#SubIsDrain').on('change', function () {
+        if ($('#SubIsDrain').prop("checked") == true) {
+            $('#SubMainDrainNameBox').addClass('d-block');
+            $('#SubMainDrainNameBox').val('');
+        }
+        else {
+            $('#SubMainDrainNameBox').removeClass('d-block');
+            $('#SubMainDrainNameBox').val('');
+        }
+    })
+
+    $('#SubIsSewer').on('change', function () {
+        if ($('#SubIsSewer').prop("checked") == true) {
+            $('#SubMainSewerLengthBox').addClass('d-block');
+            $('#SubMainSewerLengthBox').val('');
+        }
+        else {
+            $('#SubMainSewerLengthBox').removeClass('d-block');
+            $('#SubMainSewerLengthBox').val('');
+        }
+    })
+
+
+    function fAddSubDrain() {
+        if ($("#SubDrainageName").val() == '' || $("#SubDrainageName").val() == null) {
+            $("#SubDrainageName").focus();
+            return false;
+        }
+        else {
+            let txtSubDrainList = $("#SubDrainList");
+            let txtSubDrainName = $("#SubDrainageName").val();
+            txtSubDrainList.append(txtSubDrainName + ',');
+            $("#SubDrainageName").val('');
+        }
+    }
+
+    function fAddSubSewer() {
+        if ($("#SubSewerLength").val() == '' || $("#SubSewerLength").val() == null) {
+            $("#SubSewerLength").focus();
+            return false;
+        }
+        else {
+            let txtSubSewerList = $("#SubSewerList");
+            let txtSubSewerLength = $("#SubSewerLength").val();
+            txtSubSewerList.append(txtSubSewerLength + ',');
+            $("#SubSewerLength").val('');
+        }
+    }
+
+    function fGetSave() {
+
+       
+        if ($("#textPumpingStationName").val() == null || $("#textPumpingStationName").val() == '' || $("#textPumpingStationName").val() <= 0) {
+            $("#textPumpingStationName").focus();
+            return false;
+        }
+        if ($("#textSubStationMeterLoad").val() == null || $("#textSubStationMeterLoad").val() == '' || $("#textSubStationMeterLoad").val() <= 0) {
+            $("#textSubStationMeterLoad").focus();
+            return false;
+        }
+        if ($("#textSubAccountNo").val() == null || $("#textSubAccountNo").val() == '') {
+            $("#textSubAccountNo").focus();
+            return false;
+        }
+        if ($("#textSubPumpingBillCycle").val() == null || $("#textSubPumpingBillCycle").val() == '') {
+            $("#textSubPumpingBillCycle").focus();
+            return false;
+        }
+        if ($("#textSubPeakDischarge").val() == null || $("#textSubPeakDischarge").val() == '') {
+            $("#textSubPeakDischarge").focus();
+            return false;
+        }
+        if ($("#textSubPeakFactor").val() == null || $("#textSubPeakFactor").val() == '') {
+            $("#textSubPeakFactor").focus();
+            return false;
+        }
+        if ($("#textSPSName").val() == null || $("#textSPSName").val() == '') {
+            $("#textSPSName").focus();
+            return false;
+        }
+
+        if ($("#SubIsDrain").prop('checked') === true) {
+            if ($("#SubDrainList").text() == null || $("#SubDrainList").text() == "") {
+                if ($("#SubDrainageName").val() == "" || $("#SubDrainageName").val() == null) {
+                    $("#SubDrainageName").focus();
+                    $("#SubDrainageName").val('');
+                    return false;
+                }
+            }
+        }
+        if ($("#SubIsSewer").prop('checked') === true) {
+            if ($("#SubSewerList").text() == null || $("#SubSewerList").text() == "") {
+                if ($("#SubSewerLength").val() == "" || $("#SubSewerLength").val() == null) {
+                    $("#SubSewerLength").focus();
+                    $("#SubSewerLength").val('');
+                    return false;
+                }
+            }
+        }
+
+
+        var textpkID = $('#textPk_Id').val();
+        var textfkstpID = $('#textFk_STPId').val();
+        var val_pumpingstationName = $('#textPumpingStationName').val();
+        var val_meterLoad = $('#textSubStationMeterLoad').val();
+        var val_electricityAccount = $('#textSubAccountNo').val();
+        var val_billCycle = $('#textSubPumpingBillCycle').val();
+        var val_peakDischarge = $('#textSubPeakDischarge').val();
+        var val_peakFacter = $('#textSubPeakFactor').val();
+        var val_textSPSName = $('#textSPSName').val();
+        var val_subDrain = $('#SubDrainList').text();
+        var val_subSewer = $('#SubSewerList').text();
+        
+
+        var opcode=3;
+        if ( parseInt(textpkID)>0)
+        {
+            opcode = 2;
+        }
+
+
+        var Data1 = new FormData();
+        Data1.append("Pk_Id", textpkID);
+        Data1.append("Fk_STPId", textfkstpID);
+        Data1.append("Fk_ParentId", val_pumpingstationName);
+        Data1.append("PumpStationMeterLoad", val_meterLoad);
+        Data1.append("PumpingStatisonAccountNo", val_electricityAccount);
+        Data1.append("BillingCycle", val_billCycle);
+        Data1.append("PeekDesignedDischarge", val_peakDischarge);
+        Data1.append("PeekDesignedFactor", val_peakFacter);
+        Data1.append("DrainageName", val_subDrain);
+        Data1.append("SewerLength", val_subSewer);
+        Data1.append("Name", val_textSPSName);
+        Data1.append("OpCode", opcode);
+        $.ajax({
+            url: '/Firm/GetUpdatePumpingStation',
+            type: 'POST',
+            data: Data1,
+            processData:false,
+            contentType:false,
+            success: function (response) {
+                if (response.status != null && response.status != 0) {
+                    fShowToastalert(response.message)
+                    freloadpage();
+                }
+                else{
+                    fShowToastalert(response.message)
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+
+
+    function freloadpage()
+    {
+        setTimeout(location.reload(), 10);
+    }
+
+
+    function AddOpenPopup(Fk_StpId) {
+
+        fclearSPS();
+        fGetSPS_IPS(0, Fk_StpId);
+
+        $('#textFk_STPId').val(Fk_StpId);
+        $('#EditSPSModal').modal('show');
+   }
+
+   function fclearSPS() {
+        $("#submit").text("Save");
+        $('#textFk_STPId').val("");
+        $('#SubIsSewer').prop("checked", false);
+        $('#SubIsDrain').prop("checked", false);
+        $('#SubMainDrainNameBox').removeClass('d-block');
+        $('#SubMainSewerLengthBox').removeClass('d-block');
+        $('#textPumpingStationName').val(0);
+        $(".fspsclear").val('');
+        $("#SubSewerList").text("");
+        $('#SubDrainList').text("");
+   }
+</script>
+
+

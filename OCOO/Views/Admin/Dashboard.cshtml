@@ -1,0 +1,522 @@
+﻿@model OCOO.Models.Dashboard
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .card i.mdi {
+        font-size: 18px;
+        line-height: 42px;
+    }
+
+    h5.text-muted.m-b-0 { 
+        white-space: nowrap;
+        font-size: 14px;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Dashboard</h3>
+        </div>
+
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a data-toggle="collapse" title="Search" href="#searchblock" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-primary  btn-sm"><i class="fa fa-filter"></i></a></span>
+        </div>
+    </div>
+
+    <input type="hidden" id="ZoneId" value="@TempData["Fk_ZoneId"]" />
+    <input type="hidden" id="FirmId" value="@TempData["Fk_FirmId"]" />
+    <input type="hidden" id="STPId" value="@TempData["Fk_STPId"]" />
+    <input type="hidden" id="MonthId" value="@TempData["Fk_MonthId"]" />
+    <input type="hidden" id="FDate" value="@TempData["FromDate"]" />
+    <input type="hidden" id="TDate" value="@TempData["ToDate"]" />
+
+    <div class="container-fluid">
+        <div class="collapse" id="searchblock">
+            <div class="card">
+                <form asp-controller="Admin" asp-action="Dashboard">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Zone</label>
+                                    @Html.DropDownListFor(m => m.Fk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control", @onchange="return fGetFirm()"  })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Firm</label>
+                                    @Html.DropDownListFor(m => m.Fk_FirmId, new SelectList(ViewBag.ddlFirm, "Value", "Text"), new { @class = "form-control", @onchange="return fGetSTP()"  })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>STP</label>
+                                    @Html.DropDownListFor(m => m.Fk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Month</label>
+                                    @Html.DropDownListFor(m => m.Fk_MonthId, new SelectList(ViewBag.ddlMonth, "Value", "Text"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>From Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control mydatepicker" readonly asp-for="FromDate" placeholder="dd/mm/yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>To Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control mydatepicker" readonly asp-for="ToDate" placeholder="dd/mm/yyyy" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mt-2">
+                                    <label>&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary m10r  btn-xs btn-sm" id="submit" value="Search" name="btnSubmit"><i class="fa fa-search"></i> Search</button>
+                                    <button type="reset" class="btn btn-secondary   btn-xs btn-sm"><i class="fa fa-refresh"></i>     Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                   <div class="card-body">
+                     <a href="/Admin/ManageFirm">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-primary"><i class="mdi mdi-hospital-building"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["totalFirm"] != null ? Model.dtDetails.Rows[0]["totalFirm"] : 0)</h3>
+                                <h6 class="text-muted m-b-0">Total Package</h6>
+                            </div>
+                        </div>
+                      </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="/Admin/FirmStpList">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-success"><i class="mdi mdi-account"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["totalSTP"] != null ? Model.dtDetails.Rows[0]["totalSTP"] : 0)</h3>
+                                <h6 class="text-muted m-b-0">Total STP</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="/AdminReport/Utilizationofstp">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-warning"><i class="mdi mdi-percent"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["VisualisationOfSTP"] != null ? Model.dtDetails.Rows[0]["VisualisationOfSTP"] : 0)</h3>
+                                <h6 class="text-muted m-b-0">% Utilization Of STP</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                   
+                    <div class="card-body">
+                        <a href="/AdminReport/TreatedWaterVolume">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-secondary" style="background-color:#29aae1!important"><i class="mdi mdi-water"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["totalTreatedWaterVolume"] != null ? Model.dtDetails.Rows[0]["totalTreatedWaterVolume"] : 0) ML</h3>
+                                <h6 class="text-muted m-b-0">Treated Water Volume</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    
+                    <div class="card-body">
+                        <a href="/AdminReport/ComplaintsReceived">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-warning"><i class="mdi mdi-information-outline"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["totalComplaintsReceived"] != null ? Model.dtDetails.Rows[0]["totalComplaintsReceived"] : 0)</h3>
+                                <h6 class="text-muted m-b-0">Complaints Received</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="/AdminReport/ComplaintsResolved">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-success"><i class="mdi mdi-file-check"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["totalComplaintsResolved"] != null ? Model.dtDetails.Rows[0]["totalComplaintsResolved"] : 0)</h3>
+                                <h6 class="text-muted m-b-0">Complaints Resolved</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="/AdminReport/ComplaintsPending">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-danger"><i class="fa fa-clock-o"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                    @if (Model.dtDetails2 != null && Model.dtDetails2.Rows.Count>0)
+                                    {
+                                        <h3 class="m-b-0">@(Model.dtDetails2.Rows[0]["PendingComplaints"] != null ? Model.dtDetails2.Rows[0]["PendingComplaints"] : 0)</h3>
+                                    }
+                                    else
+                                    {
+                                        <h3 class="m-b-0">0</h3>
+                                    }
+                                    <h6 class="text-muted m-b-0">Complaints Pending</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="/ApproveBilling/BillApprovalList">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-primary"><i class="ti-wallet"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["BillsGenerated"] != null ? Model.dtDetails.Rows[0]["BillsGenerated"] : 0)</h3>
+                                <h6 class="text-muted m-b-0">Bill Generated</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="/AdminReport/PaidBillReport">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-success"><i class="mdi mdi-wallet"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["BillsApproved"] != null ? Model.dtDetails.Rows[0]["BillsApproved"] : 0)</h3>
+                                <h6 class="text-muted m-b-0">Bill Paid</h6>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="/AdminReport/ApprovedBill">
+                            <div class="d-flex flex-row">
+                                <div class="round align-self-center round-success" style="background-color:#29aae1!important"><i class="mdi mdi-file-check"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h3 class="m-b-0">@(Model.dtDetails.Rows[0]["VerifiedBills"] != null ? Model.dtDetails.Rows[0]["VerifiedBills"] : 0)</h3>
+                                    <h6 class="text-muted m-b-0">Approved Bill</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Row -->
+        <div class="row">
+            <div class="col-lg-7 col-md-7">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap">
+                            <div>
+                                <h4 class="card-title">Annual Complaints Report</h4>
+                            </div>
+                        </div>
+                        <figure class="highcharts-figure">
+                            <div id="barchart" style="height: 400px;"></div>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-5">
+                <!-- Column -->
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div>
+                            <h4 class="card-title">Overall Analysis</h4>
+                        </div>
+                        <figure class="highcharts-figure">
+                            <div id="PieChart" style="height: 400px;"></div>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let txtZoneId = $("#ZoneId").val();
+    let txtFirmId = $("#FirmId").val();
+    let txtSTPId = $("#Fk_STPId").val();
+    let txtMonthId = $("#MonthId").val();
+    let txtFDate = $("#FDate").val();
+    let txtTDate = $("#TDate").val();
+
+    $(document).ready(function () {
+        funcbarchart();
+    });
+    function funcbarchart() {
+        
+        $.ajax({
+            url: '/Admin/GetAdminDashboardData',
+            type: 'GET',
+            data: { Fk_ZoneId: txtZoneId, Fk_FirmId: txtFirmId, Fk_STPId: txtSTPId, Fk_MonthId: txtMonthId, FromDate: txtFDate, ToDate: txtTDate },
+            success: function (response) {
+                console.log(response)
+                if (response != null) {
+                    
+                    let complaintReceived = [];
+                    let complaintResolved = [];
+                    let pendingComplaints = [];
+                    let categories = [];
+                    if (response.barChartList != null && response.barChartList.length > 0) {
+                        for (var i = 0; i < response.barChartList.length; i++) {
+                            complaintReceived.push(parseInt(response.barChartList[i].complaintsreceived));
+                            complaintResolved.push(parseInt(response.barChartList[i].complaintresolved));
+                            pendingComplaints.push(parseInt(response.barChartList[i].pendingcomplaints));
+                            categories.push(response.barChartList[i].category);
+                        }
+                    }
+                    Highcharts.chart('barchart', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        subtitle: {
+                            text: ''
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        xAxis: {
+                            categories: categories,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'STP Complaints'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.0f} </b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        navigation: {
+                            buttonOptions: {
+                                enabled: false
+                            }
+                        },
+                        series: [{
+                            name: 'Complaint Received',
+                            data: complaintReceived,
+                            color: '#007bff'
+                        }, {
+                            name: 'Complaint Resolved',
+                            data: complaintResolved,
+                            color: '#28a745'
+                        }, {
+                            name: 'Pending Complaint',
+                            data: pendingComplaints,
+                            color: '#ffc107'
+                        }]
+                    });
+
+                    funcPiechart();
+                }
+                else {
+
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+    function funcPiechart() {
+        $.ajax({
+            url: '/Admin/GetAdminPieChartdData',
+            type: 'GET',
+            data: { Fk_ZoneId: txtZoneId, Fk_FirmId: txtFirmId, Fk_STPId: txtSTPId, Fk_MonthId: txtMonthId, FromDate: txtFDate, ToDate: txtTDate },
+            success: function (response) {
+                console.log(response)
+                if (response != null) {
+                    let complaintReceived = parseInt(response.barChartList[0].complaintsreceived);
+                    let complaintResolved = parseInt(response.barChartList[0].complaintresolved);
+                    let pendingComplaints = parseInt(response.barChartList[0].pendingcomplaints);
+
+                    Highcharts.chart('PieChart', {
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false,
+                            type: 'pie'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y}</b>'
+                        },
+                        accessibility: {
+                            point: {
+                                valueSuffix: ''
+                            }
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '<b>{point.name}</b>: {point.y}',
+                                    connectorColor: 'blue'
+                                }
+                            }
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        navigation: {
+                            buttonOptions: {
+                                enabled: false
+                            }
+                        },
+                        series: [{
+                            name: 'Complaints',
+                            colorByPoint: true,
+                            data: [{
+                                name: 'Received',
+                                y: complaintReceived,
+                                sliced: true,
+                                selected: true,
+                                color: '#007bff'
+                            }, {
+                                name: 'Resolved',
+                                y: complaintResolved,
+                                color: '#28a745'
+                            }, {
+                                name: 'Pending',
+                                y: pendingComplaints,
+                                color: '#ffc107'
+                            }]
+                        }]
+                    });
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+
+    }
+    function fGetFirm() {
+        let txtFk_ZoneId = $("#Fk_ZoneId").val();
+        $.ajax({
+            url: '/Admin/GetFirmDDl',
+            type: 'GET',
+            data: { Id: txtFk_ZoneId },
+            success: function (response) {
+                if (response != null) {
+                    $("#Fk_FirmId").html('');
+                    let dd = ''; // Initialize dd as an empty string
+                    for (let i = 0; i < response.length; i++) { // Fix the loop condition
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    $("#Fk_FirmId").html(dd);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+    function fGetSTP() {
+        let txtFk_FirmId = $("#Fk_FirmId").val();
+        $.ajax({
+            url: '/Admin/GetSTPDDl',
+            type: 'GET',
+            data: { Id: txtFk_FirmId },
+            success: function (response) {
+                if (response != null) {
+                   
+                    $("#Fk_STPId").html('');
+                    let dd = '';
+                    for (let i = 0; i < response.length; i++) {
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    //console.log(dd)
+                    $("#Fk_STPId").html(dd);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+</script>
+
+
+
+

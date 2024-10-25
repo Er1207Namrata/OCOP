@@ -1,0 +1,188 @@
+﻿@model OCOO.Models.Inspection
+@{
+    ViewData["Title"] = "Inspection Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Inspection</h3>
+
+        </div>
+        <div class="col-md-6 align-self-right">
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="InspectionMaster">
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Inspection</th>
+                                    @*    <th>Inspection Type</th>*@
+                                    @* <th class="tdaction">Action</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    @* <td>@Model.dtDetails.Rows[i]["InspectionName"].ToString()</td>*@
+                                                    <td>@Model.dtDetails.Rows[i]["InspectionType"].ToString()</td>
+                                                    @*  <td>
+                                    <a data-bs-toggle="modal" href="#" onclick="return EditForm(@Model.dtDetails.Rows[i]["PK_InspectionId"].ToString(),'@Model.dtDetails.Rows[i]["InspectionName"].ToString()','@Model.dtDetails.Rows[i]["FK_InspectionTypeId"].ToString()')" data-bs-target="#exampleModal" class="text-primary">
+                                    <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a href="/AdminMasters/DeleteInspection?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_InspectionId"].ToString())" id="btnDelete" class="text-danger" onclick="return confirm('are you sure to delete this record?')" ToolTip="Delete">
+                                    <i class="fa fa-trash"></i>
+                                    </a>
+                                    </td>*@
+                                                </tr>
+
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="2" class="text-center bg-white">
+                                                    <div class="alert alert-warning text-center">
+                                                        No Records Found !!
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <form asp-action="InspectionMaster" asp-controller="AdminMasters">
+        <div id="modeInspection" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Inspection Center </h5>
+                        <a href="#" class="btn-close" data-dismiss="modal">
+                            <i class="fa fa-close"></i>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Inspection <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" asp-for="InspectionName" placeholder="Enter Inspection" />
+                                    <input type="hidden" asp-for="PK_InspectionId" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Inspection Type <span class="text-danger">*</span></label>
+
+                                    @Html.DropDownListFor(m => m.FK_InspectionTypeId, new SelectList(ViewBag.ddlInspectionType, "Value", "Text"), new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger  btn-xs btn-sm" data-dismiss="modal"><i class="fa fa-times"></i>  Cancel</button>
+                        <button type="submit" class="btn btn-primary  btn-xs btn-sm" id="submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save"></i> Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    function ShowPopup() {
+
+        $('#modeInspection').modal('show');
+        $("#FK_InspectionTypeId").val(0);
+        $("#PK_InspectionId").val(0);
+        $("#InspectionName").val("");
+        $("#submit").val('Submit');
+        $("#submit").css("background", "green");
+        $("#submit").html('<i class="fa fa-save"></i>  Save');
+
+    }
+
+
+    function ValidateForm() {
+
+        if ($("#InspectionName").val() == '' || $("#InspectionName").val() == null) {
+            $("#InspectionName").focus();
+            return false;
+        }
+        if ($("#FK_InspectionTypeId").val() == '' || $("#FK_InspectionTypeId").val() == null || $("#FK_InspectionTypeId").val() == 0) {
+            $("#FK_InspectionTypeId").focus();
+            return false;
+        }
+
+    }
+
+    //function GetDesignation(fk_DesignationId) {
+    //    let txtDepartmentId = $("#Fk_DepartmentId").val();
+    //    $.ajax({
+    //        url: '/Admin/GetDesignationByDepartment',
+    //        type: 'GET',
+    //        data: { Id: txtDepartmentId },
+    //        success: function (response) {
+    //            if (response != null) {
+    //                let v = "";
+    //                $.each(response, function (i, v1) {
+    //                    v += "<option value=" + v1.value + ">" + v1.text + "</option>";
+    //                });
+    //                $("#Fk_DesignationId").html(v);
+    //                if (fk_DesignationId != null && fk_DesignationId != '0') {
+    //                    $("#Fk_DesignationId").val(fk_DesignationId);
+    //                }
+    //            }
+    //        },
+    //        error: function () {
+    //            alert('Something went wrong!');
+    //        }
+    //    });
+    //    if (txtDepartmentId == '1' || txtDepartmentId == '2') {
+    //        $('#dist').show();
+    //    }
+    //    else {
+    //        $('#dist').hide();
+    //    }
+    //}
+
+    function EditForm(txtId, InspectionName, FK_InspectionTypeId) {
+        $("#PK_InspectionId").val(txtId);
+        $("#InspectionName").val(InspectionName);
+        $("#FK_InspectionTypeId").val(FK_InspectionTypeId);
+        $("#submit").val('Update');
+        $("#submit").css("background", "green");
+        $('#modeInspection').modal('show');
+        $("#submit").html('<i class="fa fa-save"></i>  Update');
+
+    }
+
+                //$("#btn").click(function () {
+                //    $("#Update").hide();
+                //    $("#submit").show();
+                //});
+
+</script>

@@ -1,0 +1,185 @@
+﻿@model OCOO.Models.STPWiseMapping
+@{
+    ViewData["Title"] = "STPWiseMapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">STP Wise Mapping</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <div class="card">
+            <form asp-action="STPWiseMapping" method="post" enctype="multipart/form-data">
+                <div class="card-body pb-20">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Zone</label>
+                            @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new {@class = "form-control",@onchange="return fbindOfficer(0)"})
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Department</label>
+                            @Html.DropDownListFor(m => m.Fk_DepartmentId, new SelectList(ViewBag.ddldepartment, "Value", "Text"), new {@class = "form-control",@onchange="return fbindOfficer(0)"})
+                        </div>
+                        <input type="hidden" value="@ViewBag.Fk_EmpId" id="ViewBag_Fk_EmpId" />
+
+                        <div class="col-md-3">
+                            <label>Officer</label>
+                            @Html.DropDownListFor(m => m.Fk_EmpId, new SelectList(ViewBag.ddlOfficer, "Value", "Text"), new {@class = "form-control"})
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <div class="form-group mt-2">
+                                <button type="submit" class="btn btn-primary  btn-xs btn-sm" id="getDetails" value="Get Details" name="GetDetails" onclick="return fvalidate()"><i class="fa fa-search"> </i> Get Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>STP Name </th>
+                                    <th>Capacity </th>
+                                    <th>
+                                        <input type="checkbox" id="select-all" class="filled-in chk-col-amber" />
+                                        <label style="padding-top:3px;" for="select-all"></label> Link
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            int i = 0;
+                                            for (i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>
+                                                        @Model.dtDetails.Rows[i]["StpName"].ToString()
+                                                        <input id="Fk_STPId_@i" type="hidden" value="@Model.dtDetails.Rows[i]["FK_STPId"].ToString()" name="Fk_STPId_@i" />
+                                                    </td>
+                                                    <td>
+                                                        @Model.dtDetails.Rows[i]["Capacity"].ToString()
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" @Model.dtDetails.Rows[i]["MappingExists"].ToString() name="chkSelect_@i" id="chkSelect_@i" class="filled-in chk-col-amber" />
+                                                        <label style="padding-top:3px;" for="chkSelect_@i"></label>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <input type="hidden" id="hdRows" name="hdRows" value="@i" />
+
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-center">No Record Found</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @if (Model != null && Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                    {
+                        <button type="submit" class="btn btn-success  btn-xs btn-sm" id="Save" value="Save" name="Save"><i class="fa fa-save"> Save</i></button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(window).on("load", function () {
+        debugger
+        var ViewBag_Fk_EmpId = $("#ViewBag_Fk_EmpId").val();
+
+        if (ViewBag_Fk_EmpId == undefined || ViewBag_Fk_EmpId == NaN || ViewBag_Fk_EmpId == "" || ViewBag_Fk_EmpId == null) {
+            ViewBag_Fk_EmpId = 0;
+        }
+        var id = $("#Fk_EmpId").val(ViewBag_Fk_EmpId)
+        fbindOfficer(id);
+    });
+
+    function fbindOfficer(id) {
+        let val = $('#Fk_DepartmentId').val();
+        let Pk_ZoneId = $('#Pk_ZoneId').val();
+        debugger
+        $.ajax({
+            url: '/master/GetOfficerDDl',
+            type: 'GET',
+            data: { Id: val, Fk_ZoneId: Pk_ZoneId },
+            success: function (response) {
+                if (response != null) {
+                    $("#Fk_EmpId").html('');
+                    let dd = '';
+                    for (let i = 0; i < response.length; i++) {
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    $("#Fk_EmpId").html(dd);
+                    debugger
+                    if (id == undefined || id == NaN || id == "" || id == null) {
+                        id = 0;
+                    }
+                    if (parseInt(id) > 0) {
+                        $('#Fk_EmpId').val(id);
+                    }
+                    else if(id==0){
+                        $('#Fk_EmpId').val(0);
+                    }
+                    else {
+                        var ViewBag_Fk_EmpId = $("#ViewBag_Fk_EmpId").val();
+                        $('#Fk_EmpId').val(ViewBag_Fk_EmpId);
+                    }
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+    function fvalidate() {
+        if ($('#Pk_ZoneId').val() == 0) {
+            $('#Pk_ZoneId').focus();
+            return false;
+        }
+        if ($('#Fk_DepartmentId').val() == 0) {
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+        if ($('#Fk_EmpId').val() == 0) {
+            $('#Fk_EmpId').focus();
+            return false;
+        }
+    }
+    $("#select-all").click(function () {
+        if (this.checked) {
+
+            $(':checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $(':checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    });
+</script>
+

@@ -1,0 +1,153 @@
+﻿@model OCOO.Models.DivisionBillFlowMapping
+@{
+    ViewData["Title"] = "DivisionBillFlowMapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Division Bill Flow Mapping</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <div class="card">
+            <form asp-action="DivisionBillFlowMapping" asp-controller="Master" method="post" enctype="multipart/form-data">
+
+                @*<input type="hidden" id="TempEmp" asp-for="EmployeeId" value="@ViewBag.EmployeeId" />
+                <input type="hidden" value="@ViewBag.FK_EmployeeId" id="ViewBag_FK_EmployeeId" />
+                <input type="hidden" value="@ViewBag.Fk_ZoneId" id="ZoneID" />
+                <input type="hidden" value="@ViewBag.FK_MenuId" id="ViewBag_FK_MenuId" />*@
+                <input type="hidden" value="@ViewBag.ZoneBySession" id="ZoneIdBySession" />
+                <div class="card-body pb-20">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Zone</label>
+                            @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control", @onchange = "return GetMapping();" })
+                        </div>
+                        <div class="col-md-3">
+                            <label>Division</label>
+                            @Html.DropDownListFor(m => m.Pk_DivisionId, new SelectList(ViewBag.ddlDivision, "Value", "Text"), new { @class = "form-control", @onchange = "return GetMapping();" })
+                        </div>
+                        <div class="col-md-3">
+                            <label>Department</label>
+                            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(ViewBag.ddldepartment, "Value", "Text"), new { @class = "form-control", @onchange = "return GetMapping();" })
+                        </div>
+                        <div class="col-md-3">
+                            <label>Designation</label>
+                            @Html.DropDownListFor(m => m.DesignationId, new SelectList(ViewBag.ddlDesignation, "Value", "Text"), new { @class = "form-control", @onchange = "return GetMapping();" })
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+
+
+                    <div class="col-md-12">
+                        <table class="table table-responsive-sm" id="divTable">
+                            <thead>
+                                <tr>
+                                    <th class="width20">Sn.</th>
+                                    <th class="width20">Designation </th>
+                                    <th class="width20">Department </th>
+                                    <th class="width20">Office</th>
+                                    <th class="width20">Employee </th>
+                                    <th class="width10">Forward </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.lstData != null)
+                                {
+                                    int i = 0;
+                                    foreach (var item in Model.lstData)
+                                    {
+                                        <tr>
+                                            <td>@(i + 1)</td>
+                                            <td>@item.DesignationName</td>
+                                            <td>@item.DepartmentName</td>
+                                            <td>@item.OfficeName</td>
+                                            <td>@item.EmpName</td>
+                                            <td>
+                                                @if (item.IsForword == "False")
+                                                {
+                                                    <input type="checkbox"
+                                                           name="EmpName_@i"
+                                                           id="EmpName_@i" class="filled-in chk-col-amber" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox"
+                                                           name="EmpName_@i"
+                                                           id="EmpName_@i"
+                                                           class="filled-in chk-col-amber" checked />
+                                                }
+                                                <label style="padding-top:3px;" for="EmpName_@i"></label>
+                                                <input type="hidden" name="Pk_EmployeeId_@i" id="Pk_EmployeeId_@i" value="@item.Pk_EmployeeId">
+
+
+                                            </td>
+                                        </tr>
+                                        i++;
+                                    }
+                                    <input type="hidden" id="RowCount" name="RowCount" value="@i" />
+                                }
+                            </tbody>
+
+
+
+
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="submit" class="btn btn-success  btn-sm btn-sm" id="Save" value="Save" name="Save"><i class="fa fa-save"> Save</i></button>
+
+                  
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        debugger
+        var abc = $('#ZoneIdBySession').val();
+        if (abc == "3") {
+            $('#Pk_ZoneId').val(abc);
+        }
+        else if (abc == "4") {
+            $('#Pk_ZoneId').val(abc);
+        }
+
+    });
+
+    function GetMapping() {
+        debugger;
+        var Pk_ZoneId = $('#Pk_ZoneId').val();
+        var Pk_DivisionId = $('#Pk_DivisionId').val();
+        var DepartmentId = $('#DepartmentId').val();
+        var DesignationId = $('#DesignationId').val();
+        var empId = $('#EmpId').val();
+
+        if (parseInt(Pk_ZoneId) > 0 && parseInt(Pk_DivisionId) > 0) {
+            var url = '@Url.Action("DivisionBillFlowMapping", "Master")'
+                + '?Emp_id=' + btoa(empId)
+                + '&Zone_id=' + btoa(Pk_ZoneId)
+                + '&Division_id=' + btoa(Pk_DivisionId)
+                + '&Department_id=' + btoa(DepartmentId)
+                + '&Designation_id=' + btoa(DesignationId);
+            document.location = url;
+        }else{
+            fShowToasterror('Zone and Division fields are required.');
+        }
+    }
+
+
+
+</script>
+
+

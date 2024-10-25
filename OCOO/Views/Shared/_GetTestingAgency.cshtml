@@ -1,0 +1,119 @@
+﻿<style>
+
+    .modal-body table td {
+        border-top: 0px;
+    }
+
+    b {
+        font-weight: 600;
+    }
+
+    .test-a {
+        position: relative;
+    }
+
+    .badge-2 {
+        position: absolute;
+        top: -16px;
+        right: -8px;
+        display: inline-block;
+        border-radius: 50%;
+        font-size: xx-small;
+        padding: 5px;
+    }
+</style>
+
+
+<div id="Details" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Testing Agency</h5>
+                <a href="#" class="btn-close" data-dismiss="modal">
+                    <i class="fa fa-close"></i>
+                </a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table warning-bordered-table">
+                            <tbody>
+                                <tr>
+                                    <td style="width:98px;"><b>STP Name :</b></td>
+                                    <td style="text-align:start;" id="ShowSTPName"></td>
+                                    <td style="width:107px;"><b>Billing Date :</b></td>
+                                    <td id="ShowBillingDate"></td>
+                                    <td style="width:142px;"><b>Water Discharge :</b></t>
+                                    <td id="ShowDischarge"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="p-t-20 p-b-20">
+                            <div class="bg-light-info p-3 mb-2 radius" id="InHouseForm" style="display:none;">
+                                <div class="modal-border">
+                                    <h5> In House </h5>
+                                </div>
+                                <div class="row">
+                                    <table class="table warning-bordered-table">
+                                        <tr>
+                                            <td style="width:60px;"><b>BOD :</b></td>
+                                            <td id="showInHouseBOD"></td>
+                                            <td style="width:60px;"><b>COD :</b></td>
+                                            <td id="showInHouseCOD"></td>
+                                            <td style="width:60px;"><b>TSS :</b></td>
+                                            <td id="showInHouseTSS"></td>
+                                            <td style="width:60px;"><b>FC :</b></td>
+                                            <td id="showInHouseFC"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-light-primary p-3 mb-2 radius" id="ThirdPartyForm" style="display:none;">
+                                <div class="modal-border">
+                                    <h5> Third Party </h5>
+                                </div>
+                                <div class="row">
+                                    <table class="table warning-bordered-table">
+                                        <tr>
+                                            <td style="width:60px;"><b>BOD :</b></td>
+                                            <td id="showThirdPartyBOD"></td>
+                                            <td style="width:60px;"><b>COD :</b></td>
+                                            <td id="showThirdPartyCOD"></td>
+                                            <td style="width:60px;"><b>TSS :</b></td>
+                                            <td id="showThirdPartyTSS"></td>
+                                            <td style="width:60px;"><b>FC :</b></td>
+                                            <td id="showThirdPartyFC"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bg-light-warning p-3 mb-2 radius" id="UPPCBForm" style="display:none;">
+                                <div class="modal-border">
+                                    <h5> UPPCB </h5>
+                                </div>
+                                <div class="row">
+                                    <table class="table warning-bordered-table">
+                                        <tr>
+                                            <td style="width:60px;"><b>BOD :</b></td>
+                                            <td id="showUPPCBBOD"></td>
+                                            <td style="width:60px;"><b>COD :</b></td>
+                                            <td id="showUPPCBCOD"></td>
+                                            <td style="width:60px;"><b>TSS :</b></td>
+                                            <td id="showUPPCBTSS"></td>
+                                            <td style="width:60px;"><b>FC :</b></td>
+                                            <td id="showUPPCBFC"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

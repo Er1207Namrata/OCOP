@@ -1,0 +1,236 @@
+﻿@model OCOO.Models.SetPermission
+@{
+    ViewData["Title"] = "SetPermission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Set Permission</h3>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="SetPermission" method="post" enctype="multipart/form-data">
+
+                <div class="card-body p-3">
+                    <div class="p-20">
+                        <div class="row">
+
+                            <div class="col-md-3">
+                                <div class="basic-form">
+                                    <label>Zone <span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(m => m.Fk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new{@class="form-control",@onchange="return fGetFirm12()"})
+                                </div>
+                                <input type="hidden" value="@ViewBag.FK_EmployeeId" id="ViewBag_FK_EmployeeId" />
+                                <input type="hidden" value="@ViewBag.FK_MenuId" id="ViewBag_FK_MenuId" />
+                                <input type="hidden" value="@ViewBag.Fk_ZoneId" id="ViewBag.Fk_ZoneId" />
+                            </div>
+                            <div class="col-md-3">
+                                <div class="basic-form">
+                                    <label>Officer <span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(m => m.Fk_EmpId, new SelectList(ViewBag.ddlEmployee, "Value", "Text"), new{@class="form-control"})
+                                  @*  <input type="hidden" value="@ViewBag.FK_EmployeeId" id="ViewBag_FK_EmployeeId" />
+                                    <input type="hidden" value="@ViewBag.FK_MenuId" id="ViewBag_FK_MenuId" />*@
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label">Menu <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(m => m.MenuId, new SelectList(ViewBag.ddlMenu, "Value", "Text"), new{@class="form-control"})
+                            </div>
+
+                            <div class="col-md-2 mt-4">
+                                <div class="form-group mt-2">
+                                    <button type="submit" class="btn btn-primary  btn-xs btn-sm" id="getDetails" value="Get Details" name="GetDetails" onclick="return fvalidateunit()"><i class="fa fa-search"></i> Get Details </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="table-responsive mt-2">
+                        <table class="table" id="myTable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Sub Menu Name</th>
+                                    <th>
+                                        @*<input asp-for="Checkbox" type="checkbox" id="select-all" class="filled-in chk-col-amber" />*@
+                                        <input type="Checkbox" id="select-all" class="filled-in chk-col-amber" />
+                                        <label style="padding-top:3px;" for="select-all"></label>
+
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.lstPermission != null)
+                                    {
+                                        int i = 0;
+                                        foreach (var item in Model.lstPermission)
+                                        {
+                                            <tr>
+                                                <td>@(i + 1)</td>
+                                                <td>
+                                                    @item.SubMenuName
+                                                </td>
+                                                <td>
+                                                    <input type="hidden" name="hdMenuId_@i" id="hdMenuId_@i" value="@item.MenuId">
+                                                    <input type="hidden" name="hdSubMenuId_@i" id="hdSubMenuId_@i" value="@item.SubMenuId">
+                                                    <input type="hidden" name="hdLoginId_@i" id="hdLoginId_@i" value="@item.Fk_EmpId">
+                                                    <input type="checkbox" name="chkSelect_@i" id="chkSelect_@i" @item.SelectedValue class="filled-in chk-col-amber" />
+                                                    <label style="padding-top:3px;" for="chkSelect_@i"></label>
+                                                </td>
+                                            </tr>
+                                            i++;
+                                        }
+                                        <input type="hidden" id="hdRows" name="hdRows" value="@i" />
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="text-right p-20">
+                            @if (Model != null)
+                            {
+
+                                <button type="submit" class="btn btn-success  btn-xs btn-sm" value="Set Permission" name="Submit" id="Submit" onclick="return fvalidateunit()"><i class="fa fa-gear"></i> Set Permission</button>
+
+
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(window).on("load", function () {
+        debugger
+        var ViewBag_Fk_ZoneId = $("ViewBag_Fk_ZoneId").val();
+        var ViewBag_FK_EmployeeId = $("#ViewBag_FK_EmployeeId").val();
+        var ViewBag_FK_MenuId = $("#ViewBag_FK_MenuId").val();
+
+        if (ViewBag_Fk_ZoneId == undefined || ViewBag_Fk_ZoneId == NaN || ViewBag_Fk_ZoneId == "" || ViewBag_Fk_ZoneId == null) {
+            ViewBag_Fk_ZoneId = 0;
+        }
+
+        if (ViewBag_FK_EmployeeId == undefined || ViewBag_FK_EmployeeId == NaN || ViewBag_FK_EmployeeId == "" || ViewBag_FK_EmployeeId == null) {
+            ViewBag_FK_EmployeeId = 0;
+            
+        }
+
+        if (ViewBag_FK_EmployeeId != null) {
+            fGetFirm12(Fk_EmpId);
+        }
+
+        if (ViewBag_FK_MenuId == undefined || ViewBag_FK_MenuId == NaN || ViewBag_FK_MenuId == "" || ViewBag_FK_MenuId == null) {
+            ViewBag_FK_MenuId = 0;
+        }
+        BindMenu(ViewBag_Fk_ZoneId,ViewBag_FK_EmployeeId, ViewBag_FK_MenuId);
+
+    });
+
+    function fvalidateunit() {
+        debugger
+        if ($('#Fk_ZoneId').val() == 0) {
+            $('#Fk_ZoneId').focus();
+            return false;
+        }
+
+        if ($('#Fk_EmpId').val() == 0) {
+            $('#Fk_EmpId').focus();
+            return false;
+        }
+        if ($('#MenuId').val() == 0) {
+            $('#MenuId').focus();
+            return false;
+        }
+    };
+
+
+    function fGetFirm12() {
+        debugger
+        var txtzone = $("#Fk_ZoneId").val();
+        $.ajax({
+            url: '/Admin/GetEmpDDl',
+            type: 'GET',
+            data: { Id: txtzone },
+            success: function (response) {
+                console.log(response)
+                if (response != null) {
+                    $("#Fk_EmpId").html('');
+                    let dd = ''; // Initialize dd as an empty string
+                    for (let i = 0; i < response.length; i++) { // Fix the loop condition
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    $("#Fk_EmpId").html(dd);
+
+                    if ($("#firmtemp").val() > 0) {
+                        $("#Fk_EmpId").val($("#firmtemp").val());
+                    }
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    }
+
+    if ($('#Fk_ZoneId').val() > 0) {
+        fGetFirm12();        
+    }
+
+
+    function fGetOfficer()
+    {
+        var txtemp = $("Fk_EmpId").val();
+        $.ajax({
+            url: '/Admin/GetMenuDDl',
+            type: 'GET',
+            data: { Id: txtemp },
+            success: function (response) {
+                console.log(response)
+                if (response != null) {
+                    $("#MenuId").html('');
+                    let dd = ''; // Initialize dd as an empty string
+                    for (let i = 0; i < response.length; i++) { // Fix the loop condition
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    $("#MenuId").html(dd);
+                }
+
+            },
+        });
+    }
+
+   
+</script>
+<script>
+
+    $(document).ready(function () {
+        $("#divload").css({ 'display': 'none' });
+    });
+
+    $("#select-all").click(function () {
+
+        if (this.checked) {
+
+            $(':checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $(':checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+
+    });
+</script>

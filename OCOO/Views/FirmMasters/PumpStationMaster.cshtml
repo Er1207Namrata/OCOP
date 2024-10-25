@@ -1,0 +1,145 @@
+﻿@model OCOO.Models.PumpingStation
+@{
+    ViewData["Title"] = "PumpStationMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Pumping Station </h3>
+
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a href="#" onclick="return ShowPopup();" id="btn" class="btn btn-warning"><i class="fa fa-plus mdi-18px"></i></a></span>
+
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="PumpStationMaster">
+                <div class="card-body pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Pumping Station Name</th>
+                                    <th>Account Number</th>
+                                    <th class="tdaction">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["PumpingStationName"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["AccountNumber"].ToString()</td>
+                                                    <td>
+                                                        <a data-bs-toggle="modal" onclick="return EditForm(@Model.dtDetails.Rows[i]["Pk_PumpingStationId"].ToString(),'@Model.dtDetails.Rows[i]["PumpingStationName"].ToString()','@Model.dtDetails.Rows[i]["AccountNumber"].ToString()')" data-bs-target="#exampleModal" class="text-primary">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a href="/FirmMasters/DeletePumpingStation?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_PumpingStationId"].ToString())" id="btnDelete" class="text-danger" onclick="return confirm('are you sure to delete this record?')" ToolTip="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-center">No Record Found</td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <form asp-action="PumpStationMaster" asp-controller="FirmMasters">
+        <div id="modePumping" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Pumping Station</h5>
+                        <a href="#" class="btn-close" data-dismiss="modal">
+                            <i class="bi bi-x"></i>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Pumping Station Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="PumpingStationName" placeholder="Enter Pumping Station Name" />
+                                <input type="hidden" asp-for="Pk_PumpingStationId" />
+                            </div>
+                            <div class="col-md-6">
+                                <label>Account Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="AccountNumber" placeholder="Enter Account Number" onkeypress="return isNumberKey(this)" />
+                            </div>
+
+
+
+                            <div class="col-md-6 p-4">
+                                <input type="submit" class="btn btn-primary" id="submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit" />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    function ShowPopup() {
+
+        $('#modePumping').modal('show');
+        $("#Pk_PumpingStationId").val(0);
+        $("#AccountNumber").val("");
+        $("#PumpingStationName").val("");
+        $("#submit").val('Submit');
+        $("#submit").css("background", "green");
+    }
+
+
+    function ValidateForm() {
+
+        if ($("#PumpingStationName").val() == '' || $("#PumpingStationName").val() == null) {
+            $("#PumpingStationName").focus();
+            return false;
+        }
+        if ($("#AccountNumber").val() == '' || $("#AccountNumber").val() == null || $("#AccountNumber").val() == 0) {
+            $("#AccountNumber").focus();
+            return false;
+        }
+
+    }
+    function EditForm(txtId, PumpingStationName, AccountNo) {
+
+        $("#Pk_PumpingStationId").val(txtId);
+        $("#PumpingStationName").val(PumpingStationName);
+        $("#AccountNumber").val(AccountNo);
+        $("#submit").val('Update');
+        $("#submit").css("background", "red");
+        $('#modePumping').modal('show');
+    }
+</script>

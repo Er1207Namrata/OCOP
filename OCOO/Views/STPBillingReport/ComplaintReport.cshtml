@@ -1,0 +1,292 @@
+﻿@model OCOO.Models.ComplaintReport
+@{
+    ViewData["Title"] = "Compliance Report";
+    Layout = "~/Views/Shared/ThirdPartyLayout.cshtml";
+}
+
+<style>
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .table td {
+        padding: 10px 10px;
+        vertical-align: middle;
+        text-align: right;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-8 align-self-center">
+            <h3 class="text-themecolor">Report</h3>
+        </div>
+        <div class="col-md-4 align-self-right">
+            <span class="float-right"><a data-toggle="collapse" href="#searchblock" title="Search" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-sm btn-xs btn-primary"><i class="fa fa-filter"></i></a></span>
+
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="collapse" id="searchblock">
+            <input type="hidden" name="Page" id="Page" />
+            <input type="hidden" name="IsExport" id="IsExport" />
+            <div class="card">
+                <form asp-controller="STPBillingReport" asp-action="ComplaintReport">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Complainer Name</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" asp-for="ComplainerName" placeholder="Complainer Name">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Contact No</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" asp-for="ContactNo" placeholder="Contact No">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Email Id</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" asp-for="EmailId" placeholder="Email Id">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Zone</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" asp-for="Zone" placeholder="Zone">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>From Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control mydatepicker" asp-for="FormDate" placeholder="dd/mm/yyyy" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>To Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control mydatepicker" asp-for="ToDate" placeholder="dd/mm/yyyy" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 p-4">
+                                <div class="form-group mt-2">
+                                    <input type="submit" class="btn btn-primary  btn-xs btn-sm" id="Submit" value="Search" name="btnSubmit">
+                                    <input type="button" value="Reset" class="btn btn-secondary btn-xs btn-sm" onclick="return resetReset();">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive" id="details">
+                    <table class="table mb-0 table-hover table-striped" id="tblDetails">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Sn</th>
+                                <th class="text-center">Ticket Id</th>
+                                <th class="text-center">Created Date</th>
+                                <th class="text-center">Modify Date</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Assigned</th>
+                                <th class="text-center">Complainer Name</th>
+                                <th class="text-center">Contact Number</th>
+                                <th class="text-center">Email Id</th>
+                                <th class="text-center">Flat No</th>
+                                <th class="text-center">Block No</th>
+                                <th class="text-center">Colony Name</th>
+                                <th class="text-center">City State</th>
+                                <th class="text-center">City</th>
+                                <th class="text-center">Ward Name</th>
+                                <th class="text-center">Ward No</th>
+                                <th class="text-center">Ward Locality</th>
+                                <th class="text-center">Zone</th>
+                                <th class="text-center">Parsad Name</th>
+                                <th class="text-center">Block No</th>
+                                <th class="text-center">Zonal Incharge Name</th>
+                                <th class="text-center">Zonal Incharge Number</th>
+                                <th class="text-center">Type Of Complaint</th>
+                                <th class="text-center">Issue</th>
+                                <th class="text-center">Tat</th>
+                                <th class="text-center">Comment</th>
+                                <th class="text-center">File</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model != null && Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                            {
+                                int i = 1;
+                                int page = Model.Pager.CurrentPage;
+                                page = (page - 1);
+                                i = ((page) * (Model.Pager.PageSize));
+                                for (int j = 0; j < Model.dtDetails.Rows.Count; j++)
+                                {
+                                    <tr>
+                                        <td>@(i + 1)</td>
+                                        <td>@Model.dtDetails.Rows[j]["ticketid"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["createddate"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["modifydate"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["status"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["assigned"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["ComplainerName"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["ContactNo"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["EmailId"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Flat_No"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Block_No"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Colony_Name"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["City_State"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["City"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Ward_Name"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["WardNo"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Ward_Locality"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Zone"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Parsad_Name"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Block_No"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["ZonalIncharge_Name"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Zonal_Incharge_Number"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Type_Of_Complaint"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["Issue"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["tat"].ToString()</td>
+                                        <td>@Model.dtDetails.Rows[j]["comment"].ToString()</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(Model.dtDetails.Rows[j]["file_path"].ToString()))
+                                                @if (Model.dtDetails.Rows[j]["file_path"].ToString().Contains(".pdf"))
+                                                {
+                                                    <a href="@Model.dtDetails.Rows[j]["file_path"].ToString()" download target="_blank">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Model.dtDetails.Rows[j]["file_path"].ToString()" download target="_blank">
+                                                        <img src="@Model.dtDetails.Rows[j]["file_path"].ToString()" style="height:50px" />
+                                                    </a>
+                                                }
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="22">
+                                        <div class="alert alert-warning text-center">
+                                            No Records Found !!
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                    <footer class="p-20">
+                        <div class="d-md-flex align-items-center justify-content-between">
+
+                            @if (Model != null)
+                            {
+                                if (Model.Pager != null)
+                                {
+                                    if (Model.Pager.EndPage > 1)
+                                    {
+                                        <div> <small class="text-muted inline">showing @Model.dtDetails.Rows.Count of @Model.dtDetails.Rows[0]["TotalRecords"].ToString() items</small> </div>
+                                        <div>
+                                            <ul class="pagination pagination-sm m-t-none m-b-none">
+                                                @if (Model.Pager.CurrentPage > 1)
+                                                {
+                                                    <li class="page-item">
+                                                        <a class="page-link" onclick="fCallPaging(1)" href="#">First</a>
+
+                                                    </li>
+                                                    <li class="page-item">
+
+                                                        <a class="page-link" onclick="fCallPaging(@(Model.Pager.CurrentPage - 1))" href="#">Prev</a>
+                                                    </li>
+                                                }
+                                                @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+                                                {
+                                                    <li class="page-item @(page == Model.Pager.CurrentPage ? "active" : "")">
+                                                        <span><a class="page-link" onclick="fCallPaging(@(page))" href="#">@(page)</a></span>
+                                                    </li>
+                                                }
+                                                @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+                                                {
+                                                    <li class="page-item">
+
+                                                        <a class="page-link" onclick="fCallPaging(@(Model.Pager.CurrentPage + 1))" href="#">Next</a>
+
+                                                    </li>
+                                                    <li class="page-item">
+
+                                                        <a class="page-link" onclick="fCallPaging(@(Model.Pager.TotalPages))" href="#">Last</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </footer>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+</div>
+
+<script>
+
+    function resetReset() {
+        debugger;
+        $('#Flag').val('0');
+        $('#Unit').val('0');
+        $('#Parameter').val('0');
+        $('#FormDate').val('');
+        $('#ToDate').val('');
+    }
+</script>
+

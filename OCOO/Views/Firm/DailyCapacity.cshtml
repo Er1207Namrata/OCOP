@@ -1,0 +1,745 @@
+﻿@model OCOO.Models.DailyData
+@{
+    ViewData["Title"] = "DailyCapacity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .buttn {
+        width: 100%;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-4 align-self-center">
+            <h3 class="text-themecolor">STP Daily Capacity</h3>
+         
+        </div>
+        <div class="col-md-4 align-self-center">
+            <h3 class="text-themecolor">@Context.Session.GetString("Zone")</h3>            
+        </div>
+    </div>
+    <form asp-action="DailyCapacity" method="post" enctype="multipart/form-data">
+        <div class="container-fluid">
+            <input type="hidden" asp-for="IsPermanent" />
+            <input type="hidden" asp-for="Fk_UniqueId" />
+            <div class="card">
+                <div class="card-body">
+                    <div class="row p-3">
+                        @* <div class="col-md-3">
+                            <label>Offer/Zone</label>
+                            @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control", @onchange="return fGetSTPName()"  })
+                        </div> *@
+                        <div class="col-md-3">
+                            <label>STP Name</label>
+                            @Html.DropDownListFor(m => m.STPName, new SelectList(ViewBag.ddlFirm, "Value", "Text"), new {@class = "form-control"})
+                        </div>
+                        <div class="col-md-3">
+                            <label>Month</label>
+                            @Html.DropDownListFor(m => m.Fk_MonthId, new SelectList(ViewBag.ddlMonth, "Value", "Text"), new {@class = "form-control", @onchange="return funchangeinputmethod()"})
+                        </div>
+                        <div class="col-md-3">
+                            <label>Details entry By</label>
+                            <select class="form-control" asp-for="DetailType" onchange="return funcshowhideDiv()">
+                                <option value="0">Select</option>
+                                <option value="ExportExcel">Upload Excel</option>
+                                <option value="Manual">Enter Details Manually</option>
+                            </select>
+                        </div>
+                      
+                    </div>
+                    <div class="col-md-12" id="divexportData" style="display:none;">
+                        <div class="row">
+                            <div class="col-12 col-md-10 d-flex justify-content-left ">
+                                <div class="form-group">
+                                    <input type="file" id="excelfile" onchange="return funcHidebutton();fvalidateTPIReport(this)" />
+                                    @Html.HiddenFor(m => m.JsonString)
+                                </div>
+
+                                <div class="form-group" style="margin-right:10px;">
+                                    <input type="button" id="viewfile" value="Import Details" onclick="return ImportDetails()" class="btn btn-info btn-sm" />
+                                </div>
+
+                                <div class="form-group">
+                                    <a class="btn btn-primary btn-sm" href="@OCOO.Models.BaseUrl.URL/STPDailyDataSample.xlsx" target="_blank">Click Here To Download Format</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table mb-0" id="exceltable"></table>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" id="divmanualdata" style="display:none;">
+                        <table class="table table-striped footable" id="manualtable">
+                            <thead>
+                                <tr>
+                                    <th>DATE</th>
+                                    <th>WATER_FLOW_IN_MLD</th>
+                                    <th>FLOW_CAPACITY</th>
+                                    <th>ACTUAL_FLOW_ACHIEVED</th>
+                                    <th>BOD_REPORTED_VALUE</th>
+                                    <th>COD_REPORTED_VALUE</th>
+                                    <th>TSS_REPORTED_VALUE</th>
+                                    <th>FC_REPORTED_VALUE</th>
+                                    <th>NO_OF_COMPLAINTS_RECIEVED</th>
+                                    <th>NO_OF_COMPLAINTS_RESOLVED</th>
+                                    <th>REMARKS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                        {
+                                            <tr>
+                                                <td>@Model.dtDetails.Rows[i]["EntryDate"].ToString()</td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["AmountOf72MLDStp"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["FlowCapacity"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["FlowActualAchived"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["BODReportedValue"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["CODReportedValue"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["FCReportedValue"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["ComplaintReceived"].ToString()"></td>
+                                                <td><input type="text" class="input-box" onkeypress="return isNumberKey(event)" value="@Model.dtDetails.Rows[i]["ComplaintResolved"].ToString()"></td>
+                                                <td><input type="text" class="input-box" value="@Model.dtDetails.Rows[i]["Remarks"].ToString()"></td>
+                                            </tr>
+
+                                        }
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row p-3" id="divSaveDetails" style="display:none;">
+                        <div class="col-md-6 d-flex justify-content-end pt-3">
+                            <input type="submit" id="btngetDetails" name="btngetDetails" style="display:none;" />
+                            <input type="submit" name="btnsubmit" id="btnsubmit" onclick="return validate()" value="Save as Draft" class="btn btn-info mr-2 buttn" />
+                          @*  <input type="submit" name="btnsubmit" id="btnFinal" onclick="return funcConfirm()" value="Save & Send for Approval" class="btn btn-success buttn" />*@
+                            <input type="button" name="btnsubmit" id="btnFinal" onclick="return fShowUploadDocument1()" value="Save & Send for Approval" class="btn btn-success buttn" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="txtDocumentsForm" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Upload Documents</h5>
+                        <a href="#" class="btn-close" data-dismiss="modal">
+                           <i class="fa fa-close"></i>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped footable" id="tblDocumentsDetails">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 150px;">Sn</th>
+                                    <th>Documents</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td id="txtCoveringLetter">
+                                        <label>Covering Letter</label>
+                                        <input type="file" asp-for="CoveringLetter" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                    </td>
+                                    <td style="padding-top:46px;">
+                                        <a href="#" id="CoveringLetterURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td id="txtInspectionReport">
+                                        <label>Inspection Report</label>
+                                        <input type="file" asp-for="InspectionReport" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                    </td>
+                                    <td style="padding-top:46px;">
+                                        <a href="#" target="_blank" id="InspectionReportURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td id="txtTPIReports">
+                                        <label>TPI Reports</label>
+                                        <input type="file" asp-for="TPIReports" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                    </td>
+                                    <td style="padding-top:46px;">
+                                        <a href="#" target="_blank" id="TPIReportsURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td id="txtLDSheet">
+                                        <label>LD Sheet</label>
+                                        <input type="file" asp-for="LDSheet" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                    </td>
+                                    <td style="padding-top:46px;">
+                                        <a href="#" target="_blank" id="LDSheetURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td id="txtOtherDocument">
+                                        <label>Other Documents</label>
+                                        <input type="file" asp-for="OtherDocuments" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                    </td>
+                                    <td style="padding-top:46px;">
+                                        <a href="#" target="_blank" id="OtherDocumentsURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="text-align:center;">
+                                        <input type="submit" style="margin-top:28px;" class="btn btn-info" value="Save" onclick="return fValidateDocumentForm()" name="btnUpload" />
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="txtDocumentsForm" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <form asp-action="UploadSTPDocuments" enctype="multipart/form-data">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Upload Documents</h5>
+                            <a href="#" class="btn-close" data-dismiss="modal">
+                               <i class="fa fa-close"></i>
+                            </a>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-striped footable" id="tblDocumentsDetails">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 150px;">Sn</th>
+                                        <th>Documents</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <input type="hidden" name="Fk_UniqueId" id="UniqueId" value="" />
+                                        <td>1</td>
+                                        <td id="txtCoveringLetter">
+                                            <label>Covering Letter</label>
+                                            <input type="file" asp-for="CoveringLetter" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                        </td>
+                                        <td style="padding-top:46px;">
+                                            <a href="#" id="CoveringLetterURL" style="display:none;"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td id="txtInspectionReport">
+                                            <label>Inspection Report</label>
+                                            <input type="file" asp-for="InspectionReport" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                        </td>
+                                        <td style="padding-top:46px;">
+                                            <a href="#" target="_blank" style="display:none;" id="InspectionReportURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td id="txtTPIReports">
+                                            <label>TPI Reports</label>
+                                            <input type="file" asp-for="TPIReports" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                        </td>
+                                        <td style="padding-top:46px;">
+                                            <a href="#" target="_blank" style="display:none;" id="TPIReportsURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td id="txtLDSheet">
+                                            <label>LD Sheet</label>
+                                            <input type="file" asp-for="LDSheet" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                        </td>
+                                        <td style="padding-top:46px;">
+                                            <a href="#" target="_blank" style="display:none;" id="LDSheetURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td id="txtOtherDocument">
+                                            <label>Other Documents</label>
+                                            <input type="file" asp-for="OtherDocuments" class="form-control" onchange="return fvalidateTPIReport(this)" />
+                                        </td>
+                                        <td style="padding-top:46px;">
+                                            <a href="#" target="_blank" style="display:none;" id="OtherDocumentsURL"><span class="badge badge-info"><i class="bi bi-eye"></i></span></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="text-align:center;">
+                                            <input type="submit" style="margin-top:28px;" class="btn btn-info" value="Save" onclick="return fValidateDocumentForm()" name="btnUpload" />
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </form>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
+<script>
+
+    function ValidateForm() {
+        if ($("#ContactPerson").val() == null || $("#ContactPerson").val() == '') {
+            $("#ContactPerson").focus();
+            return false;
+        }
+        if ($("#MobileNo").val() == null || $("#MobileNo").val() == '') {
+            $("#MobileNo").focus();
+            return false;
+        }
+
+        if ($("#Address").val() == null || $("#Address").val() == '') {
+            $("#Address").focus();
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        if ($('#DetailType').val() === "Manual") {
+            $('#divexportData').css({ "display": "none" });
+            $('#divmanualdata').css({ "display": "" });
+            $('#divSaveDetails').css({ "display": "" });
+
+        }
+        else if ($('#DetailType').val() === "ExportExcel") {
+            $('#divexportData').css({ "display": "" });
+            $('#divmanualdata').css({ "display": "none" });
+            $('#divSaveDetails').css({ "display": "none" });
+
+        }
+        else {
+            $('#divexportData').css({ "display": "none" });
+            $('#divmanualdata').css({ "display": "none" });
+            $('#divSaveDetails').css({ "display": "none" });
+            $('#exceltable').empty();
+        }
+    });
+    function fShowUploadDocument() {
+        $("#CoveringLetter").val('');
+        $("#InspectionReport").val('');
+        $("#TPIReports").val('');
+        $("#LDSheetURL").val('');
+        $("#OtherDocuments").val('');
+        $('#txtDocumentsForm').modal('show');
+    }
+
+    function funcshowhideDiv() {
+        if ($('#DetailType').val() === "Manual") {
+            $('#divexportData').css({ "display": "none" });
+            $('#divmanualdata').css({ "display": "" });
+            $('#divSaveDetails').css({ "display": "" });
+            if ($('#STPName').val() === '') {
+                fShowToastalert('Please Enter STP Name');
+                $('#STPName').focus();
+                $('#divmanualdata').css({ "display": "none" });
+                $('#DetailType').val('0');
+                return false;
+            }
+            if ($('#Fk_MonthId').val() === '0') {
+                fShowToastalert('Please Select Month');
+                $('#Fk_MonthId').focus();
+                $('#divmanualdata').css({ "display": "none" });
+                $('#DetailType').val('0');
+                return false;
+            }
+            $('#btngetDetails').trigger('click');
+
+        }
+        else if ($('#DetailType').val() === "ExportExcel") {
+            $('#divexportData').css({ "display": "" });
+            $('#divmanualdata').css({ "display": "none" });
+            $('#divSaveDetails').css({ "display": "none" });
+
+        }
+        else {
+            $('#divexportData').css({ "display": "none" });
+            $('#divmanualdata').css({ "display": "none" });
+            $('#divSaveDetails').css({ "display": "none" });
+            $('#exceltable').empty();
+        }
+    }
+    function funcHidebutton() {
+        $('#divSaveDetails').css({ "display": "none " });
+    }
+    function ImportDetails() {
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;
+        /*Checks whether the file is a valid excel file*/
+        if (regex.test($("#excelfile").val().toLowerCase())) {
+            $('#exceltable').empty();
+            var xlsxflag = false; /*Flag for checking whether excel is .xls format or .xlsx format*/
+            if ($("#excelfile").val().toLowerCase().indexOf(".xlsx") > 0) {
+                xlsxflag = true;
+            }
+            /*Checks whether the browser supports HTML5*/
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var data = e.target.result;
+                    /*Converts the excel data in to object*/
+                    if (xlsxflag) {
+                        var workbook = XLSX.read(data, { type: 'binary' });
+                    }
+                    else {
+                        var workbook = XLS.read(data, { type: 'binary' });
+                    }
+                    /*Gets all the sheetnames of excel in to a variable*/
+                    var sheet_name_list = workbook.SheetNames;
+                    var cnt = 0; /*This is used for restricting the script to consider only first sheet of excel*/
+                    sheet_name_list.forEach(function (y) { /*Iterate through all sheets*/
+                        /*Convert the cell value to Json*/
+                        if (xlsxflag) {
+                            var exceljson = XLSX.utils.sheet_to_json(workbook.Sheets[y]);
+                        }
+                        else {
+                            var exceljson = XLS.utils.sheet_to_row_object_array(workbook.Sheets[y]);
+                        }
+                        if (exceljson.length > 0 && cnt == 0) {
+                            BindTable(exceljson, '#exceltable');
+                            cnt++;
+                        }
+                    });
+                    $('#exceltable').show();
+                    $('#divSaveDetails').css({ "display": "" });
+                }
+                if (xlsxflag) {/*If excel file is .xlsx extension than creates a Array Buffer from excel*/
+                    reader.readAsArrayBuffer($("#excelfile")[0].files[0]);
+                }
+                else {
+                    reader.readAsBinaryString($("#excelfile")[0].files[0]);
+                }
+            }
+            else {
+                fShowToastalert("Sorry! Your browser does not support HTML5!");
+            }
+        }
+        else {
+            fShowToastalert("Please upload a valid Excel file!");
+        }
+    }
+    function BindTable(jsondata, tableid) {/*Function used to convert the JSON array to Html Table*/
+        var columns = BindTableHeader(jsondata, tableid); /*Gets all the column headings of Excel*/
+        for (var i = 0; i < jsondata.length; i++) {
+            var row$ = $('<tr/>');
+            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                var cellValue = jsondata[i][columns[colIndex]];
+                if (cellValue == null)
+                    cellValue = "";
+                row$.append($('<td/>').html(cellValue));
+            }
+            $('#exceltable').append(row$);
+        }
+    }
+    function BindTableHeader(jsondata, tableid) {/*Function used to get all column names from JSON and bind the html table header*/
+        var columnSet = [];
+        var headerTr$ = $('<tr/>');
+        for (var i = 0; i < jsondata.length; i++) {
+            var rowHash = jsondata[i];
+            for (var key in rowHash) {
+                if (rowHash.hasOwnProperty(key)) {
+                    if ($.inArray(key, columnSet) == -1) {/*Adding each unique column names to a variable array*/
+                        columnSet.push(key);
+                        headerTr$.append($('<th/>').html(key));
+                    }
+                }
+            }
+        }
+        $('#exceltable').append(headerTr$);
+        return columnSet;
+    }
+    function funcSaveDetails(table) {
+        //if (confirm('are you sure want to import details?') == false) {
+        //    return false;
+        //}
+        var obj = "";
+        let DATE = "";
+        let WATER_FLOW_IN_MLD = "";
+        let FLOW_CAPACITY = "";
+        let ACTUAL_FLOW_ACHIEVED = "";
+        let BOD_REPORTED_VALUE = "";
+        let COD_REPORTED_VALUE = "";
+        let TSS_REPORTED_VALUE = "";
+        let FC_REPORTED_VALUE = "";
+        let NO_OF_COMPLAINTS_RECIEVED = "";
+        let NO_OF_COMPLAINTS_RESOLVED = "";
+        let REMARKS = "";
+        // let table = 'exceltable';
+        var oTable = document.getElementById(table);
+        var rowLength = oTable.rows.length;
+        for (i = 1; i < rowLength; i++) {
+
+            //gets cells of current row
+            var oCells = oTable.rows.item(i).cells;
+
+            //gets amount of cells of current row
+            var cellLength = oCells.length;
+
+            //loops through each cell in current row
+            if (table === 'exceltable') {
+                for (var j = 0; j < cellLength; j++) {
+                    var cellVal = oCells.item(j).innerHTML;
+                    if (i != 0) {
+                        if (j == 0) {
+                            DATE = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 1) {
+                            WATER_FLOW_IN_MLD = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 2) {
+                            FLOW_CAPACITY = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 3) {
+                            ACTUAL_FLOW_ACHIEVED = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 4) {
+                            BOD_REPORTED_VALUE = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 5) {
+                            COD_REPORTED_VALUE = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 6) {
+                            TSS_REPORTED_VALUE = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 7) {
+                            FC_REPORTED_VALUE = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 8) {
+                            NO_OF_COMPLAINTS_RECIEVED = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 9) {
+                            NO_OF_COMPLAINTS_RESOLVED = oCells.item(j).innerHTML;
+                        }
+                        else if (j == 10) {
+                            REMARKS = oCells.item(j).innerHTML;
+                        }
+                    }
+                }
+            }
+            else {
+                for (var j = 0; j < cellLength; j++) {
+                    var cellVal = oCells.item(j).innerHTML;
+                    if (i != 0) {
+                        if (j == 0) {
+                            DATE = oCells.item(j).innerHTML;
+
+                        }
+                        else if (j == 1) {
+                            //WATER_FLOW_IN_MLD = oCells.item(j).firstElementChild.value;
+                            WATER_FLOW_IN_MLD = oCells.item(j).firstChild.value;
+                            //alert(WATER_FLOW_IN_MLD);
+                        }
+                        else if (j == 2) {
+                            FLOW_CAPACITY = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 3) {
+                            ACTUAL_FLOW_ACHIEVED = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 4) {
+                            BOD_REPORTED_VALUE = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 5) {
+                            COD_REPORTED_VALUE = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 6) {
+                            TSS_REPORTED_VALUE = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 7) {
+                            FC_REPORTED_VALUE = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 8) {
+                            NO_OF_COMPLAINTS_RECIEVED = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 9) {
+                            NO_OF_COMPLAINTS_RESOLVED = oCells.item(j).firstChild.value;
+                        }
+                        else if (j == 10) {
+                            REMARKS = oCells.item(j).firstChild.value;
+                        }
+                    }
+                }
+            }
+
+            if (obj == "") {
+                obj = "{\"DATE\":\"" + DATE + "\",\"WATER_FLOW_IN_MLD\":\"" + WATER_FLOW_IN_MLD + "\",\"FLOW_CAPACITY\":\"" + FLOW_CAPACITY + "\",\"ACTUAL_FLOW_ACHIEVED\":\"" + ACTUAL_FLOW_ACHIEVED + "\",\"BOD_REPORTED_VALUE\":\"" + BOD_REPORTED_VALUE + "\",\"COD_REPORTED_VALUE\":\"" + COD_REPORTED_VALUE + "\",\"TSS_REPORTED_VALUE\":\"" + TSS_REPORTED_VALUE + "\",\"FC_REPORTED_VALUE\":\"" + FC_REPORTED_VALUE + "\",\"NO_OF_COMPLAINTS_RECIEVED\":\"" + NO_OF_COMPLAINTS_RECIEVED + "\",\"NO_OF_COMPLAINTS_RESOLVED\":\"" + NO_OF_COMPLAINTS_RESOLVED + "\",\"REMARKS\":\"" + REMARKS + "\"}";
+            }
+            else {
+                obj = obj + "," + "{\"DATE\":\"" + DATE + "\",\"WATER_FLOW_IN_MLD\":\"" + WATER_FLOW_IN_MLD + "\",\"FLOW_CAPACITY\":\"" + FLOW_CAPACITY + "\",\"ACTUAL_FLOW_ACHIEVED\":\"" + ACTUAL_FLOW_ACHIEVED + "\",\"BOD_REPORTED_VALUE\":\"" + BOD_REPORTED_VALUE + "\",\"COD_REPORTED_VALUE\":\"" + COD_REPORTED_VALUE + "\",\"TSS_REPORTED_VALUE\":\"" + TSS_REPORTED_VALUE + "\",\"FC_REPORTED_VALUE\":\"" + FC_REPORTED_VALUE + "\",\"NO_OF_COMPLAINTS_RECIEVED\":\"" + NO_OF_COMPLAINTS_RECIEVED + "\",\"NO_OF_COMPLAINTS_RESOLVED\":\"" + NO_OF_COMPLAINTS_RESOLVED + "\",\"REMARKS\":\"" + REMARKS + "\"}";
+            }
+        }
+        obj = "[" + obj + "]";
+        $('#JsonString').val(obj);
+
+    }
+    function validate() {
+        $('#IsPermanent').val('0');
+        if ($('#STPName').val() === '') {
+            fShowToastalert('Please Enter STP Name');
+            $('#STPName').focus();
+            return false;
+        }
+        if ($('#Fk_MonthId').val() === '0') {
+            fShowToastalert('Please Select Month');
+            $('#Fk_MonthId').focus();
+            return false;
+        }
+        if (confirm('are you sure to save details?') === false) {
+            return false;
+        }
+        else {
+            if ($('#DetailType').val() === "Manual") {
+                funcSaveDetails('manualtable');
+            }
+            else if ($('#DetailType').val() === "ExportExcel") {
+                funcSaveDetails('exceltable');
+            }
+        }
+    }
+    function funcConfirm() {
+        $('#IsPermanent').val('1');
+        if ($('#STPName').val() === '') {
+            fShowToastalert('Please Enter STP Name');
+            $('#STPName').focus();
+            return false;
+        }
+        if ($('#Fk_MonthId').val() === '0') {
+            fShowToastalert('Please Select Month');
+            $('#Fk_MonthId').focus();
+            return false;
+        }
+        if (confirm('are you sure to save details?') === false) {
+            return false;
+        }
+        else {
+            if ($('#DetailType').val() === "Manual") {
+                funcSaveDetails('manualtable');
+            }
+            else if ($('#DetailType').val() === "ExportExcel") {
+                funcSaveDetails('exceltable');
+            }
+        }
+    }
+
+    CoveringLetter.onchange = evt => {
+        let url = $('#CoveringLetter').val();
+        if (url) {
+            $("#CoveringLetterURL").prop("href", url);
+        }
+    };
+
+    function fValidateDocumentForm() {
+
+        if ($("#CoveringLetter").val() != '' || $("#InspectionReport").val() != '' || $("#TPIReports").val() != '' || $("#LDSheet").val() != '' | $("#OtherDocuments").val() != '') {
+            $("#CoveringLetter").focus();
+            return true;
+        }
+        else {
+            fShowToastalert('Please upload minimum one documents!')
+            return false;
+        }
+
+    }
+    function funchangeinputmethod(){
+        $('#DetailType').val('0');
+        funcshowhideDiv();
+    }
+
+
+    function fGetSTPName() {
+        let txtId = $("#Pk_ZoneId").val();
+        $.ajax({
+            url: '/Firm/GetSTPName',
+            type: 'Get',
+            data: { Id: txtId },
+            success: function (response) {
+                if (response != null) {
+                    let v = "";
+                    $.each(response, function (i, v1) {
+                        v += "<option value=" + v1.value + ">" + v1.text + "</option>";
+                    });
+                    $("#STPName").html(v);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+    function fShowUploadDocument1(txtUniqueId) {
+        $("#CoveringLetterURL").css({ "display": "none" })
+        $("#InspectionReportURL").css({ "display": "none" })
+        $("#TPIReportsURL").css({ "display": "none" })
+        $("#LDSheetURL").css({ "display": "none" })
+        $("#OtherDocumentsURL").css({ "display": "none" })
+        $.ajax({
+            url: '/Firm/GetDocumentDetails',
+            type: 'GET',
+            data: { Id: txtUniqueId },
+            success: function (response) {
+                if (response != null) {
+                    $("#UniqueId").val(txtUniqueId);
+                    $('#Pk_DocumentId').val(response.pk_DocumentId);
+                    $('#Fk_UniqueId').val(response.fk_UniqueId);
+                    $("#CoveringLetterURL").prop("href", response.coveringLetterURL);
+                    $("#InspectionReportURL").prop("href", response.inspectionReportURL);
+                    $("#TPIReportsURL").prop("href", response.tpiReportsURL);
+                    $("#LDSheetURL").prop("href", response.ldSheetURL);
+                    $("#OtherDocumentURL").prop("href", response.otherDocumentsURL);
+                    if (response.coveringLetterURL != null) {
+                        $("#CoveringLetterURL").css({ "display": "block" })
+                    }
+                    if (response.inspectionReportURL != null) {
+                        $("#InspectionReportURL").css({ "display": "block" })
+                    }
+                    if (response.tpiReportsURL != null) {
+                        $("#TPIReportsURL").css({ "display": "block" })
+                    }
+                    if (response.ldSheetURL != null) {
+                        $("#LDSheetURL").css({ "display": "block" })
+                    }
+                    if (response.otherDocumentsURL != null) {
+                        $("#OtherDocumentsURL").css({ "display": "block" })
+                    }
+                }
+                $('#txtDocumentsForm').modal('show');
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+    function fValidateDocumentForm() {
+        if ($("#CoveringLetter").val() != '' || $("#InspectionReport").val() != '' || $("#TPIReports").val() != '' || $("#LDSheet").val() != '' | $("#OtherDocuments").val() != '') {
+            $("#CoveringLetter").focus();
+            return true;
+        }
+        else {
+            fShowToastalert('Please upload minimum one documents!')
+            return false;
+        }
+
+    }
+
+</script>
+

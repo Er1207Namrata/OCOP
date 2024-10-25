@@ -1,0 +1,421 @@
+﻿@model OCOO.Models.AdminMasters.ZoneModel
+
+@{
+    ViewData["Title"] = "Zone Contract Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Zone Contract List</h3>
+
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a href="#" onclick="return ShowPopup();" id="btn" class="btn  btn-xs btn-sm btn-success fUserPermission" title="Add Zone"><i class="fa fa-plus mdi-18px"></i> Zone</a></span>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="STCRequestList">
+                <div class="card-body p-3 pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Zone</th>
+                                    <th>Contract Amount</th>
+                                    <th>Min. LD Charges</th>
+                                    <th>Contract Year</th>
+                                    <th>Contract From</th>
+                                    <th>Contract To</th>
+                                    <th>Additional Contract Year Date</th>
+                                    <th>Year Wise Increament</th>
+                                    <th>No. Of STP</th>
+                                    <th>Total Capacity</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Zone"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ContractAmt"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["min_LD_Charges"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ContractYear"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ContractFrom"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ContractTo"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["AdditionalContractYearDate"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["YearWiseIncreament"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["NoOfStp"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["TotalCapacity"].ToString()</td>
+                                                    <td>
+                                                        <a href="#" data-bs-toggle="modal" onclick="return EditForm(@Model.dtDetails.Rows[i]["Pk_ContractId"].ToString(),'@Model.dtDetails.Rows[i]["Fk_ZoneId"].ToString()','@Model.dtDetails.Rows[i]["ContractAmt"].ToString()', '@Model.dtDetails.Rows[i]["ContractYears"].ToString()','@Model.dtDetails.Rows[i]["min_LD_Charges"].ToString()','@Model.dtDetails.Rows[i]["ContractTo"].ToString()','@Model.dtDetails.Rows[i]["ContractFrom"].ToString()','@Model.dtDetails.Rows[i]["NoOfStp"].ToString()','@Model.dtDetails.Rows[i]["TotalCapacity"].ToString()','@Model.dtDetails.Rows[i]["AdditionalContractYear"].ToString()','@Model.dtDetails.Rows[i]["AdditionalContractYearDate"].ToString()','@Model.dtDetails.Rows[i]["YearWiseIncreament"].ToString()')" data-bs-target="#exampleModal" class="text-primary fUserPermission">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a href="/Admin/DeleteContractMaster?Id=@Model.dtDetails.Rows[i]["Pk_ContractId"].ToString()" class="text-danger fUserPermission" onclick="return confirm('are you sure to delete this record?')" ToolTip="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="10" class="text-center bg-white">
+                                                    <div class="alert alert-warning text-center">
+                                                        No Records Found !!
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="txtDetails" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add/Update Zone </h5>
+                <a href="#" class="btn-close" data-dismiss="modal">
+                    <i class="fa fa-close"></i>
+                </a>
+            </div>
+
+            <form asp-action="ZoneContractMaster" asp-controller="Admin" method="post">
+                <input type="hidden" asp-for="Pk_ContractId" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Zone <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(m => m.Fk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Contract Year <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" placeholder="Enter Contract Year" class="form-control" onkeypress="return isNumberKey(this)" onchange="return fchangedate()" asp-for="ContractYears" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>From Date <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" readonly class="form-control mydatepicker" onchange="return AddYear()" asp-for="ContractFrom" placeholder="dd/mm/yyyy">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="icon-calender"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>To Date <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" readonly asp-for="ContractTo" placeholder="dd/mm/yyyy">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="icon-calender"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Additional Contract Year</label>
+                                <div class="input-group">
+                                    <input type="text" placeholder="Enter Additional Contract Year " onchange="return AddAdditionalYear()" class="form-control" onkeypress="return isNumberKey(this)" asp-for="AdditionalContractYear" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Additional Contract Year Date</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" readonly asp-for="AdditionalContractYearDate" placeholder="dd/mm/yyyy">
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="icon-calender"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Additional Contract Year Wise Increament (In %)<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" placeholder="Enter Year Wise Increament" class="form-control" onkeypress="return isNumberKey(this)" asp-for="YearWiseIncreament" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Contract Amount <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" asp-for="ContractAmt" onkeypress="return isNumberKey(this)" placeholder="Enter Contract Amount">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Min. LD Charges <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" asp-for="MinLDCharge" onkeypress="return isNumberKey(this)" placeholder="Enter Min. LD Charges">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Total Capacity  <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" asp-for="TotalCapacity" onkeypress="return isNumberKey(this)" placeholder="Enter Total Capacity">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>No. Of STP <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" asp-for="NoOfStp" onkeypress="return isNumberKey(this)" placeholder="Enter No. Of STP">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger  btn-xs btn-sm " data-dismiss="modal"><i class="fa fa-times"></i>     Cancel</button>
+                    <button type="submit" class="btn btn-success  btn-xs btn-sm" id="Submit" onclick="return ValidateForm();" value="Save" name="btnSubmit"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#ContractYears").change(function () {
+            AddYear();
+        });
+    });
+    function fchangedate() {
+        if ($("#ContractFrom").val() != "" && $("#ContractFrom").val() != null) {
+            AddYear();
+        }
+    }
+    function ShowPopup() {
+        $('#txtDetails').modal('show');
+        $("#Pk_ContractId").val("0");
+        $("#Fk_ZoneId").val("");
+        $("#ContractAmt").val("");
+        $("#ContractYears").val("");
+        $("#ContractTo").val("");
+        $("#ContractFrom").val("");
+        $("#MinLDCharge").val("");
+        $("#NoOfStp").val("");
+        $("#TotalCapacity").val("");
+        $("#AdditionalContractYear").val("");
+        $("#AdditionalContractYearDate").val("");
+        $("#YearWiseIncreament").val("");
+        $("#Submit").val('Save');
+        $("#Submit").html('<i class="fa fa-save"></i>  Save');
+
+    }
+
+    function ValidateForm() {
+
+        if ($("#Fk_ZoneId").val() == null || $("#Fk_ZoneId").val() == '' || $("#Fk_ZoneId").val() <= 0) {
+            $("#Fk_ZoneId").focus();
+            return false;
+        }
+        if ($("#ContractYears").val() == null || $("#ContractYears").val() == '') {
+            $("#ContractYears").focus();
+            return false;
+        }
+        if ($("#ContractFrom").val() == null || $("#ContractFrom").val() == '') {
+            $("#ContractFrom").focus();
+            return false;
+        }
+        if ($("#ContractTo").val() == null || $("#ContractTo").val() == '') {
+            $("#ContractTo").focus();
+            return false;
+        } if ($("#YearWiseIncreament").val() == null || $("#YearWiseIncreament").val() == '') {
+            $("#YearWiseIncreament").focus();
+            return false;
+        }
+        if ($("#ContractAmt").val() == null || $("#ContractAmt").val() == '' || $("#ContractAmt").val() <= 0) {
+            $("#ContractAmt").focus();
+            return false;
+        }
+        if ($("#MinLDCharge").val() == null || $("#MinLDCharge").val() == '' || $("#MinLDCharge").val() <= 0) {
+            $("#MinLDCharge").focus();
+            return false;
+        }
+        if ($("#TotalCapacity").val() == null || $("#TotalCapacity").val() == '' || $("#TotalCapacity").val() <= 0) {
+            $("#TotalCapacity").focus();
+            return false;
+        }
+        if ($("#NoOfStp").val() == null || $("#NoOfStp").val() == '' || $("#NoOfStp").val() <= 0) {
+            $("#NoOfStp").focus();
+            return false;
+        }
+    }
+
+    function EditForm(txtId, txtZoneId, txtAmt, txtYear, min_LD_Charges, ContractTo, ContractFrom, NoOfStp, TotalCapacity, AdditionalContractYear, AdditionalContractYearDate, YearWiseIncreament) {
+        $('#txtDetails').modal('show');
+        $("#Pk_ContractId").val(txtId);
+        $("#Fk_ZoneId").val(txtZoneId);
+        $("#ContractAmt").val(txtAmt);
+        $("#ContractYears").val(txtYear);
+        $("#ContractTo").val(ContractTo);
+        $("#ContractFrom").val(ContractFrom);
+        $("#MinLDCharge").val(min_LD_Charges);
+        $("#NoOfStp").val(NoOfStp);
+        $("#TotalCapacity").val(TotalCapacity);
+        $("#AdditionalContractYear").val(AdditionalContractYear);
+        $("#AdditionalContractYearDate").val(AdditionalContractYearDate);
+        $("#YearWiseIncreament").val(YearWiseIncreament);
+        $("#Submit").val('Update');
+        $("#Submit").html('<i class="fa fa-save"></i>  Update');
+    }
+    function AddYear() {
+        var ContractYears = $("#ContractYears").val();
+        if (ContractYears != "" && ContractYears != 0) {
+            var date = $("#ContractFrom").val();
+            if ($("#ContractFrom").val() != "") {
+                var oldYear = "";
+                var newYear = "";
+                var ContractFrom = "";
+
+                ContractFrom = date.split("/");
+                oldYear = parseInt(ContractFrom[2]);
+
+                if (oldYear > 0) {
+                    // Convert the date to a Date object
+                    var fromDate = new Date(ContractFrom[2], ContractFrom[1] - 1, ContractFrom[0]);
+
+                    // Subtract 1 day from the date
+                    fromDate.setDate(fromDate.getDate() - 1);
+
+                    // Get the updated year, month, and day
+                    newYear = fromDate.getFullYear();
+                    var newMonth = fromDate.getMonth() + 1;
+                    var newDay = fromDate.getDate();
+
+                    // Update the ContractFrom array
+                    ContractFrom[2] = newYear;
+                    ContractFrom[1] = newMonth;
+                    ContractFrom[0] = newDay;
+
+                    // Convert the updated date back to a string with dd/mm/yyyy format
+                    var updatedDate = ContractFrom[0] + "/" + ContractFrom[1] + "/" + ContractFrom[2];
+
+                    // Increment the year
+                    newYear = parseInt(newYear) + parseInt(ContractYears);
+                    ContractFrom[2] = newYear;
+
+                    // Convert the updated date back to a string with dd/mm/yyyy format
+                    var updatedDateWithYearIncremented = ContractFrom[0] + "/" + ContractFrom[1] + "/" + ContractFrom[2];
+
+                    // Update the ContractTo input fields with the new date
+                    $("#ContractTo").val(updatedDateWithYearIncremented);
+
+                    // Perform additional actions if needed
+                    changeyear();
+                }
+                else {
+                    fShowToastalert("Please! Don't Enter Year in Negative!")
+                    $("#ContractYears").val("");
+                    $("#ContractYears").focus();
+                    return false;
+                }
+            }
+        }
+        else {
+            fShowToastalert("Please Enter Contract Years !")
+            $("#ContractFrom").val("")
+            $("#ContractTo").val("")
+            $("#ContractYears").focus();
+            return false;
+        }
+
+    }
+    function changeyear() {
+        if ($("#AdditionalContractYear").val() != "" && $("#AdditionalContractYear").val() != null) {
+            AddAdditionalYear();
+        }
+    }
+    function AddAdditionalYear() {
+        var AdditionalContractYear = $("#AdditionalContractYear").val();
+        var ContractYears = $("#ContractYears").val();
+        if (AdditionalContractYear != "" && ContractYears != "" && AdditionalContractYear != 0) {
+            var add = parseInt(AdditionalContractYear) + parseInt(ContractYears);
+            var date = $("#ContractFrom").val();
+
+            if (date !== "") {
+                var oldYear = "";
+                var newYear = "";
+                var ContractFrom = "";
+                ContractFrom = date.split("/");
+                oldYear = parseInt(ContractFrom[2]);
+                newYear = parseInt(oldYear) + parseInt(add);
+
+                if (oldYear > 0) {
+                    // Create a Date object
+                    var fromDate = new Date(ContractFrom[2], ContractFrom[1] - 1, ContractFrom[0]);
+
+                    // Add years
+                    fromDate.setFullYear(newYear);
+
+                    // Subtract 1 day
+                    fromDate.setDate(fromDate.getDate() - 1);
+
+                    // Get the updated year, month, and day
+                    newYear = fromDate.getFullYear();
+                    var newMonth = fromDate.getMonth() + 1;
+                    var newDay = fromDate.getDate();
+
+                    // Update the ContractFrom array
+                    ContractFrom[2] = newYear;
+                    ContractFrom[1] = newMonth;
+                    ContractFrom[0] = newDay;
+
+                    // Convert the updated date back to a string with dd/mm/yyyy format
+                    var updatedDate = ContractFrom[0] + "/" + ContractFrom[1] + "/" + ContractFrom[2];
+
+                    // Update the ContractTo and AdditionalContractYearDate input fields
+                    $("#AdditionalContractYearDate").val(updatedDate);
+                } else {
+                    fShowToastalert("Please! Don't Enter Year in Negative!");
+                    $("#AdditionalContractYear").val("");
+                    $("#AdditionalContractYear").focus();
+                    return false;
+                }
+            }
+        }
+        else {
+            $("#AdditionalContractYearDate").val("")
+        }
+    }
+</script>

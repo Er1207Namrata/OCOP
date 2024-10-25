@@ -1,0 +1,22 @@
+{
+  "version": 2,
+<<<<<<< HEAD
+  "dgSpecHash": "sg4flAvwW/A=",
+  "success": true,
+  "projectFilePath": "D:\\Repositories\\OCOO\\DTOs\\DTOs.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Piyush\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
+    "C:\\Users\\Piyush\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.1\\microsoft.extensions.primitives.5.0.1.nupkg.sha512",
+    "C:\\Users\\Piyush\\.nuget\\packages\\system.io.pipelines\\5.0.2\\system.io.pipelines.5.0.2.nupkg.sha512"
+=======
+  "dgSpecHash": "vWi1UgHZ6xawcBglfdzMwN7mWZtZcTraRgVhYlRzOClTN4BqRxUzV16trsEpdnYHMjS47FDSpK/6FYhhC4UGHA==",
+  "success": true,
+  "projectFilePath": "D:\\Maqsood\\OCOO\\DTOs\\DTOs.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\sileo\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
+    "C:\\Users\\sileo\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.1\\microsoft.extensions.primitives.5.0.1.nupkg.sha512",
+    "C:\\Users\\sileo\\.nuget\\packages\\system.io.pipelines\\5.0.2\\system.io.pipelines.5.0.2.nupkg.sha512"
+>>>>>>> OCOP-UAT
+  ],
+  "logs": []
+}

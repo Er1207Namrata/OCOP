@@ -1,0 +1,63 @@
+﻿@model OCOO.Models.Dashboard
+@{
+    ViewData["Title"] = "City Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">City</h3>
+         
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="card-body pb-20">
+                        <div class="row">
+                             <table class="table table-striped footable">
+                                <thead>
+                                    <tr>
+                                        <th>Sn</th>
+                                        <th>Zone</th>
+                                        <th class="tdaction">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.dtDetails != null)
+                                        {
+                                            if (Model.dtDetails.Rows.Count > 0)
+                                            {
+                                                for (int i = 1; i < Model.dtDetails.Rows.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td>@i</td>
+                                                        <td>@Model.dtDetails.Rows[i]["Name"].ToString()</td>
+                                                        <td>
+                                                            <a href="/Admin/GetBlockRequest?Id=>@Model.dtDetails.Rows[i]["Id"].ToString()"><span class="badge badge-info p-1">View Details</span></a>
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="3" class="text-center">No Record Found</td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

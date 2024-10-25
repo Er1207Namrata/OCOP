@@ -1,0 +1,204 @@
+﻿@model OCOO.Models.Payment
+@{
+    ViewData["Title"] = "ProceedPayment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+    table thead {
+        position: sticky;
+        top: 0;
+    }
+
+    table {
+        border-collapse: unset !important;
+    }
+
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .bg-light-info {
+        background-color: #f5fbff;
+        border: 1px solid #b6e2ff;
+    }
+
+    .bg-light-primary {
+        background-color: #f1effd;
+        border: 1px solid #dbd5ff;
+    }
+
+    .bg-light-warning {
+        background-color: #fff8ec;
+        border: 1px solid #ffe2b0;
+    }
+
+    .p-b-20 .radius {
+        padding: 10px 10px 0px 10px !important
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Proceed Payment</h3>
+        </div>
+        <div class="col-md-6 align-self-right">
+           @* <span class="float-right ml-2"><a data-toggle="collapse" href="#BillDetailArea" title="Search" role="button" aria-expanded="true" aria-controls="BillDetailArea" class="btn btn-sm btn-xs btn-info"><i class="fa fa-eye"></i></a></span>*@
+            <span class="float-right"><a href="/Admin/Payment" class="btn btn-sm btn-warning btn-xs" title="Back"><i class="fa fa-arrow-left"></i> Back</a></span>
+
+        </div>
+    </div>
+    <div class="container-fluid">
+       
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                           @* <h6 class="font-weight-bold text-center">Payment</h6>*@
+                            <table class="table warning-bordered-table">
+                                <tr>
+                                    <td style="font-weight:600;">Zone</td>
+                                    <td id="">@Model.Zone</td>
+                                    <td style="font-weight:600;">Firm</td>
+                                    <td id="">@Model.Firm</td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:600;">Bill Date</td>
+                                    <td id="">@Model.Date</td>
+                                    <td style="font-weight:600;">Month</td>
+                                    <td id="">@Model.Month/@Model.Years</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:600;">Bill Amount</td>
+                                    <td id="">@Model.Bill_Amount</td>
+                                    <td style="font-weight:600;">Payable Amount</td>
+                                    <td id="">@Model.Payable_Amount</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       
+
+
+        <div class="card p-3">
+            <form asp-controller="Admin" asp-action="ProceedPayment" enctype="multipart/form-data">
+                <input type="hidden" asp-for="PK_FbillId" />
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Amount<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="Bill_Amount" id="Amount" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                            <div class="form-group">
+                            <label>With held Amount<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="WithheldAmount" id="WithheldAmount" />
+                            </div>
+                        </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Payment Mode<span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.PaymentMode, new SelectList(ViewBag.PaymentMode, "Value", "Text"), new { @class = "form-control", @onchange = "return fGetFirmList()" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Refrence No.<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="RefrenceNo" id="RefrenceNo" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Attachment<span class="text-danger">*</span></label>
+                            <input type="file" asp-for="AttachmentURl" onchange="return ValidateFiles(this)" class="form-control" id="Attachment" />
+                            <b class="text-danger">JPG,JPEG,PNG,PDF and file size only 5MB Allow !</b>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Payment Date<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control mydatepicker" asp-for="PaymentDate" placeholder="dd/mm/yyyy" readonly>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="icon-calender"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Remark<span class="text-danger"></span></label>
+                            <textarea class="form-control" asp-for="Remark" id="Remark"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-8 mt-4 d-flex justify-content-end">
+                        <div class="form-group mt-2">
+                            <button type="submit" class="btn btn-primary  btn-xs btn-sm " id="Submit" value="Submit" name="Submit" onclick="return GetValidate();">Submit</button>
+                            <input type="button" value="Reset" class="btn btn-secondary btn-xs btn-sm" onclick="return Getreset();">
+                        </div>
+                    </div>
+                </div>
+                   
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/script/generatefirmbill.js"></script>
+<script src="~/script/frimstpbind.js"></script>
+<script>
+    function GetValidate() {
+        debugger;
+        if ($('#Amount').val() == '' || $('#Amount').val() == null || $('#Amount').val() == '0') {
+            $('#Amount').focus();
+            return false;
+        }
+        if ($('#WithheldAmount').val() == '' || $('#WithheldAmount').val() == null || $('#WithheldAmount').val() == '0') {
+            $('#WithheldAmount').focus();
+            return false;
+        }
+        if ($('#PaymentMode').val() == '' || $('#PaymentMode').val() == null || $('#PaymentMode').val() == '0') {
+            $('#PaymentMode').focus();
+            return false;
+        }
+        if ($('#RefrenceNo').val() == '' || $('#RefrenceNo').val() == null || $('#RefrenceNo').val() == '0') {
+            $('#RefrenceNo').focus();
+            return false;
+        }
+        if ($('#Attachment').val() == '' || $('#Attachment').val() == null || $('#Attachment').val() == '0') {
+            $('#Attachment').focus();
+            return false;
+        }
+        if ($('#PaymentDate').val() == '' || $('#PaymentDate').val() == null || $('#PaymentDate').val() == '0') {
+            $('#PaymentDate').focus();
+            return false;
+        }
+        if ($('#Remark').val() == '' || $('#Remark').val() == null || $('#Remark').val() == '0') {
+            $('#Remark').focus();
+            return false;
+        }
+    }
+    function Getreset() {
+        debugger;
+        $('#Amount').val('');
+        $('#PaymentMode').val('');
+        $('#RefrenceNo').val('');
+        $('#Attachment').val('');
+        $('#Remark').val('');
+
+    }
+</script>
+

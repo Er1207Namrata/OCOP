@@ -1,0 +1,122 @@
+﻿@model OCOO.Models.STP_Billing
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<style>
+    #footer {
+        margin: 0px;
+    }
+
+    .login-register {
+        padding: 50px 0px 50px !important;
+    }
+</style>
+<head>
+    <link href="~/assets/css/login.css" rel="stylesheet">
+
+</head>
+<section id="wrapper">
+    <div class="login-register position-relative" style="background: url(../assets/images/background/login-register.jpg);">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1">
+                    <div class="clearfix bg-login">
+                        <div class="row">
+
+                            <div class="col-md-6 text-center bg-transparent d-none d-md-block d-lg-block d-xl-block">
+                                <ul class="leader">
+                                    <li>
+                                        <div class="photo" tabindex="0"><img src="~/assets/images/upcm.jpg" alt="UPCM" title="UPCM"></div>
+                                        <div class="content" tabindex="0">
+                                            <h4>Shri Yogi Adityanath</h4>
+                                            <p>
+                                                Honorable Chief Minister<br>
+                                                Uttar Pradesh
+                                            </p>
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <div class="photo" tabindex="0"><img src="~/assets/images/aksharma.jpg" alt="Urban Development Minister" title="Urban Development Minister"></div>
+                                        <div class="content" tabindex="0">
+                                            <h4>Shri Arvind Kumar Sharma</h4>
+                                            <p>
+                                                Urban Development Minister<br>
+                                                Uttar Pradesh
+                                            </p>
+                                        </div>
+                                    </li>
+
+                                    <li style="border: none;">
+                                        <div class="photo" tabindex="0"><img src="~/assets/images/amrit-abhijat.jpg" alt="Principal Secretary" title="Principal Secretary"> </div>
+                                        <div class="content" tabindex="0">
+                                            <h4>Shri Amrit Abhijat, IAS</h4>
+                                            <p>
+                                                Principal Secretary  Urban Development Department<br>
+                                                Uttar Pradesh
+                                            </p>
+                                        </div>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+                            <div class="col-md-6 bg-white" style="background: #f4f4f4 !important;">
+                                <h2 class="text-center">&nbsp;</h2>
+                                <h2 class="text-center p-1">Login</h2>
+                                <form method="post">
+
+                                    <div style="padding:20px 40px">
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <input asp-for="Email" class="form-control" type="text" placeholder="User Name">
+
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="LoginId" data-valmsg-replace="false" style="display:none">Invalid Login ID</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <input asp-for="Password" class="form-control" type="password" placeholder="Password">
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="Password" data-valmsg-replace="false" style="display:none">Invalid Login Password</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center mb-2">
+                                            <button class="btn btn-info btn-block text-uppercase waves-effect waves-light" id="btnLogin" onclick="return validatefunc()" name="btnLogin" type="submit" value="Log In">Login</button>
+
+                                        </div>
+                                        <span class="text-danger"> @TempData["LoginMessage"]</span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<script>
+
+
+    function validatefunc() {
+        debugger
+        if ($('#LoginId').val() == '') {
+            fShowToastalert('Please Enter LoginId');
+            $('#LoginId').focus();
+            return false;
+        }
+        if ($('#Password').val() == '') {
+            fShowToastalert('Please Enter Password');
+            $('#Password').focus();
+            return false;
+        }
+    }
+
+
+</script>
+

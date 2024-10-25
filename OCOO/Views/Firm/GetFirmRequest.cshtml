@@ -1,0 +1,93 @@
+﻿@model OCOO.Models.DailyCapacity
+@{
+    ViewData["Title"] = "STP Daily Capacity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Firm</h3>
+         
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a data-toggle="collapse" href="#-" class="btn btn-warning"><i class="fa fa-filter"></i></a></span>
+            <span class="float-right mr-2"><a data-toggle="collapse" href="#searchblock" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-info"><i class="fa fa-filter"></i></a></span>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="STCDailyCapacity" asp-controller="STC">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th style="min-width: 150px;">Date</th>
+                                    <th>Amount Of 72 MLD STP</th>
+                                    <th>Flow Capacity</th>
+                                    <th>Flow Actual Achived</th>
+                                    <th>Treated For Payment MLD</th>
+                                    <th>Fix Charge As Per CB</th>
+                                    <th>Fix Charge As Per Actual</th>
+                                    <th>Variable Charges As Per CB</th>
+                                    <th>Variable Charges As per Actual</th>
+                                    <th>BOD Reported Value</th>
+                                    <th>BOD 50</th>
+                                    <th>BOD LD</th>
+                                    <th>COD Reported Value</th>
+                                    <th>COD 15</th>
+                                    <th>COD LD</th>
+                                    <th>TSS Reported Value</th>
+                                    <th>TSS 25</th>
+                                    <th>TSS LD</th>
+                                    <th>FC Reported Value</th>
+                                    <th>FC 10</th>
+                                    <th>FC LD</th>
+                                    <th>After Deducted Para Amt</th>
+                                    <th>LD</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int sn = 1;
+                                    for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@sn</td>
+                                            <td>@Model.dtDetails.Rows[i]["EntryDate"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AmountOf72MLDStp"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["FlowCapacity"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["FlowActualAchived"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["TreatedForPaymentMLD"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["FixChargeAsPerCB"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["FixChargeAsPerActual"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["VariableChargesAsPerCB"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["VariableChargesAsperActual"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["BODReportedValue"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["BOD50"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["BODLD"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["CODReportedValue"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["COD15"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["CODLD"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["TSS25"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["TSSLD"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["FCReportedValue"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["FC10"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["FCLD"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["AfterDeductedParaAmt"].ToString()</td>
+                                            <td>@Model.dtDetails.Rows[i]["LD"].ToString()</td>
+                                        </tr>
+                                        sn++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

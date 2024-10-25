@@ -1,0 +1,228 @@
+﻿@model OCOO.Models.StpTree
+@{
+    ViewData["Title"] = "AdminStpGraph";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">STP Graph</h3>
+        </div>
+    </div>
+    <style>
+
+        .SewerNode {
+            background: #5d975d;
+            color: beige;
+            font-size: 9px;
+            width: 100px;
+            height: 50px;
+            transform: skew(20deg);
+            border: none;
+            font-weight: 200;
+        }
+
+        .DrainNode {
+            background: #7979b8;
+            color: #fcfcfc;
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 9px;
+            font-weight: 200;
+        }
+
+
+        #chart_div {
+            width: 100%;
+            height: 700px;
+            overflow: auto !important;
+        }
+
+        .MPSNode {
+            background: #f9ff00 !important;
+            color: black;
+            font-size: 9px;
+            font-weight: 200;
+            border-radius: 50%;
+            border: none;
+        }
+
+        table {
+            width: 10% !important;
+        }
+
+        .color-div {
+            width: 40px;
+            height: 40px;
+            border: 1px solid grey;
+            background: #f9ff00;
+        }
+
+        .color-div-1 {
+            width: 40px;
+            height: 40px;
+            border: 1px solid grey;
+            background: #5d975d;
+        }
+
+        .color-div-2 {
+            width: 40px;
+            height: 40px;
+            border: 1px solid grey;
+            background: #7979b8;
+        }
+        /*.myTable {
+    transform:rotate(270deg);
+}
+       .myTable  td {
+    transform:rotate(90deg);
+     width: 120px !important;
+     height: 40px !important;
+}
+   .myTable  tr {
+    margin:20px !important;
+}
+       .myTable> td {
+    transform:rotate(270deg);
+}
+
+
+ .myTable .google-visualization-orgchart-connrow-small{
+width: 100px !important;
+}*/
+
+.google-visualization-orgchart-node .google-visualization-orgchart-node-small{
+
+}
+
+.google-visualization-orgchart-node{
+    border: none !important;
+    padding:10px !important;
+     width: 20px !important;
+     height: 40px !important;
+}
+
+    </style>
+    <input type="hidden" asp-for="Fk_STPId" />
+    <div class="container-fluid">
+        <div class="card">
+            <div class="">
+                <div class="d-flex justify-content-start align-items-center p-3">
+                    <div class="color-div mr-2"></div>
+                    <span>MPS/SPS/IPS</span>
+                </div>
+                <div class="d-flex justify-content-start align-items-center p-3">
+                    <div class="color-div-1  mr-2"> </div>
+                    <span>Sewer Length</span>
+                </div>
+                <div class="d-flex justify-content-start align-items-center p-3">
+                    <div class="color-div-2 mr-2"></div>
+                    <span>Drain</span>
+                </div>
+            </div>
+            <div id="chart_div" class="myTable">
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+@*<script src="//cdn.amcharts.com/lib/5/index.js"></script>
+<script src="//cdn.amcharts.com/lib/5/hierarchy.js"></script>
+<script src="//cdn.amcharts.com/lib/5/themes/Animated.js"></script>*@
+
+<script>
+
+    google.charts.load('current', { packages: ["orgchart"] });
+    google.charts.setOnLoadCallback(function () {
+        debugger;
+        $.ajax({
+            url: '/Admin/AdminGetStpTree',
+            type: 'Post',
+            data: { Fk_STPId: $("#Fk_STPId").val() },
+            success: function (response) {
+                debugger
+                console.log(response);
+                if (response != null && Array.isArray(response.lstChild)) {
+                    // Create an object to store the hierarchical data
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('string', 'Name');
+                    data.addColumn('string', 'Manager');
+                    data.addColumn('string', 'ToolTip');
+
+                    response.lstChild.forEach(item => {
+                        data.addRows([
+                            // [item.name, item.parentName, '']
+                            [{ 'v': item.name, 'f': '<div ><b>' + item.name + '</b></div>' },
+                            item.parentName, 'MPS/SPS/IPS']// Add row for each item
+                        ]);
+                    });
+                    response.lstDrain.forEach(item => {
+                        data.addRows([
+                            // ['f': item.name, item.parentName, '']
+                            [{ 'v': item.dName, 'f': '<div ><b>' + item.name + '</b></div>' },
+                            item.parentName, 'Drain -' + item.name]// Add row for each item
+                        ]);
+                    });
+                    response.lstSeverLength.forEach(item => {
+                        data.addRows([
+                            //[item.name, item.parentName, '']
+                            [{ 'v': item.sName, 'f': '<div ><b>' + item.name + ' K.M.</b></div>' },
+                            item.parentName, 'Sewer length' + item.name + ' K.M.']
+                            // / Add row for each item
+                        ]);
+
+                    });
+
+                    // console.log(response.lstSeverLength)
+                    // For each orgchart box, provide the name, manager, and tooltip to show.
+
+                    // Create the chart.
+                    var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+                    chart.draw(data, {
+                        allowHtml: true,
+                        size: 'small',
+                        orientation: 'vertical',
+                        'style': 'background-color: "yellow"' // Set background color based on type
+
+                    });
+
+
+                    // Add CSS classes to nodes dynamically based on their type
+                    $('.google-visualization-orgchart-node').each(function () {
+                        var nodeType = $(this, '.google-visualization-orgchart-node').attr('title');
+                        debugger
+                        if (nodeType != undefined && nodeType != NaN && nodeType != "") {
+                            var ClassTitle = nodeType.substring(0, 3);
+                            if (ClassTitle === 'Dra') {
+                                debugger
+                                $(this, '.google-visualization-orgchart-node').addClass('DrainNode');
+
+                            } else if (ClassTitle === 'Sew') {
+                                $(this, '.google-visualization-orgchart-node').addClass('SewerNode');
+
+                            }
+                            else if (ClassTitle === 'MPS') {
+                                $(this, '.google-visualization-orgchart-node').addClass('MPSNode');
+
+                            }
+                        }
+                    });
+                }
+
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("td[title='Drain']").css({ "background-color": "yellow" });
+        $(".google-visualization-orgchart-node-small").css({ "background": "#f9ff00!important" });
+    });
+</script>
+

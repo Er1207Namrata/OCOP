@@ -1,0 +1,1190 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "BillApproval";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+
+    .table-responsive {
+        height: calc(100vh - 260px);
+        overflow: auto;
+    }
+
+    table thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    table {
+        border-collapse: unset !important;
+    }
+
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .bg-light-info {
+        background-color: #f5fbff;
+        border: 1px solid #b6e2ff;
+    }
+
+    .bg-light-primary {
+        background-color: #f1effd;
+        border: 1px solid #dbd5ff;
+    }
+
+    .bg-light-warning {
+        background-color: #fff8ec;
+        border: 1px solid #ffe2b0;
+    }
+
+    .p-b-20 .radius {
+        padding: 10px 10px 0px 10px !important
+    }
+
+    .disabledTextBoxes {
+        width: 80px !important;
+        border: none;
+        background: none !important;
+    }
+
+    .modal-header {
+        color: #fff !important;
+        background: #eb8c23 !important;
+    }
+
+    .modal-title {
+        color: #fff !important;
+    }
+
+    .click {
+        cursor: pointer !important;
+    }
+
+    #UpdateBill_BOCODTSSFC input {
+        max-height: 20px !important;
+        border-radius: 2px !important;
+        font-size: 12px !important;
+    }
+
+    #UpdateBill_BOCODTSSFC .modal-dialog, .modal-header {
+        border-radius: 0px !important;
+    }
+
+    .Active_row {
+        border: 1px solid #eb8c23 !important;
+        color: #fff !important;
+        background: #eb8c23 !important;
+    }
+
+        .Active_row td {
+            border: none !important;
+        }
+
+
+
+    .Edited_Row {
+        border: 1px solid #f0f0f0 !important;
+        color: #fff !important;
+        background: #70bb4d !important;
+    }
+
+        .Edited_Row td {
+            border: none !important;
+        }
+
+</style>
+<script src="~/app/ProccedBillProcess.js"></script>
+<div ng-controller="ProccedBillProcessController">
+    <div class="page-wrapper">
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor">Bill Approval</h3>
+            </div>
+            <div class="col-md-6 align-self-right">
+                <a href="javascript:history.back()" class="btn btn-sm btn-warning text-white float-right"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a> &nbsp;
+                <span class="float-right" style="margin-right:10px !important"><a data-toggle="collapse" href="#BillDetailArea" title="Search" role="button" aria-expanded="true" aria-controls="BillDetailArea" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Bill </a></span>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            @if (Model.DesignationId == 4)
+            {
+                <input type="hidden" name="BillId" id="BillId" value="@ViewBag.BillId" />
+                <div class="collapse" id="BillDetailArea">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table warning-bordered-table">
+                                        <tr>
+                                            <td colspan="6" class="text-center"><p class="font-weight-bold">{{BillDetails.headerText}}</p></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Firm Name</b></td>
+                                            <td>{{BillDetails.firmName}}</td>
+                                            <td><b> Bill No.</b></td>
+                                            <td>{{BillDetails.billNo}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Bill Date</b></td>
+                                            <td>{{BillDetails.billDate}}</td>
+                                            <td><b>Fuel Charges</b></td>
+                                            <td>{{BillDetails.fuelCharges}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><b>Net LD Charges</b></td>
+                                            <td>{{BillDetails.netLDCharges}}</td>
+                                            <td><b>Grand Total</b></td>
+                                            <td>{{BillDetails.grandtotal}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body p-3">
+                        @if (Model != null && Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                        {
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <h2 class="">Payment of {{BillDetails.zone}}- Zone    @*for the month of  @Model.dtDetails1.Rows[0]["MonthName"].ToString() 2023*@</h2>
+                                </div>
+                                <div class="col-md-2"><button data-toggle="modal" data-target="#Bill_Approval_Modal" class="btn btn-outline-success btn-xs" style="float:right"><i class="fa fa-check-circle" aria-hidden="true"></i> Verify </button></div>
+                            </div>
+                        }
+                        <div class="table-responsive" id="data-table">
+                            <table class="table table-striped table-bordered bill-table" cellspacing="0" cellpadding="0" border="0">
+                                <thead>
+                                    <tr>
+                                        <th>0</th>
+                                        <th>1</th>
+                                        <th>2</th>
+                                        <th>3</th>
+                                        <th>4</th>
+                                        <th>5</th>
+                                        <th>6</th>
+                                        <th>7</th>
+                                        <th>8</th>
+                                        <th>9</th>
+                                        <th>10</th>
+                                        <th>11</th>
+                                        <th>12</th>
+                                        <th>13</th>
+                                        <th>14</th>
+                                        <th>15</th>
+                                        <th>16</th>
+                                        <th>17</th>
+                                        <th>18</th>
+                                        <th>19</th>
+                                        <th>20</th>
+                                        <th>21</th>
+                                        <th>22</th>
+                                        <th>23</th>
+                                        <th>24</th>
+                                        <th>25</th>
+                                        <th>26</th>
+                                        <th>27</th>
+                                        <th>28</th>
+                                        <th>29</th>
+                                        <th>30</th>
+                                        <th>31</th>
+                                        <th>32</th>
+                                        <th>33</th>
+                                        <th>34</th>
+                                    </tr>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th colspan="4">Flow (MLD)</th>
+                                        <th colspan="3">Fix Charges (60%)</th>
+                                        <th colspan="15">Variable Cost (40%)</th>
+                                        @* <th colspan="12"></th>*@
+                                        <th colspan="4">Complaints</th>
+                                        <th colspan="4"></th>
+                                    </tr>
+                                    <tr>
+                                        <th rowspan="2">SL No</th>
+                                        <th rowspan="2">Edit</th>
+                                        <th rowspan="2">Date</th>
+                                        <th rowspan="2">STP</th>
+                                        <th rowspan="2">Amount Of STP</th>
+                                        <th rowspan="2">Capacity</th>
+                                        <th rowspan="2">Actual<br /> Achieved</th>
+                                        <th rowspan="2">Treated for<br /> &nbsp;Payment</th>
+                                        <th rowspan="2">Withheld Amount</th>
+                                        <th rowspan="2">As Per CB</th>
+                                        <th rowspan="2">As Per Actual</th>
+                                        <th rowspan="2">LD As Per CB</th>
+                                        <th rowspan="2">AS Per CB</th>
+                                        <th rowspan="2">As Per Actual</th>
+
+                                        <th style="text-align: center;" colspan="3">BOD</th>
+                                        <th style="text-align: center;" colspan="3">COD</th>
+                                        <th style="text-align: center;" colspan="3">TSS</th>
+                                        <th style="width: 227px; text-align: center;" colspan="3">FC</th>
+                                        <th rowspan="2">Withheld Amount</th>
+                                        <th rowspan="2">Received</th>
+                                        <th rowspan="2">Resolved</th>
+                                        <th rowspan="2">LD</th>
+                                        <th rowspan="2">Withheld Amount</th>
+                                        <th rowspan="2">Verified amount <br /> (15+18+21+24)</th>
+                                        <th rowspan="2">LD</th>
+                                        <th rowspan="2">Total Amount <br /> (9+31)</th>
+                                        <th rowspan="2">Testing Agency</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Reported Value</th>
+                                        <th>BOD (50%)</th>
+                                        <th>LD</th>
+                                        <th>Reported Value</th>
+                                        <th>COD (15%)</th>
+                                        <th>LD</th>
+                                        <th>Reported Value</th>
+                                        <th>TSS (25%)</th>
+                                        <th>LD</th>
+                                        <th>Reported Value</th>
+                                        <th>FC (10%)</th>
+                                        <th>LD</th>
+                                    </tr>
+                                </thead>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                                    {
+                                        <tbody>
+
+                                            @for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr id="@(i)_row" class="@(Model.dtDetails.Rows[i]["IsSame"].ToString() == "True" ? "measurementwarning" : "")">
+                                                    <td>
+                                                        @(i + 1)
+                                                        <div class="" style="display:none">
+                                                            <small class="@(i)_BODMessage">@Model.dtDetails.Rows[i]["BODMessage"].ToString()</small>
+                                                            <small class="@(i)_CODMessage">@Model.dtDetails.Rows[i]["CODMessage"].ToString()</small>
+                                                            <small class="@(i)_TSSMessage">@Model.dtDetails.Rows[i]["TSSMessage"].ToString()</small>
+                                                            <small class="@(i)_FCMessage">@Model.dtDetails.Rows[i]["FCMessage"].ToString()</small>
+                                                            <input type="hidden" class="@(i)_BODCODTSSFCWithheldAmount" value="@Model.dtDetails.Rows[i]["BODCODTSSFCWithheldAmount"].ToString()" />
+                                                            <input type="hidden" class="@(i)_BODCODTSSFCWithheldRemark" value="@Model.dtDetails.Rows[i]["BODCODTSSFCWithheldRemark"].ToString()" />
+                                                            <input type="hidden" class="@(i)_BODCODTSSFCWithheldAttachment" value="@Model.dtDetails.Rows[i]["BODCODTSSFCWithheldAttachment"].ToString()" />
+
+                                                            <input type="hidden" class="@(i)_ComplaintWithheldAmount" value="@Model.dtDetails.Rows[i]["ComplaintWithheldAmount"].ToString()" />
+                                                            <input type="hidden" class="@(i)_ComplaintWithheldRemark" value="@Model.dtDetails.Rows[i]["ComplaintWithheldRemark"].ToString()" />
+                                                            <input type="hidden" class="@(i)_ComplaintWithheldAttachment" value="@Model.dtDetails.Rows[i]["ComplaintWithheldAttachment"].ToString()" />
+
+                                                            <input type="hidden" class="@(i)_WaterDischargeWithheldAmount" value="@Model.dtDetails.Rows[i]["WaterDischargeWithheldAmount"].ToString()" />
+                                                            <input type="hidden" class="@(i)_WaterDischargeWithheldRemark" value="@Model.dtDetails.Rows[i]["WaterDischargeWithheldRemark"].ToString()" />
+                                                            <input type="hidden" class="@(i)_WaterDischargeWithheldAttachment" value="@Model.dtDetails.Rows[i]["WaterDischargeWithheldAttachment"].ToString()" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <i data-toggle="modal"
+                                                           data-target="@(Model.dtDetails.Rows[i]["FormName"].ToString() == "BODCODTSSFC" ? "#UpdateBill_BOCODTSSFC" : (Model.dtDetails.Rows[i]["FormName"].ToString() == "Complaint" ? "#UpdateBill_Complaint" : "#UpdateBill_WaterDischarge"))" class="fa fa-pencil text-danger click" onclick="HighlightCurrentRow('@i','@(i)_BODReportedValue','@Model.dtDetails.Rows[i]["BODReportedValue"].ToString()','@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_BillingId"].ToString())','@Model.dtDetails.Rows[0]["FormName"].ToString()')"></i>
+                                                    </td>
+                                                    <td>@Model.dtDetails.Rows[i]["Dates"].ToString()</td>
+                                                    <td class="nowrap">@Model.dtDetails.Rows[i]["StpName"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["AmountOfMLDSTP"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["Capacity"].ToString()</td>
+
+                                                    @if (@Model.dtDetails.Rows[i]["IsFlowUpdated"].ToString() == "Y")
+                                                    {
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFlowLD"])>0?"measurementcolor":"")">
+                                                            <span class="Waterdischarge">@Model.dtDetails.Rows[i]["Waterdischarge"].ToString()</span><br />
+                                                            <span class="badge badge-info">@Model.dtDetails.Rows[i]["FlowUpdatedDate"].ToString()</span><br />
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["FlowUpdatedBy"].ToString()</span>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFlowLD"])>0?"measurementcolor":"")"><span class="Waterdischarge ">@Model.dtDetails.Rows[i]["Waterdischarge"].ToString()</span></td>
+                                                    }
+                                                    <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFlowLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["Treated_for_Payement"].ToString()</td>
+                                                    <td><span> @Model.dtDetails.Rows[i]["WaterDischargeWithheldAmount"].ToString()</span></td>
+                                                    <td>@Model.dtDetails.Rows[i]["AsPerCBFixCharges_60"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["AsPerActual_FixCharges_60"].ToString()</td>
+
+                                                    <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFlowLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["FlowLDAmount"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["AsPerCBFixCharges_40"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["AsPerActual_FixCharges_40"].ToString()</td>
+
+
+                                                    @if (@Model.dtDetails.Rows[i]["IsBODUpdated"].ToString() == "Y")
+                                                    {
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString()  @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsBODLD"])>0?"measurementcolor":"")">
+                                                            <span>
+                                                                @Model.dtDetails.Rows[i]["BODReportedValue"].ToString()
+                                                            </span>
+                                                            <br />
+                                                            <span class="badge badge-info">@Model.dtDetails.Rows[i]["BODUpdatedDate"].ToString()</span><br />
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["BODUpdatedBy"].ToString()</span>
+                                                        </td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsBODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["BODAmount"].ToString()</td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsBODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["BODLDAmount"].ToString()</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsBODLD"])>0?"measurementcolor":"")">
+                                                            <span>
+                                                                @Model.dtDetails.Rows[i]["BODReportedValue"].ToString()
+                                                            </span>
+                                                        </td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsBODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["BODAmount"].ToString()</td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsBODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["BODLDAmount"].ToString()</td>
+                                                    }
+                                                    @if (@Model.dtDetails.Rows[i]["IsCODUpdated"].ToString() == "Y")
+                                                    {
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsCODLD"])>0?"measurementcolor":"")">
+                                                            <span>
+                                                                @Model.dtDetails.Rows[i]["CODReportedValue"].ToString()
+                                                            </span>
+                                                            <br />
+                                                            <span class="badge badge-info">@Model.dtDetails.Rows[i]["CODUpdatedDate"].ToString()</span><br />
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["CODUpdatedBy"].ToString()</span>
+                                                        </td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsCODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["CODAmount"].ToString()</td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsCODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["CODLDAmount"].ToString()</td>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsCODLD"])>0?"measurementcolor":"")">
+                                                            <span>
+                                                                @Model.dtDetails.Rows[i]["CODReportedValue"].ToString()
+                                                            </span>
+                                                        </td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsCODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["CODAmount"].ToString()</td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsCODLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["CODLDAmount"].ToString()</td>
+                                                    }
+                                                    @if (@Model.dtDetails.Rows[i]["IsTSSUpdated"].ToString() == "Y")
+                                                    {
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsTSSLD"])>0?"measurementcolor":"")">
+                                                            <span>
+                                                                @Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()
+                                                            </span>
+                                                            <br />
+                                                            <span class="badge badge-info">@Model.dtDetails.Rows[i]["TSSUpdatedDate"].ToString()</span><br />
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["TSSUpdatedBy"].ToString()</span>
+                                                        </td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsTSSLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["TSSAmount"].ToString()</td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsTSSLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["TSSLDAmount"].ToString()</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsTSSLD"])>0?"measurementcolor":"")">
+                                                            <span>  @Model.dtDetails.Rows[i]["TSSReportedValue"].ToString()</span>
+                                                        </td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsTSSLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["TSSAmount"].ToString()</td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsTSSLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["TSSLDAmount"].ToString()</td>
+                                                    }
+
+                                                    @if (@Model.dtDetails.Rows[i]["IsFCUpdated"].ToString() == "Y")
+                                                    {
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFCLD"])>0?"measurementcolor":"")">
+                                                            <span>@Model.dtDetails.Rows[i]["FCReportedValue"].ToString()</span><br />
+                                                            <span class="badge badge-info">@Model.dtDetails.Rows[i]["FCUpdatedDate"].ToString()</span><br />
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["FCUpdatedBy"].ToString()</span>
+                                                        </td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFCLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["FCAmount"].ToString()</td>
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString() @(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFCLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["FCLDAmount"].ToString()</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFCLD"])>0?"measurementcolor":"")">
+                                                            <span> @Model.dtDetails.Rows[i]["FCReportedValue"].ToString()</span>
+                                                        </td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFCLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["FCAmount"].ToString()</td>
+                                                        <td class="@(Convert.ToDecimal(Model.dtDetails.Rows[i]["IsFCLD"])>0?"measurementcolor":"")">@Model.dtDetails.Rows[i]["FCLDAmount"].ToString()</td>
+                                                    }
+                                                    <td><span>@Model.dtDetails.Rows[i]["BODCODTSSFCWithheldAmount"].ToString()</span></td>
+                                                    <td>@Model.dtDetails.Rows[i]["ComplaintReceived"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["ComplaintResolved"].ToString()</td>
+                                                    @if (@Model.dtDetails.Rows[i]["IsCRUpdated"].ToString() == "Y")
+                                                    {
+                                                        <td class="@Model.dtDetails.Rows[i]["UpdatedColor"].ToString()">
+                                                            <span>@Model.dtDetails.Rows[i]["ComplaintLDAmount"].ToString()</span><br />
+                                                            <span class="badge badge-info">@Model.dtDetails.Rows[i]["CRUpdatedDate"].ToString()</span><br />
+                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["CRUpdatedBy"].ToString()</span>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><span>@Model.dtDetails.Rows[i]["ComplaintLDAmount"].ToString()</span></td>
+                                                    }
+                                                    <td><span>@Model.dtDetails.Rows[i]["ComplaintWithheldAmount"].ToString()</span></td>
+                                                    <td>@Model.dtDetails.Rows[i]["TotalVerifiedAmount"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["TotalLDAmount"].ToString()</td>
+                                                    <td>@Model.dtDetails.Rows[i]["TotalBillAmount"].ToString()</td>
+                                                    <td class="text-center">
+                                                        <a href="#" onclick="return fViewDetails(@Model.dtDetails.Rows[i]["Pk_BillingId"].ToString())">
+                                                            <span class="badge badge-warning test-a">
+                                                                @Model.dtDetails.Rows[i]["TestingAgency"].ToString()
+                                                                <span class="badge-2 @Model.dtDetails.Rows[i]["TestingCountColor"].ToString()">@Model.dtDetails.Rows[i]["TestingCount"].ToString()</span>
+                                                            </span>
+
+
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="ReportFooter" style="background-color:#d8d8d8;font-weight:bold">
+                                                <td colspan="31" class="text-right">Total</td>
+                                                <td>@OCOO.Utils.GetSum(Model.dtDetails, "TotalVerifiedAmount")</td>
+                                                <td>@OCOO.Utils.GetSum(Model.dtDetails, "TotalLDAmount")</td>
+                                                <td>@OCOO.Utils.GetSum(Model.dtDetails, "TotalBillAmount")</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="29" class="alert alert-warning text-center">No Record Found</td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card p-2">
+                    <h5 class="text-danger text-center"><i class="fa fa-ban" aria-hidden="true"></i> Sorry, you are not allowed to access this page</h5>
+                </div>
+            }
+        </div>
+    </div>
+    <input type="hidden" id="UpdateBill_BOCODTSSFC_Row_id" />
+    <input type="hidden" id="fieldid_hidden" />
+    @if (Model.dtDetails != null && Model.dtDetails.Rows[0]["FormName"].ToString() == "BODCODTSSFC")
+    {
+        <form action="#" method="post">
+            <div id="UpdateBill_BOCODTSSFC" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog modal-xs">
+                    <div class="modal-content">
+                        <div class="modal-header modal-header">
+                            <h4 class="modal-title"><span class="fa fa-pencil-square-o"></span> Edit Bill</h4>
+                            <button type="button" class="close float-right" data-dismiss="modal">&times;</button>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <p class="text-danger">
+                                        <span id="BODMessage">@Convert.ToString(Model.dtDetails.Rows[0]["BODMessage"])</span>
+                                        <br />
+                                        <span id="CODMessage">@Convert.ToString(Model.dtDetails.Rows[0]["CODMessage"])</span>
+                                        <br />
+                                        <span id="TSSMessage">@Convert.ToString(Model.dtDetails.Rows[0]["TSSMessage"])</span>
+                                        <br />
+                                        <span id="FCMessage">@Convert.ToString(Model.dtDetails.Rows[0]["FCMessage"])</span>
+                                        <br />
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>BOD<small class="text-danger">*</small></label>
+                                        <input type="hidden" name="BOD_TextBox_hidden" id="BOD_TextBox_hidden" value="0" />
+                                        <input type="number" id="BOD_TextBox" name="BOD" class="form-control" placeholder="BOD" min="0" max="100" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>COD<small class="text-danger">*</small></label>
+                                        <input type="hidden" name="COD_TextBox_hidden" id="COD_TextBox_hidden" value="0" />
+                                        <input type="number" id="COD_TextBox" name="COD" class="form-control" placeholder="COD" min="0" max="100" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>TSS<small class="text-danger">*</small></label>
+                                        <input type="hidden" name="TSS_TextBox_hidden" id="TSS_TextBox_hidden" value="0" />
+                                        <input type="number" id="TSS_TextBox" name="TSS" class="form-control" placeholder="TSS" min="0" max="100" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>FC<small class="text-danger">*</small></label>
+                                        <input type="hidden" name="FC_TextBox_hidden" id="FC_TextBox_hidden" value="0" />
+                                        <input type="number" id="FC_TextBox" name="FC" class="form-control" placeholder="FC" min="0" max="100" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Withheld amount</label>
+                                        <input type="number" id="WithheldAmount" name="WithheldAmount" class="form-control" placeholder="Withheld Amount" min="0" max="999999999" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Attachment<small class="text-danger" id="IsRequried">*</small> </label>
+
+                                        <input type="file" id="WithheldAttachment" name="WithheldAttachment" class="form-control" placeholder="WithheldAttachment" disabled onchange="return ValidateFiles(this)" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <a href="" target="_blank" id="BODCODimagehref" style="float:right">
+                                        <img src="#" id="my_image" style="width:250px;height:150px;display:none; float:right" />
+                                    </a>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Remark<small class="text-danger" id="IsRequried">*</small></label>
+                                        <textarea id="WithheldRemark" name="WithheldRemark" class="form-control" placeholder="Withheld remark" rows="3" disabled></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-danger  btn-xs" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+                            <button type="button" class="btn btn-outline-success btn-xs" onclick="UpdateBill_BOCODTSSFC()"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+    @if (Model.dtDetails != null && Model.dtDetails.Rows[0]["FormName"].ToString() == "Complaint")
+    {
+        <form action="#" method="post">
+            <div id="UpdateBill_Complaint" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header modal-header">
+                            <h4 class="modal-title"><span class="fa fa-pencil-square-o"></span> Edit Bill</h4>
+                            <button type="button" class="close float-right" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Complaint Received</label>
+                                        <input type="hidden" name="ReceivedComplaint_TextBox_hidden" id="ReceivedComplaint_TextBox_hidden" value="0" />
+                                        <input type="number" id="ReceivedComplaint_TextBox" name="ReceivedComplaint" class="form-control" placeholder="Received complaint" min="0" max="100000" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Complaint Resolved</label>
+                                        <input type="hidden" name="ResolvedComplaint_TextBox_hidden" id="ResolvedComplaint_TextBox_hidden" value="0" />
+                                        <input type="number" id="ResolvedComplaint_TextBox" name="ResolvedComplaint" class="form-control" placeholder="Resolved complaint" min="0" max="100000" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>No of complaint on which LD is imposed.</label>
+                                        <input type="number" id="ComplaintLD_TextBox" name="ComplaintLD" class="form-control" value="0" placeholder="Complaint LD" min="0" max="1000000" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>LD Amount</label>
+
+                                        <input type="hidden" name="ComplaintLD_TextBox_hidden" id="ComplaintLD_TextBox_hidden" value="0" />
+                                        <input type="number" id="LDAmount_TextBox" name="LDAmount_TextBox" class="form-control" placeholder="LD amount" min="0" max="1000000" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Withheld amount</label>
+                                        <input type="number" id="WithheldAmount" name="WithheldAmount" class="form-control" placeholder="Withheld Amount" min="0" max="999999999" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Attachment<small class="text-danger" id="IsRequried">*</small> </label>
+                                        <input type="file" id="WithheldAttachment" name="WithheldAttachment" class="form-control" placeholder="WithheldAttachment" disabled onchange="return ValidateFiles(this)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <a href="" target="_blank" id="BODCODimagehref" style="float:right">
+                                        <img src="#" id="my_image" style="width:250px;height:150px;display:none; float:right" />
+                                    </a>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Remark<small class="text-danger" id="IsRequried">*</small></label>
+                                        <textarea id="WithheldRemark" name="WithheldRemark" class="form-control" placeholder="Withheld remark" rows="3" disabled></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-danger  btn-xs" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+                            <button type="button" class="btn btn-outline-success btn-xs" onclick="UpdateBill_Complaint()"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+    @if (Model.dtDetails != null && Model.dtDetails.Rows[0]["FormName"].ToString() == "WaterDischarge")
+    {
+        <form action="#" method="post">
+            <div id="UpdateBill_WaterDischarge" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header modal-header">
+                            <h4 class="modal-title"><span class="fa fa-pencil-square-o"></span> Edit Bill</h4>
+                            <button type="button" class="close float-right" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Actual achieved</label>
+                                        <input type="hidden" name="ActualAchieved_TextBox_hidden" id="ActualAchieved_TextBox_hidden" value="0" />
+                                        <input type="number" id="ActualAchieved_TextBox" name="ActualAchieved_TextBox" class="form-control" placeholder="Actual achieved" min="0" max="100000000" />
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Withheld amount</label>
+                                        <input type="number" id="WithheldAmount" name="WithheldAmount" class="form-control" placeholder="Withheld Amount" min="0" max="999999999" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Attachment<small class="text-danger" id="IsRequried">*</small> </label>
+                                        <input type="file" id="WithheldAttachment" name="WithheldAttachment" class="form-control" placeholder="WithheldAttachment" disabled onchange="return ValidateFiles(this)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <a href="" target="_blank" id="BODCODimagehref" style="float:right">
+                                        <img src="#" id="my_image" style="width:250px;height:150px;display:none; float:right" />
+                                    </a>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Remark<small class="text-danger" id="IsRequried">*</small></label>
+                                        <textarea id="WithheldRemark" name="WithheldRemark" class="form-control" placeholder="Withheld remark" rows="3" disabled></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-danger  btn-xs" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+                            <button type="button" class="btn btn-outline-success btn-xs" onclick="UpdateBill_WaterDischarge()"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+
+    <form action="/Bill/JEBillSTPWiseApproval" method="post" name="BillApprovalForm" id="BillApprovalForm" enctype="multipart/form-data">
+        <div id="Bill_Approval_Modal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+            @Html.AntiForgeryToken()
+            <div class="modal-dialog modal-xs">
+                <div class="modal-content">
+                    <div class="modal-header modal-header">
+                        <h4 class="modal-title"><span class="fa fa-check-circle"></span> Verify Bill</h4>
+                        <button type="button" class="close float-right" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mt-2">
+                            <input type="hidden" name="Bill_Id" id="Bill_Id" value="@ViewBag.BillId" />
+                            <input type="hidden" name="STPId" id="STPId" value="@ViewBag.STPId" />
+                            <input type="hidden" id="fieldid_hidden" />
+                            @*   <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Attachment</label>
+                            <input type="file" id="Attachment" name="Attachment" class="form-control" placeholder="Attach your file" onchange="return ValidateFiles(this)" />
+                            </div>
+                            </div>
+                            <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Remark<small class="text-danger">*</small></label>
+                            <textarea class="form-control" name="Remark" id="Remark" placeholder="Enter Remark."></textarea>
+                            </div>
+                            </div> *@
+
+                            <div class="col-md-12">
+                                <input type="checkbox" id="md_checkbox_34" class="filled-in chk-col-amber" />
+                                <label style="font-size:12px;" for="md_checkbox_34">It is hereby declared that the details mentioned here/above are true and correct.</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger  btn-xs" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+                        <button type="button" class="btn btn-outline-success btn-xs" onclick="ValiddateJEBillCApproval()"><i class="fa fa-save"></i> Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    @{
+        Html.RenderPartial("_GetTestingAgency");
+    }
+</div>
+<script src="~/script/showtestingagency.js"></script>
+<script src="~/script/year.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#UpdateBill_BOCODTSSFC').on('hidden.bs.modal', function () {
+            CloseModelPopup();
+        });
+        $('#UpdateBill_Complaint').on('hidden.bs.modal', function () {
+            CloseModelPopup();
+        });
+
+        $('#UpdateBill_WaterDischarge').on('hidden.bs.modal', function () {
+            CloseModelPopup();
+        });
+
+        $("#WithheldAmount").on('blur keypress keyup', function () {
+            if ($(this).val() > 0) {
+                $("#WithheldAttachment").prop("disabled", false);
+                $("#WithheldRemark").prop("disabled", false);
+            }
+            else {
+                $("#WithheldAttachment").prop("disabled", true);
+                $("#WithheldRemark").prop("disabled", true);
+            }
+        });
+
+    });
+    function EditTextbox(i, id, value) {
+        $('#' + id).removeClass('disabledTextBoxes');
+        $('#' + id).addClass('form-control');
+        $('#' + id).removeAttr('readonly');
+    }
+    function HighlightCurrentRow(i, id, value, fieldid, formName) {
+        debugger
+        $($('#' + i + '_row')).removeClass('Edited_Row');
+        $('#' + i + '_row').addClass('Active_row');
+        if (formName == 'BODCODTSSFC') {
+            var BOD = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(14) span:first-child').text());
+            var COD = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(17) span:first-child').text());
+            var TSS = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(20) span:first-child').text());
+            var FC = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(23) span:first-child').text());
+            var WithHeldAmount = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(26) span:first-child').text());
+            $("#BOD_TextBox").val(BOD);
+            $("#COD_TextBox").val(COD);
+            $("#TSS_TextBox").val(TSS);
+            $("#FC_TextBox").val(FC);
+
+            if (WithHeldAmount > 0) {
+                $("#WithheldAttachment").prop("disabled", false);
+                $("#WithheldRemark").prop("disabled", false);
+            }
+
+            $("#WithheldAmount").val(WithHeldAmount);
+            $("#WithheldRemark").val($('.' + i + "_BODCODTSSFCWithheldRemark").val());
+            if ($('.' + i + "_BODCODTSSFCWithheldAttachment").val() != "" && $('.' + i + "_BODCODTSSFCWithheldAttachment").val() != undefined) {
+                $("#my_image").attr("src", $('.' + i + "_BODCODTSSFCWithheldAttachment").val());
+                $("#BODCODimagehref").attr("href", $('.' + i + "_BODCODTSSFCWithheldAttachment").val());
+                $("#my_image").show();
+            }
+            else {
+                $("#my_image").hide();
+            }
+
+
+            $("#BOD_TextBox_hidden").val(BOD);
+            $("#COD_TextBox_hidden").val(COD);
+            $("#TSS_TextBox_hidden").val(TSS);
+            $("#FC_TextBox_hidden").val(FC);
+
+            $("#BODMessage").text($('.' + i + '_BODMessage').text());
+            $("#CODMessage").text($('.' + i + '_CODMessage').text());
+            $("#TSSMessage").text($('.' + i + '_TSSMessage').text());
+            $("#FCMessage").text($('.' + i + '_FCMessage').text());
+        }
+        else if (formName == 'Complaint') {
+            var ReceivedComplaint = parseInt($('.bill-table tbody tr:eq(' + i + ') td:eq(27)').text());
+            var ResolvedComplaint = parseInt($('.bill-table tbody tr:eq(' + i + ') td:eq(28)').text());
+            var ComplaintLD = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(29) span:first-child').text());
+            $("#ReceivedComplaint_TextBox").val(ReceivedComplaint);
+            $("#ResolvedComplaint_TextBox").val(ResolvedComplaint);
+            $("#LDAmount_TextBox").val(ComplaintLD);
+            $("#ReceivedComplaint_TextBox_hidden").val(ReceivedComplaint);
+            $("#ResolvedComplaint_TextBox_hidden").val(ResolvedComplaint);
+            $("#ComplaintLD_TextBox_hidden").val(ComplaintLD);
+
+            var WithHeldAmount = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(30) span:first-child').text());
+            if (WithHeldAmount > 0) {
+                $("#WithheldAttachment").prop("disabled", false);
+                $("#WithheldRemark").prop("disabled", false);
+            }
+
+            $("#WithheldAmount").val(WithHeldAmount);
+            $("#WithheldRemark").val($('.' + i + "_ComplaintWithheldRemark").val());
+            if ($('.' + i + "_ComplaintWithheldAttachment").val() != "" && $('.' + i + "_ComplaintWithheldAttachment").val() != undefined) {
+                $("#my_image").attr("src", $('.' + i + "_ComplaintWithheldAttachment").val());
+                $("#BODCODimagehref").attr("href", $('.' + i + "_ComplaintWithheldAttachment").val());
+                $("#my_image").show();
+            }
+            else {
+                $("#my_image").hide();
+            }
+        }
+        else if (formName == 'WaterDischarge') {
+            debugger
+            var ActualAchieved = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(6) span:first-child').text());
+            $("#ActualAchieved_TextBox").val(ActualAchieved);
+            $("#ActualAchieved_TextBox_hidden").val(ActualAchieved);
+
+            var WithHeldAmount = parseFloat($('.bill-table tbody tr:eq(' + i + ') td:eq(8) span:first-child').text());
+
+            if (WithHeldAmount > 0) {
+                $("#WithheldAttachment").prop("disabled", false);
+                $("#WithheldRemark").prop("disabled", false);
+            }
+
+            $("#WithheldAmount").val(WithHeldAmount);
+            $("#WithheldRemark").val($('.' + i + "_WaterDischargeWithheldRemark").val());
+            if ($('.' + i + "_WaterDischargeWithheldAttachment").val() != "" && $('.' + i + "_WaterDischargeWithheldAttachment").val() != undefined) {
+                $("#my_image").attr("src", $('.' + i + "_WaterDischargeWithheldAttachment").val());
+                $("#BODCODimagehref").attr("href", $('.' + i + "_WaterDischargeWithheldAttachment").val());
+                $("#my_image").show();
+            }
+            else {
+                $("#my_image").hide();
+            }
+        }
+        $("#UpdateBill_BOCODTSSFC_Row_id").val('#' + i + '_row');
+        $("#fieldid_hidden").val(fieldid);
+    }
+    function CloseModelPopup() {
+        $($("#UpdateBill_BOCODTSSFC_Row_id").val()).removeClass('Active_row');
+    }
+    function UpdateBill_BOCODTSSFC() {
+
+        if (parseFloat($("#BOD_TextBox").val()) < 0 || parseFloat($("#COD_TextBox").val()) < 0 || parseFloat($("#TSS_TextBox").val()) < 0 || parseFloat($("#FC_TextBox").val()) < 0) {
+            fShowToastalert('All fields are required. Please ensure that you have provided value for each required field');
+            return false;
+        }
+
+        var WithheldAmount = $("#WithheldAmount").val();
+        var WithheldAttachment = $("#WithheldAttachment").val();
+        var WithheldRemark = $("#WithheldRemark").val();
+        var fileInput = $("#WithheldAttachment")[0];
+        var WithheldAttachmentt = $("#WithheldAttachment")[0].files[0];
+
+        let existingFile = $("#BODCODimagehref").attr("href");
+        debugger
+        if (WithheldAmount > 0) {
+            if ((WithheldRemark.trim() === "") || ((existingFile == '' || existingFile == undefined) && (WithheldAttachmentt == undefined || WithheldAttachment.trim() === ""))) {
+                alert("Withheld attachment and remark are required.");
+                return false;
+            }
+            var validExtensions = ["pdf", "jpg", "jpeg", "png", "gif"];
+            var fileExtension = fileInput.value.split('.').pop().toLowerCase();
+            if ($.inArray(fileExtension, validExtensions) === -1 && (existingFile == '' || existingFile == undefined)) {
+                alert("File should be PDF or image (JPG, JPEG, PNG, GIF).");
+                return false;
+            }
+
+
+            if (existingFile == '' && existingFile == undefined && fileInput.files[0] != undefined && fileInput.files[0] != null) {
+                var fileSize = fileInput.files[0].size;
+                var maxSize = 1 * 1024 * 1024;
+                if (fileSize > maxSize && (existingFile == '' || existingFile == undefined)) {
+                    alert("File size should be less than 1 MB.");
+                    return false;
+                }
+            }
+
+
+        }
+
+        var IsBODChanged = parseFloat($("#BOD_TextBox").val()) == parseFloat($("#BOD_TextBox_hidden").val()) ? false : true;
+        var IsCODChanged = parseFloat($("#COD_TextBox").val()) == parseFloat($("#COD_TextBox_hidden").val()) ? false : true;
+        var IsTSSChanged = parseFloat($("#TSS_TextBox").val()) == parseFloat($("#TSS_TextBox_hidden").val()) ? false : true;
+        var IsFCChanged = parseFloat($("#FC_TextBox").val()) == parseFloat($("#FC_TextBox_hidden").val()) ? false : true;
+        var fieldid_hidden = $("#fieldid_hidden").val();
+        var ExistingBODValue = parseFloat($("#BOD_TextBox_hidden").val() == "" ? 0 : $("#BOD_TextBox_hidden").val());
+        var ExistingCODValue = parseFloat($("#COD_TextBox_hidden").val() == "" ? 0 : $("#COD_TextBox_hidden").val());
+        var ExistingTSSValue = parseFloat($("#TSS_TextBox_hidden").val() == "" ? 0 : $("#TSS_TextBox_hidden").val());
+        var ExistingFCValue = parseFloat($("#FC_TextBox_hidden").val() == "" ? 0 : $("#FC_TextBox_hidden").val());
+        var BODValue = parseFloat($("#BOD_TextBox").val() == "" ? 0 : $("#BOD_TextBox").val());
+        var CODValue = parseFloat($("#COD_TextBox").val() == "" ? 0 : $("#COD_TextBox").val());
+        var TSSValue = parseFloat($("#TSS_TextBox").val() == "" ? 0 : $("#TSS_TextBox").val());
+        FCValue = parseFloat($("#FC_TextBox").val() == "" ? 0 : $("#FC_TextBox").val());
+        debugger;
+        // if (IsBODChanged || IsCODChanged || IsTSSChanged || IsFCChanged) { Comented by Piyush asked by dubey sir on 18/03/2024
+        var updateBillData = new FormData();
+        updateBillData.append("IsBODChanged", IsBODChanged);
+        updateBillData.append("IsCODChanged", IsCODChanged);
+        updateBillData.append("IsTSSChanged", IsTSSChanged);
+        updateBillData.append("IsFCChanged", IsFCChanged);
+        updateBillData.append("fieldid_hidden", fieldid_hidden);
+        updateBillData.append("ExistingBODValue", ExistingBODValue);
+        updateBillData.append("ExistingCODValue", ExistingCODValue);
+        updateBillData.append("ExistingTSSValue", ExistingTSSValue);
+        updateBillData.append("ExistingFCValue", ExistingFCValue);
+        updateBillData.append("BODValue", BODValue);
+        updateBillData.append("CODValue", CODValue);
+        updateBillData.append("TSSValue", TSSValue);
+        updateBillData.append("FCValue", FCValue);
+        updateBillData.append("WithheldAmount", WithheldAmount);
+        updateBillData.append("WithheldRemark", WithheldRemark);
+        updateBillData.append("WithheldAttachment", WithheldAttachmentt == undefined ? "" : WithheldAttachmentt);
+
+        $.ajax({
+            url: '/Bill/UpdateBillBOCODTSSFC',
+            data: updateBillData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (response) {
+                if (response.status) {
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val()).removeClass('Active_row');
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val()).addClass('Edited_Row');
+                    $("#UpdateBill_BOCODTSSFC").modal("hide");
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val() + ' td:eq(14) span:first-child').text(parseFloat($("#BOD_TextBox").val() == "" ? 0 : $("#BOD_TextBox").val()));
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val() + ' td:eq(17) span:first-child').text(parseFloat($("#COD_TextBox").val() == "" ? 0 : $("#COD_TextBox").val()));
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val() + ' td:eq(20) span:first-child').text(parseFloat($("#TSS_TextBox").val() == "" ? 0 : $("#TSS_TextBox").val()));
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val() + ' td:eq(23) span:first-child').text(parseFloat($("#FC_TextBox").val() == "" ? 0 : $("#FC_TextBox").val()));
+                    fShowToast(response.message);
+                    location.reload();
+                }
+                else {
+                    fShowToasterror(response.message);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+        $("#UpdateBill_BOCODTSSFC").modal("hide");
+        // }
+    }
+
+    function UpdateBill_Complaint() {
+        if (parseInt($("#ReceivedComplaint_TextBox").val()) < 0 || parseInt($("#ResolvedComplaint_TextBox").val()) < 0) {
+            fShowToastalert('All fields are required. Please ensure that you have provided value for each required field');
+            return false;
+        }
+
+        var WithheldAmount = $("#WithheldAmount").val();
+        var WithheldAttachment = $("#WithheldAttachment").val();
+        var WithheldRemark = $("#WithheldRemark").val();
+        var fileInput = $("#WithheldAttachment")[0];
+        var WithheldAttachmentt = $("#WithheldAttachment")[0].files[0];
+
+        let existingFile = $("#BODCODimagehref").attr("href");
+        if (WithheldAmount > 0) {
+            if ((WithheldRemark.trim() === "") || ((existingFile == '' || existingFile == undefined) && (WithheldAttachmentt == undefined || WithheldAttachment.trim() === ""))) {
+                alert("Withheld attachment and remark are required.");
+                return false;
+            }
+            var validExtensions = ["pdf", "jpg", "jpeg", "png", "gif"];
+            var fileExtension = fileInput.value.split('.').pop().toLowerCase();
+            if ($.inArray(fileExtension, validExtensions) === -1 && (existingFile == '' || existingFile == undefined)) {
+                alert("File should be PDF or image (JPG, JPEG, PNG, GIF).");
+                return false;
+            }
+            if (existingFile == '' && existingFile == undefined && fileInput.files[0] != undefined && fileInput.files[0] != null) {
+                var fileSize = fileInput.files[0].size;
+                var maxSize = 1 * 1024 * 1024;
+                if (fileSize > maxSize && (existingFile == '' || existingFile == undefined)) {
+                    alert("File size should be less than 1 MB.");
+                    return false;
+                }
+            }
+        }
+
+        var IsReceivedComplaintChanged = parseInt($("#ReceivedComplaint_TextBox").val()) == parseInt($("#ReceivedComplaint_TextBox_hidden").val()) ? false : true;
+        var IsResolvedComplaintChanged = parseInt($("#ResolvedComplaint_TextBox").val()) == parseInt($("#ResolvedComplaint_TextBox_hidden").val()) ? false : true;
+        var fieldid_hidden = $("#fieldid_hidden").val();
+        var ExistingReceivedComplaintValue = parseInt($("#ReceivedComplaint_TextBox_hidden").val() == "" ? 0 : $("#ReceivedComplaint_TextBox_hidden").val());
+        var ExistingResolvedComplaintValue = parseInt($("#ResolvedComplaint_TextBox_hidden").val() == "" ? 0 : $("#ResolvedComplaint_TextBox_hidden").val());
+        var ReceivedComplaint = parseInt($("#ReceivedComplaint_TextBox").val() == "" ? 0 : $("#ReceivedComplaint_TextBox").val());
+        var ResolvedComplaint = parseInt($("#ResolvedComplaint_TextBox").val() == "" ? 0 : $("#ResolvedComplaint_TextBox").val());
+        var ComplaintLD = parseInt($("#ComplaintLD_TextBox").val() == "" ? 0 : $("#ComplaintLD_TextBox").val());
+        var LDAmount = parseFloat($("#LDAmount_TextBox").val() == "" ? 0 : $("#LDAmount_TextBox").val());
+        //if (IsReceivedComplaintChanged || IsResolvedComplaintChanged || 1 == 1) { Comented by Piyush asked by dubey sir on 18/03/2024
+        var updateBillData = new FormData();
+        updateBillData.append("IsReceivedComplaintChanged", IsReceivedComplaintChanged);
+        updateBillData.append("IsResolvedComplaintChanged", IsResolvedComplaintChanged);
+        updateBillData.append("fieldid_hidden", fieldid_hidden);
+        updateBillData.append("ExistingReceivedComplaintValue", ExistingReceivedComplaintValue);
+        updateBillData.append("ExistingResolvedComplaintValue", ExistingResolvedComplaintValue);
+        updateBillData.append("ReceivedComplaint", ReceivedComplaint);
+        updateBillData.append("ResolvedComplaint", ResolvedComplaint);
+        updateBillData.append("ComplaintLD", ComplaintLD);
+        updateBillData.append("LDAmount", LDAmount);
+        updateBillData.append("WithheldAmount", WithheldAmount);
+        updateBillData.append("WithheldRemark", WithheldRemark);
+        updateBillData.append("WithheldAttachment", WithheldAttachmentt == undefined ? "" : WithheldAttachmentt);
+        $.ajax({
+            url: '/Bill/UpdateBillComplaint',
+            data: updateBillData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (response) {
+                if (response.status) {
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val()).removeClass('Active_row');
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val()).addClass('Edited_Row');
+                    $("#UpdateBill_Complaint").modal("hide");
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val() + ' td:eq(29) span:first-child').text(parseFloat($("#LDAmount_TextBox").val() == "" ? 0 : $("#LDAmount_TextBox").val()));
+                    fShowToast(response.message);
+                    location.reload();
+                }
+                else {
+                    fShowToasterror(response.message);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+        $("#UpdateBill_Complaint").modal("hide");
+        // }
+    }
+
+    function UpdateBill_WaterDischarge() {
+        debugger;
+        var IsActualAchievedChanged = parseFloat($("#ActualAchieved_TextBox").val()) == parseFloat($("#ActualAchieved_TextBox_hidden").val()) ? false : true;
+        var fieldid_hidden = $("#fieldid_hidden").val();
+        var ExistingActualAchievedValue = parseFloat($("#ActualAchieved_TextBox_hidden").val() == "" ? 0 : $("#ActualAchieved_TextBox_hidden").val());
+        var ActualAchieved = parseFloat($("#ActualAchieved_TextBox").val() == "" ? 0 : $("#ActualAchieved_TextBox").val());
+
+        var WithheldAmount = $("#WithheldAmount").val();
+        var WithheldAttachment = $("#WithheldAttachment").val();
+        var WithheldRemark = $("#WithheldRemark").val();
+        var fileInput = $("#WithheldAttachment")[0];
+        var WithheldAttachmentt = $("#WithheldAttachment")[0].files[0]
+
+        let existingFile = $("#BODCODimagehref").attr("href");
+        if (WithheldAmount > 0) {
+            debugger
+            if ((WithheldRemark.trim() === "") || ((existingFile == '' || existingFile == undefined) && (WithheldAttachmentt == undefined || WithheldAttachment.trim() === ""))) {
+                alert("Withheld attachment and remark are required.");
+                return false;
+            }
+            var validExtensions = ["pdf", "jpg", "jpeg", "png", "gif"];
+            var fileExtension = fileInput.value.split('.').pop().toLowerCase();
+            if ($.inArray(fileExtension, validExtensions) === -1 && (existingFile == '' || existingFile == undefined)) {
+                alert("File should be PDF or image (JPG, JPEG, PNG, GIF).");
+                return false;
+            }
+            if (existingFile == '' && existingFile == undefined && fileInput.files[0] != undefined && fileInput.files[0] != null) {
+                var fileSize = fileInput.files[0].size;
+                var maxSize = 1 * 1024 * 1024;
+                if (fileSize > maxSize && (existingFile == '' || existingFile == undefined)) {
+                    alert("File size should be less than 1 MB.");
+                    return false;
+                }
+            }
+        }
+
+
+
+        // if (WithheldAmount > 0) {
+        //     if (WithheldAttachment.trim() === "" || WithheldRemark.trim() === "") {
+        //         alert("Withheld attachment and remark are required.");
+        //         return false;
+        //     }
+        //     var validExtensions = ["pdf", "jpg", "jpeg", "png", "gif"];
+        //     var fileExtension = fileInput.value.split('.').pop().toLowerCase();
+        //     if ($.inArray(fileExtension, validExtensions) === -1) {
+        //         alert("File should be PDF or image (JPG, JPEG, PNG, GIF).");
+        //         return false;
+        //     }
+        //     var fileSize = fileInput.files[0].size;
+        //     var maxSize = 1 * 1024 * 1024;
+        //     if (fileSize > maxSize) {
+        //         alert("File size should be less than 1 MB.");
+        //         return false;
+        //     }
+        // }
+
+        // if (IsActualAchievedChanged) { Comented by Piyush asked by dubey sir on 18/03/2024
+        var updateBillData = new FormData();
+        updateBillData.append("IsActualAchievedChanged", IsActualAchievedChanged);
+        updateBillData.append("fieldid_hidden", fieldid_hidden);
+        updateBillData.append("ExistingActualAchievedValue", ExistingActualAchievedValue);
+        updateBillData.append("ActualAchieved", ActualAchieved);
+        updateBillData.append("WithheldAmount", WithheldAmount);
+        updateBillData.append("WithheldRemark", WithheldRemark);
+        updateBillData.append("WithheldAttachment", WithheldAttachmentt == undefined ? "" : WithheldAttachmentt);
+
+        $.ajax({
+            url: '/Bill/UpdateWaterFlow',
+            processData: false,
+            contentType: false,
+            data: updateBillData,
+            type: 'POST',
+            success: function (response) {
+                debugger;
+                if (response.status) {
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val()).removeClass('Active_row');
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val()).addClass('Edited_Row');
+                    $("#UpdateBill_WaterDischarge").modal("hide");
+                    $($("#UpdateBill_BOCODTSSFC_Row_id").val() + ' td:eq(7) span:first-child').text(parseFloat($("#ActualAchieved_TextBox").val() == "" ? 0 : $("#ActualAchieved_TextBox").val()));
+                    fShowToast(response.message);
+                    location.reload();
+                }
+                else {
+                    fShowToasterror(response.message);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+        $("#UpdateBill_WaterDischarge").modal("hide");
+        //}
+    }
+
+    function ValiddateJEBillCApproval() {
+        // if ($("#Remark").val() == undefined || $("#Remark").val() == "") {
+        //     fShowToastalert('Please enter remark.');
+        //     $("#Remark").focus();
+        //     return false;
+        // }
+        if ($("#md_checkbox_34").prop('checked') == false) {
+            fShowToastalert('Please check declaration box!');
+            return false;
+        }
+        else {
+            $("#BillApprovalForm").submit();
+        }
+    }
+
+</script>
+

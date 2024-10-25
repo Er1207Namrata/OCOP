@@ -1,0 +1,514 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "PrintInvoiceBill";
+    Layout = null;
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Untitled Document</title>
+    <style>
+        .text-right {
+            text-align: right
+        }
+
+        .text-center {
+            text-align: center
+        }
+    </style>
+</head>
+
+<body>
+    <table width="100%" style="font-size: 12px;font-family: arial; border:0px; width: 842px; margin: 0px auto;" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+            <tr>
+
+                <td colspan="11" style="text-align: left;font-size: 14px; font-weight: bold; padding:10px 0px">
+                    @Model.dtDetails.Rows[0]["HeaderText"].ToString()
+                </td>
+
+            </tr>
+            <tr class="text-center">
+                <td colspan="6" class="text-center" style="border: 1px solid #333;border-right:0px solid #333; border-bottom:0px solid #333; padding: 5px 10px">&nbsp;</td>
+                <td colspan="3" style="border: 1px solid #333;border-right: 0px solid #333;border-bottom: 0px solid #333; padding: 5px 10px"><strong>  @Model.dtDetails.Rows[0]["SubHeader"].ToString() </strong></td>
+                <td rowspan="3" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>LD recommended by OM&amp;M Cell</strong></td>
+                <td rowspan="3" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Total verified amount </strong></td>
+            </tr>
+            <tr class="text-center">
+                <td rowspan="3" class="text-center" style="border: 1px solid #333;border-right:0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px"><strong>Sl No </strong></td>
+                <td rowspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Name of Zone </strong></td>
+                <td rowspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Name of city</strong></td>
+                <td rowspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>STP Capacity (MLD)</strong></td>
+                <td rowspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Contract Amount (Rs) </strong></td>
+                <td rowspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Contract Amount/Month/MLD (Rs) </strong></td>
+                <td rowspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>STP wise Cost (Rs)/month</strong></td>
+                <td colspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Verified amount by OM&amp;M Cell </strong></td>
+            </tr>
+            <tr class="text-center">
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Fixed Cost</strong></td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px"><strong>Variable cost </strong></td>
+            </tr>
+            <tr class="text-center">
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        a
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        b
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        c
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        d
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        e
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        f
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        h
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        j
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        k
+                    </strong>
+                </td>
+                <td style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                    <strong>
+                        l
+                    </strong>
+                </td>
+            </tr>
+            @if (Model != null && Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+            {
+                for (var i = 0; i < Model.dtDetails.Rows.Count; i++)
+                {
+                    <tr>
+                        <td style="border: 1px solid #333;border-right: 0px solid #333; border-top: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @(i+1)
+                        </td>
+                        <td rowspan="1" style="border: 1px solid #333;border-right: 0px solid #333; border-top: 0px; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["Zone"].ToString()
+                        </td>
+                        <td style="border: 1px solid #333;border-right: 0px solid #333;border-top: 0px solid #333;  border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["City"].ToString()
+                        </td>
+                        <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333;border-top: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["Capacity"].ToString()
+                        </td>
+                        <td rowspan="1" class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-top: 0px; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["ContractAmount"].ToString()
+
+                        </td>
+                        <td rowspan="1" class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-top: 0px; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["ContractAmount_Month"].ToString()
+
+                        </td>
+                        <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-top: 0px solid #333;border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["STPCost_month"].ToString()
+
+                        </td>
+                        <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333;border-top: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["FixedCost"].ToString()
+                        </td>
+                        <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-top: 0px solid #333;border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["VariableCost"].ToString()
+
+                        </td>
+                        <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333;border-top: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["LDrecommendedbyOMMCell"].ToString()
+
+                        </td>
+                        <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333;border-top: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                            @Model.dtDetails.Rows[i]["TotalVerifiedAmount"].ToString()
+                        </td>
+                    </tr>
+                }
+            }
+
+
+            <tr>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                </td>
+                <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                </td>
+                <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    Total
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-left: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b>@Model.dtDetails.Rows[0]["TotalSTPCapacity"].ToString()</b>
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b>@Model.dtDetails.Rows[0]["ContractAmount"].ToString()</b>
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b>@Model.dtDetails.Rows[0]["ContractAmount_Month"].ToString()</b>
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b>@Model.dtDetails.Rows[0]["TotalSTPCost_month"].ToString()</b>
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b>@Model.dtDetails.Rows[0]["TotalFixedCost"].ToString()</b>
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b>@Model.dtDetails.Rows[0]["TotalVariablecost"].ToString()</b>
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b>@Model.dtDetails.Rows[0]["LDrecommendedbyOMMCell"].ToString()</b>
+                </td>
+                <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                    <b> @Model.dtDetails.Rows[0]["TotalVerifiedAmount"].ToString()</b>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="11">
+                    <table border="0" cellpadding="0" cellspacing="0" style="width: 100%">
+                        <tr>
+                            <td colspan="2" style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px; text-align:center">
+                                <h3>
+                                    Amount Recommended By OM&amp;M
+
+                                </h3>
+                            </td>
+                            <td style="white-space:nowrap; border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                <h3>
+                                    Total Verified Amount
+                                </h3>
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="white-space:nowrap;font-weight:bold; width:180px; border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                1
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Total Verified Amount
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["subTotalVerifiedAmount"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                2
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                LD as recommeded by OM&amp;M cell on quality parameters (rounded off to nearest thousand)
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["NetLDrecommendedbyOMMCell"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                3
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Other LD recommended by UPJN and Jal Kal
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["OtherLD"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                4
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["LDagainstletterdetails"].ToString()
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["LDagainstletter"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                <b>  5 = (1-2-3-4)</b>
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                <b>Payable amount</b>
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                <b> @Model.dtDetails.Rows[0]["Payableamount"].ToString()</b>
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                6 = (5% * 5)
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Escalation @@ 5%
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["Escalation5"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                7 = (5 + 6)*5%
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Escalation @@ 5% 2nd Year
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["Escalation_5_2ndYear"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                8 = (5+6+7)*5%
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Escalation @@ 5% 3rd Year
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["Escalation_5_3nd_Year"].ToString()
+                            </td>
+
+
+                        </tr>
+
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                9 = (5+6+7+8)*5%
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Escalation @@ 5% 4th Year
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["Escalation_5_4th_Year"].ToString()
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                10 = (5+6+7+8+9)
+                            </td>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Sub Total
+                            </td>
+                            <td class="text-right" style="font-weight:bold;border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["SubTotal"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                11
+                            </td>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Release of withheld amount in <b>(@Model.dtDetails.Rows[0]["MonthName"].ToString(), @Model.dtDetails.Rows[0]["Year"].ToString())</b>
+                            </td>
+                            <td class="text-right" style="font-weight:bold;border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["Releaseofwithheldamount"].ToString()
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                12= (10+11)
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Sub total
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["NetSubtotal"].ToString()
+
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                13 = (18% * 12)
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                GST @@ 18 %
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["GST_18"].ToString()
+
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                14 = (10% * 13)
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                10% Centage/ Supervion charge to UP Jal Nigam
+                            </td>
+                            <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["Supervioncharge"].ToString()
+
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                15
+                            </td>
+                            <td style="border: 1px solid #333;border-right: 0px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                Fuel Charges as certified by UPJN
+                            </td>
+                            @if (Convert.ToInt32(@Model.dtDetails.Rows[0]["FuelCharges"]) > 0)
+                            {
+                                <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">
+                                    @Model.dtDetails.Rows[0]["FuelCharges"].ToString()
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="text-right" style="border: 1px solid #333;border-right: 1px solid #333; border-bottom: 0px solid #333; padding: 5px 10px">No Information Submitted</td>
+                            }
+                            @* @Model.dtDetails.Rows[0]["Grandtotal"].ToString()*@
+
+
+
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                                15 = (10+11+12+13+14)
+                            </td>
+                            <td style="font-weight:bold;border: 1px solid #333;border-right: 0px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                                Grand total certified by OM&amp;M Cell
+                            </td>
+                            <td class="text-right" style="font-weight:bold;border: 1px solid #333;border-right: 1px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["Grandtotal"].ToString()
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right" style="font-weight:bold;border: 1px solid #333;border-right: 1px solid #333; border-bottom: 1px solid #333; padding: 5px 10px">
+                                @Model.dtDetails.Rows[0]["AmountInWord"].ToString()
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:10px;" colspan="11" class="text-right">This is a system generated invoice and needs no signature</td>
+            </tr>
+            <tr>
+
+                @*  <td colspan="11">
+
+                <table style="width: 100%">
+
+                <tr>
+                <td style="text-align:center; height: 35px">&nbsp;</td>
+                <td style="text-align: center;">&nbsp;</td>
+                <td style="text-align: center;">&nbsp;</td>
+                <td style="text-align: center;">&nbsp;</td>
+                </tr>
+                <tr>
+
+                </tr>
+
+                <tr>
+                <td style="text-align:center; font-weight:bold; vertical-align: top;">
+                <strong>
+                Project Manager<br />Mls V.A. Tech<br />Wabag Ltd.<br />
+                @Model.dtDetails.Rows[0]["Zone"].ToString()
+                </strong>
+                </td>
+                <td style="text-align: center;vertical-align: top;"><strong>Executive Engineer <br />CD (E&M),<br /> U.P. Jal Nigam (Urban), Agra</strong></td>
+                <td style="text-align: center;vertical-align: top;">
+                <strong>
+                Executive Engineer <br>
+                </strong><strong>
+                CD II, U.P. Jal Nigam<br>
+                (Urban),  @Model.dtDetails.Rows[0]["Zone"].ToString()
+                </strong>
+                </td>
+                <td style="text-align: center;vertical-align: top;">
+                <strong>
+                Executive Engineer <br>
+                Jalkal Vibhag, <br>
+                Nagar Nigam,  @Model.dtDetails.Rows[0]["Zone"].ToString()
+                </strong>
+                </td>
+                </tr>
+
+
+                </table>
+                <table style="width: 100%">
+
+                <tr>
+
+                </tr>
+                <tr>
+                <td style="text-align:center; font-weight:bold;vertical-align: top;">
+                <strong>
+                General Manager<br />Jalkal Vibhag<br /> Nagar Nigam<br />
+                @Model.dtDetails.Rows[0]["Zone"].ToString()
+                </strong>
+                </td>
+                <td style="text-align: center;vertical-align: top;"><strong>Executive Engineer <br />CD (E&M),<br /> U.P. Jal Nigam (Urban), Agra</strong></td>
+                <td style="text-align: center;vertical-align: top;">
+                <strong>
+                Executive Engineer <br>
+                </strong><strong>
+                CD II, U.P. Jal Nigam<br>
+                (Urban),  @Model.dtDetails.Rows[0]["Zone"].ToString()
+                </strong>
+                </td>
+
+                </tr>
+
+
+                </table>
+
+
+                </td>*@
+            </tr>
+
+
+
+        </tbody>
+    </table>
+
+
+</body>
+</html>

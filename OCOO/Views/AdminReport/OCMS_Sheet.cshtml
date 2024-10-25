@@ -1,0 +1,184 @@
+﻿@model OCOO.Models.OCMSSheet
+@{
+    ViewData["Title"] = "OCMS_Sheet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .matchedbg {
+        background-color: green !important;
+        text-align: #fff;
+    }
+
+    .notmatchedbg {
+        background-color: indianred !important;
+    }
+
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .table td {
+        padding: 10px 10px;
+        vertical-align: middle;
+        text-align: right;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-8 align-self-center">
+            <h3 class="text-themecolor">OCMS Sheet</h3>
+        </div>
+        <div class="col-md-4 align-self-right">
+            <span class="float-right"><a data-toggle="collapse" href="#searchblock" title="Search" role="button" aria-expanded="true" aria-controls="searchblock" class="btn btn-sm btn-xs btn-primary"><i class="fa fa-filter"></i></a></span>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="collapse" id="searchblock">
+            <div class="card">
+                <input type="hidden" id="firmtemp" value="@TempData["firm"]" />
+                <input type="hidden" id="stptemp" value="@TempData["stp"]" />
+                <form asp-controller="AdminReport" asp-action="OCMS_Sheet">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Zone</label>
+                                    @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control",@onchange="return fGetFirmList()" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Firm</label>
+                                    @Html.DropDownListFor(m => m.Fk_FirmId, new SelectList(ViewBag.ddlFirm, "Value", "Text"), new { @class = "form-control" ,@onchange="return fGetSTPList()"})
+                                </div>
+                            </div>
+                            @*<div class="col-md-3">
+                                <div class="form-group">
+                                    <label>STP</label>
+                                    @Html.DropDownListFor(m => m.Fk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                            *@
+                           
+
+                            <div class="col-md-2 mt-4">
+                                <div class="form-group mt-2">
+                                    <button type="submit" class="btn btn-primary  btn-xs btn-sm " id="Submit" value="Search" name="btnSubmit"><i class="fa fa-search"></i> Search</button>
+                                    @*<input type="button" value="Reset" class="btn btn-secondary btn-xs btn-sm" onclick="return Getreset();">*@
+                                    <button type="button" value="Reset" class="btn btn-secondary btn-xs btn-sm" onclick="return Getreset()"><i class="fa fa-refresh"></i>  Reset</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+            <div class="card-body pb-20">
+                <div class="row">
+                    @if (Model != null)
+                    {
+                        if (Model.dtDetails != null)
+                        {
+                            if (Model.dtDetails.Rows.Count > 0)
+                            {
+                                for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                {
+
+                                <a style="cursor:pointer" href="/AdminReport/OCMSSheet?Id=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_Stp_Id"].ToString())&&Zone=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Fk_ZoneId"].ToString())&&Firm=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Fk_FirmId"].ToString())">
+                                        <div class="col-md-3">
+                                            <div class="card card-outline-inverse">
+                                                <div class="card-header" style="padding: 0.75rem 1.25rem;background-color: #21aee4;">
+                                                    <h5 class="m-b-0 text-white">@Model.dtDetails.Rows[i]["StpName"].ToString() </h5>
+                                                </div>
+                                                <div class="card-body" style="padding:20px 10px !important">
+                                                    <h3>
+                                                        @Model.dtDetails.Rows[i]["CityName"].ToString()
+                                                    </h3>
+
+                                                    <p class="card-text pb-1">
+                                                        Capacity : @Model.dtDetails.Rows[i]["Capacity"].ToString() &nbsp;&nbsp;
+                                                        Meter Load : @Model.dtDetails.Rows[i]["ElectricityMeterLoad"].ToString()
+                                                    </p>
+
+                                                <a href="@Model.Url?Id=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_Stp_Id"].ToString())&&Zone=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Fk_ZoneId"].ToString())&&Firm=@Crypto.Encrypt(Model.dtDetails.Rows[i]["Fk_FirmId"].ToString())">
+                                                        @if (Model.dtDetails.Rows[i]["UpdatedBy"].ToString() == "")
+                                                        {
+                                                            if (@Model.dtDetails.Rows[i]["UpdatedOn"].ToString() == "")
+                                                            {
+                                                                <i class="card-title" style="color:#6ab84d">
+                                                                    &nbsp;
+                                                                </i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="card-title" style="color:#6ab84d">
+                                                                    Last Updated on @Model.dtDetails.Rows[i]["UpdatedOn"].ToString()
+                                                                </i>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="card-title" style="color:#6ab84d">
+                                                                Last Updated on @Model.dtDetails.Rows[i]["UpdatedOn"].ToString() by @Model.dtDetails.Rows[i]["UpdatedBy"].ToString()
+                                                            </i>
+                                                        }
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning text-center">No Record Found</div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+
+
+      
+
+
+
+    </div>
+</div>
+<script src="~/script/frimstpbind.js"></script>
+<script>
+    $(document).ready(function () {
+        debugger;
+        var firmID = $('#firmtemp').val();
+        var stpID = $('#stptemp').val();
+        if (firmID != null && stpID != null) {
+            fGetFirmList(firmID);
+            fGetSTPList(firmID, stpID);
+        }
+    });
+
+    function Getreset() {
+        debugger;
+        $('#Pk_ZoneId').val(null);
+        $('#Fk_FirmId').val('0');
+        $('#Fk_STPId').val('0');
+        $('#Fk_MonthId').val('0');
+        $('#FromDate').val('');
+        $('#ToDate').val('');
+        fGetFirmList();
+        fGetSTPList();
+    }
+</script>
+
+

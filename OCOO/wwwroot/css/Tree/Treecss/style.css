@@ -1,0 +1,206 @@
+html, body
+{
+    padding: 0;
+    margin: 0;
+    color: #101010;
+    
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+*
+{
+    box-sizing: border-box;
+}
+.tree-container p 
+{
+    margin: 0;
+    line-height: 1.2;
+}
+.tree-container .text-danger
+{
+    color: #ff0000;
+}
+.tree-container .text-black-light
+{
+  opacity: 0.6;
+}
+.tree-container .text-primary
+{
+    color: #2196f3;
+}
+
+.tree-container
+{
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    font-size: 11px;
+}
+
+.tree-container .tree-row
+{
+    display: flex;
+    width: 100%;
+}
+.tree-container .tree-row .tree-col
+{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.tree-line
+{
+    width: 100%;
+}
+.tree-line .v-line
+{
+    height: 25px;
+    border-left: 2px solid #101010;
+    width: 2px;
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+.tree-line .h-line
+{
+    border: 2px solid #101010;
+    height: 25px;
+    width: calc(50% + 2px);
+    align-self: center;
+    border-bottom: 0;
+}
+
+.tree-item
+{
+   width: 100%;
+   display: flex;
+   align-items: center;
+   flex-direction: column;
+   margin-top: 2px;
+}
+.tree-item .tree-item-icon
+{
+  height: 50px;
+  width: 50px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  background-color: #ffc107;
+}
+.tree-item .tree-item-icon img
+{
+    height: 80%;
+    width: 80%;
+}
+.tree-item-active.tree-item .tree-item-icon
+{
+  background-color: #fff;
+}
+.tree-item .tree-item-body
+{
+  text-align: center;
+}
+
+.tree-form
+{
+    display: flex;
+    padding: 15px 0;
+}
+.tree-form .tree-form-input
+{
+    flex:1;
+    padding-left: 20px;
+}
+.tree-form .tree-form-input input
+{
+    height: 42px;
+    border-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    width: 100%;
+    padding: 0 15px;
+    border: 1px solid #ddd;
+    border-right: 0;
+    outline: none;
+    box-shadow: none !important;
+}
+.tree-form .tree-form-btn
+{
+    width: 120px;
+    padding: 0 3px;
+}
+
+.tree-form  .tree-form-btn .tree-btn 
+{
+    height: 42px;
+    border-radius: 4px;
+    width: 100%;
+    display: block;
+    border: 0;
+    cursor: pointer;
+    outline: none;
+    box-shadow: none !important;
+}
+.tree-form .tree-form-btn.tree-form-btn-search 
+{
+    padding: 0;
+}
+.tree-form .tree-form-btn.tree-form-btn-search .tree-btn
+{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.tree-form .tree-btn.tree-btn-success
+{
+    background-color: #4caf50 !important;
+    color:#fff !important;
+}
+.tree-form .tree-btn.tree-btn-info
+{
+    background-color: #00bcd4;
+    color:#000 !important;
+}
+.tree-form .tree-btn.tree-btn-warning
+{
+    background-color: #ffc107 !important;
+    color:#000 !important;
+}
+.popover
+{
+    width: 400px;
+    max-width: 400px;
+}
+.popover .popover-header .popover-title
+{
+  text-align: center;
+  margin-bottom: 0;
+}
+.popover .popover-body
+{
+    font-size: 11px;
+} 
+.block
+{
+    margin-top: 10px;
+}
+.block .block-row
+{
+    display: flex;
+}
+.block .block-row .block-col
+{
+    padding:0 2px;
+    border: 1px solid #555;
+    border-bottom-width: 0;
+    border-right-width: 0;
+}
+.block .block-row .block-col:last-child
+{
+    border-right-width: 1px;
+}
+.block .block-row:last-child .block-col
+{
+    border-bottom-width: 1px;
+}

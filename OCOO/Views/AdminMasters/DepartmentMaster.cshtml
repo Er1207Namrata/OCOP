@@ -1,0 +1,140 @@
+﻿@model OCOO.Models.Department
+@{
+    ViewData["Title"] = "DepartmentMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Department</h3>
+
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right"><a href="#" onclick="return ShowDepatmentPopup();" id="btn" class="btn  btn-xs btn-sm btn-success fUserPermission" title="Add New"><i class="fa fa-plus mdi-18px"></i> Department</a></span>
+
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <form asp-action="DepartmentMaster">
+                <div class="card-body p-3 pb-20">
+                    <div class="table-responsive">
+                        <table class="table table-striped footable">
+                            <thead>
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Department</th>
+                                    <th class="tdaction">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    if (Model.dtDetails != null)
+                                    {
+                                        if (Model.dtDetails.Rows.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@Model.dtDetails.Rows[i]["DepartmentName"].ToString()</td>
+                                                    <td>
+                                                        <a href="#" data-bs-toggle="modal" onclick="return EditDegination(@Model.dtDetails.Rows[i]["Pk_DepartmentId"].ToString(),'@Model.dtDetails.Rows[i]["DepartmentName"].ToString()')" data-bs-target="#exampleModal" class="text-primary fUserPermission">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a href="/AdminMasters/DeleteDepartment?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_DepartmentId"].ToString())" id="btnDelete" class="text-danger fUserPermission" onclick="return confirm('are you sure to delete this record?')" ToolTip="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3" class="text-center bg-white">
+                                                    <div class="alert alert-warning text-center">
+                                                        No Records Found !!
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <form asp-action="DepartmentMaster" asp-controller="AdminMasters">
+        <div id="modelDepartment" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add/Update Department</h5>
+                        <a href="#" class="btn-close" data-dismiss="modal">
+                            <i class="fa fa-close"></i>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Department <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" asp-for="DepartmentName" placeholder="Enter Department" />
+                                <input type="hidden" asp-for="Pk_DepartmentId" />
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger   btn-xs btn-sm"><i class="fa fa-times"></i> Cancel</button>
+                        <button type="submit" class="btn btn-success  btn-xs btn-sm " id="submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save"></i> Save</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+
+    function ShowDepatmentPopup() {
+
+        $('#modelDepartment').modal('show');
+        $("#Pk_UserId").val(0);
+        $("#Pk_DepartmentId").val(0);
+        $("#DepartmentName").val("");
+        $("#submit").val('Submit');
+        $("#submit").html('<i class="fa fa-save"></i>  Save');
+        //$("#submit").css("background", "green");
+    }
+
+
+    function ValidateForm() {
+        if ($("#DepartmentName").val() == '' || $("#DepartmentName").val() == null) {
+            $("#DepartmentName").focus();
+            return false;
+        }
+    }
+
+    function EditDegination(Pk_DepartmentId, DepartmentName) {
+
+        //$("#Pk_UserId").val(txtId);
+        $("#Pk_DepartmentId").val(Pk_DepartmentId);
+        $("#DepartmentName").val(DepartmentName);
+        $("#submit").val('Update');
+        $("#submit").html('<i class="fa fa-save"></i>  Update');
+
+        //$("#submit").css("background", "green");
+        $('#modelDepartment').modal('show');
+    }
+</script>

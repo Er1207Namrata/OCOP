@@ -1,0 +1,342 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "Add STP Billing";
+    Layout = "~/Views/Shared/_FirmLayout.cshtml";
+}
+
+
+<style>
+
+    table thead {
+        position: sticky;
+        top: 0;
+    }
+
+    table {
+        border-collapse: unset !important;
+    }
+
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .bg-light-info {
+        background-color: #f5fbff;
+        border: 1px solid #b6e2ff;
+    }
+
+    .bg-light-primary {
+        background-color: #f1effd;
+        border: 1px solid #dbd5ff;
+    }
+
+    .bg-light-warning {
+        background-color: #fff8ec;
+        border: 1px solid #ffe2b0;
+    }
+
+    .p-b-20 .radius {
+        padding: 10px 10px 0px 10px !important
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Add Upload Measurement</h3>
+        </div>
+        <div class="col-md-6 align-self-right">
+            <span class="float-right ml-1"><a href="/Firm/STPBillingList?Id=@Crypto.Encrypt(Model.Pk_STPId.ToString())" class="btn btn-sm btn-warning btn-xs" title="Back"><i class="fa fa-arrow-left"></i> Back</a></span>
+           @*  <span class="float-right ml-2"><a data-toggle="collapse" href="#BillDetailArea" title="Search" role="button" aria-expanded="true" aria-controls="BillDetailArea" class="btn btn-sm btn-xs btn-info"><i class="fa fa-eye"></i></a></span> *@
+           @*  <span class="float-right"><a href="/Firm/STPBillingList" class="btn btn-sm btn-warning btn-xs" title="Back"><i class="fa fa-arrow-left"></i> Back</a></span>
+ *@
+        </div>
+    </div>
+    <div class="container-fluid">      
+                <div class="collapse" id="BillDetailArea">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h6 class="font-weight-bold text-center">Measurement Of STP</h6>
+                                    <table class="table warning-bordered-table">
+                                        <tr>
+                                            <td style="font-weight:600;">BOD</td>
+                                            <td id="BOD_id"></td>
+                                            <td style="font-weight:600;">COD</td>
+                                            <td id="COD_id"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">TSS</td>
+                                            <td id="TSS_id"></td>
+                                            <td style="font-weight:600;">FC</td>
+                                            <td id="FC_id"></td>
+
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           
+       
+        <div class="card p-3">
+            
+
+            <form asp-action="AddSTPBilling" asp-controller="Firm" method="post">
+                <input type="hidden" asp-for="Pk_BillingId" />
+                <input type="hidden" asp-for="LastBillingDate" />
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>STP <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.Pk_STPId, new SelectList(ViewBag.ddlSTP, "Value", "Text"), new { @class = "form-control", @onchange="return fGetSTPBillDetails()",@readonly="true" })
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Billing Date <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control datepicker" asp-for="BillingDate" onchange="return fGetCallstpbillings()" placeholder="dd/mm/yyyy" readonly>
+                                @*<input type="text" class="form-control datepicker" asp-for="BillingDate" onchange="return fAddStpbilling()" placeholder="dd/mm/yyyy" readonly>*@
+
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="icon-calender"></i></span>
+                                </div>
+                            </div>
+                            <span id="msg" class="text-danger"></span>
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Discharge (MLD)<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="WaterDischarge" onchange="return fGetDischargeBillDetails()" onkeypress="return isNumberKey(event)" placeholder="Enter Water Discharge" />
+                        </div>
+                        <span id="capcityExceedmsg" class="text-danger"></span>
+                        <span id="capcityExceedmsg1" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <h3>Testing Agency</h3>
+                       
+                    </div>
+                    <div class="col-md-1">
+
+                        <label>BOD : <span style="color:blue">@Model.dtDetails.Rows[0]["BOD"].ToString()</span>
+                            
+                        </label>
+                       
+                      
+                        
+                    </div>
+                    <div class="col-md-1">
+                        <label>COD : <span style="color:blue">@Model.dtDetails.Rows[0]["COD"].ToString()</span></label>
+                    </div>
+                    <div class="col-md-1">
+                        <label>
+                            FC : <span style="color:blue">@Model.dtDetails.Rows[0]["FC"].ToString()</span>
+                           
+                        </label>
+                    </div>
+                    <div class="col-md-1">
+                        <label>
+                            
+                            TSS : <span style="color:blue">@Model.dtDetails.Rows[0]["TSS"].ToString()</span>
+                        </label>
+                    </div>
+                   
+                    <div class="col-md-12">
+                        <div class="p-t-20 p-b-20">
+                            <div class="bg-light-info p-3 mb-2 radius">
+                                <input type="checkbox" name="InHouse" id="InHouseCheck" />
+                                <label for="InHouseCheck"> In House </label>
+                                <div id="InHouseForm" style="display:none;">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>BOD <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="InHouseBOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported BOD" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>COD <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="InHouseCOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported COD" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>TSS <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="InHouseTSS" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported TSS" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>FC <span class="text-danger IsFc ">*</span></label>
+                                                <input type="text" class="form-control" asp-for="InHouseFC" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported FC" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-light-primary p-3 mb-2 radius">
+                                <div>
+                                    <input type="checkbox" name="ThirdParty" id="ThirdPartyCheck" />
+                                    <label for="ThirdPartyCheck"> Third Party </label>
+                                </div>
+                                <div id="ThirdPartyForm" style="display:none;">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>BOD <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="ThirdPartyBOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported BOD" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>COD <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="ThirdPartyCOD" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported COD" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>TSS <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="ThirdPartyTSS" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported TSS" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>FC <span class="text-danger IsFc">*</span></label>
+                                                <input type="text" class="form-control" asp-for="ThirdPartyFC" onkeypress="return isNumberKey(event)" placeholder="Enter Value Reported FC" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-light-warning p-3 mb-2 radius">
+                                <div>
+                                    <input type="checkbox" name="UPPCB" id="UPPCBCheck" />
+                                    <label for="UPPCBCheck"> UPPCB </label>
+                                </div>
+                                <div id="UPPCBForm" style="display:none;">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>BOD <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="UPPCBBOD" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value BOD" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>COD <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="UPPCBCOD" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value COD" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>TSS <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" asp-for="UPPCBTSS" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value TSS" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>FC <span class="text-danger IsFc ">*</span></label>
+                                                <input type="text" class="form-control" asp-for="UPPCBFC" onkeypress="return isNumberKey(event)" placeholder="Enter Reported Value FC" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total Complaint Received <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="ComplaintReceived" onkeypress="return isNumberKey(event)" placeholder="Complaint Received" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total Complaint Resolved <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" asp-for="ComplaintResolved" onkeypress="return isNumberKey(event)" placeholder="Complaint Resolved" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-right">
+                    <button type="submit" class="btn btn-success" id="Submit" onclick="return ValidateForm();" value="Submit" name="btnSubmit"><i class="fa fa-save"> Save</i></button>
+                </div>
+                <input type="hidden" asp-for="IsSame" value="false" />
+                <input type="hidden" id="checksamecap" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/script/uploadmeasurement.js"></script>
+@* <script src="~/script/year.js"></script> *@
+<script>
+    function getMissingDates(startDateStr, endDateStr) {
+        const Start_Date = startDateStr.split("/");
+        var _startDate = Start_Date[1] + "/" + Start_Date[0] + "/" + Start_Date[2];
+        var End_Date = endDateStr.split("/");
+        var _endDate = End_Date[1] + "/" + End_Date[0] + "/" + End_Date[2];
+        const startDate = new Date(_startDate);
+        const endDate = new Date(_endDate);
+        const missingDates = [];
+        const currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+            const day = currentDate.getDate().toString().padStart(2, '0');
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = currentDate.getFullYear().toString();
+            const formattedDate = `${day}/${month}/${year}`;
+            if (currentDate.getTime() !== startDate.getTime() && currentDate.getTime() !== endDate.getTime()) {
+               missingDates.push(formattedDate);
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        return missingDates;
+    }
+    function fGetCallstpbillings() {
+        debugger
+        const startDate = '@Model.LastBillingDate';
+        const endDate = document.querySelector('.datepicker').value;
+
+        const start_Date = new Date(startDate);
+        const end_Date = new Date(endDate);
+        var start_Dateparts = startDate.split('/');
+        var parts = endDate.split('/');
+        var _startdate = new Date(start_Dateparts[2], start_Dateparts[1] - 1, start_Dateparts[0]);
+        var date = new Date(parts[2], parts[1] - 1, parts[0]);
+
+        if (date < _startdate) {
+            alert("Sorry, you cannot make an entry for a previous date.");
+            document.querySelector('.datepicker').value = startDate;
+            return false;
+        }
+        const missingDates = getMissingDates(startDate, endDate);
+        if (missingDates.length > 0) {
+            const alertMessage = " You have not filled of these date of data " + startDate + " and " + endDate + " are: " + missingDates.join(", ");
+            window.alert(alertMessage);
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,167 @@
+﻿@model OCOO.Models.DailyCapacity
+@{
+    ViewData["Title"] = "STC Daily Capacity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Firm Request</h3>
+            
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="card-body pb-20">
+                        <form asp-action="STCDailyCapacity" asp-controller="STC">
+                            <div class="card-body pb-4">
+                                <div class="table-responsive">
+                                     <table class="table table-striped footable">
+                                        <thead>
+                                            <tr>
+                                                <th style="min-width: 150px;">Sn</th>
+                                                <th>Firm Name</th>
+                                                <th>City</th>
+                                                <th>Month</th>
+                                                <th>Details</th>
+                                                <th class="tdaction">Approved By</th>
+                                                <th class="tdaction">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model != null)
+                                            {
+                                                if (Model.dtDetails != null)
+                                                {
+                                                    int sn = 1;
+                                                    if (Model.dtDetails.Rows.Count > 0)
+                                                    {
+                                                        for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td>@sn</td>
+                                                                <td>@Model.dtDetails.Rows[i]["Name"].ToString()</td>
+                                                                <td>@Model.dtDetails.Rows[i]["DistrictName"].ToString()</td>
+                                                                <td>@Model.dtDetails.Rows[i]["Month"].ToString()</td>
+                                                                <td><a href="/Admin/GetFirmRequest?Id=@Model.dtDetails.Rows[i]["UniqueId"].ToString()"><i class="fa fa-eye"></i></a></td>
+                                                                <td><a href="#" onclick="return GetAprovedByDetails('@Model.dtDetails.Rows[i]["UniqueId"].ToString()')">View</a></td>
+                                                                <td>
+
+                                                                    @if (Model.dtDetails.Rows[i]["Status"].ToString() == "Pending" && Model.dtDetails.Rows[i]["CanApproveDecline"].ToString() == "True")
+                                                                    {
+                                                                        <a href="/Admin/ApproveFirmRequest?Id=@Model.dtDetails.Rows[i]["UniqueId"].ToString()" onclick="return confirm('are you sure to approve this request?')" class="badge badge-info">Approve</a>
+                                                                        <a href="/Admin/DeclineFirmRequest?Id=@Model.dtDetails.Rows[i]["UniqueId"].ToString()" onclick="return confirm('are you sure to decline this request?')" class="badge badge-danger">Decline</a>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @if (Model.dtDetails.Rows[i]["Status"].ToString() == "Pending")
+                                                                        {
+                                                                            <span class="badge badge-warning">@Model.dtDetails.Rows[i]["Status"].ToString()</span>
+                                                                        }
+                                                                        else if (Model.dtDetails.Rows[i]["Status"].ToString() == "Approved")
+                                                                        {
+                                                                            <span class="badge badge-success">@Model.dtDetails.Rows[i]["Status"].ToString()</span>
+                                                                        }
+                                                                        else if (Model.dtDetails.Rows[i]["Status"].ToString() == "Declined")
+                                                                        {
+                                                                            <span class="badge badge-danger">@Model.dtDetails.Rows[i]["Status"].ToString()</span>
+                                                                        }
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+                                                            sn++;
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr><td colspan="7" class="text-center">No Record Found</td></tr>
+
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div id="txtDetails" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Approval Status</h5>
+                                            <a class="btn-close" data-dismiss="modal">
+                                                <i class="bi bi-x"></i>
+                                            </a>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover footable" id="tbtApprovedDetails">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="min-width: 150px;">Sn</th>
+                                                            <th>Designation</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function GetAprovedByDetails(Fk_UniqueId) {
+        $.ajax({
+            url: '/Admin/STCApprovedBy',
+            type: 'GET',
+            data: { Fk_UniqueId: Fk_UniqueId },
+            success: function (response) {
+                if (response != null) {
+                    //console.log(response);
+                    let str = "";
+                    let srno = 1;
+                    $("#tbtApprovedDetails tbody").html('');
+                    for (var i = 0; i < response.length; i++) {
+                        str += "<tr><td>" + srno + "</td><td>" + response[i].designationName + "</td>"
+                        if (response[i].status === 'Approved') {
+                            str += "<td><span class='badge badge-success'>" + response[i].status + "</span></td></tr>"
+                        }
+                        else if (response[i].status === 'Pending') {
+                            str += "<td><span class='badge badge-warning'>" + response[i].status + "</span></td></tr>"
+                        }
+                        else {
+                            str += "<td><span class='badge badge-danger'>" + response[i].status + "</span></td></tr>"
+                        }
+                        srno++;
+                    }
+
+                    $("#tbtApprovedDetails tbody").html(str);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+        $('#txtDetails').modal('show');
+    }
+</script>
+
+
+
+
+

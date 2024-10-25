@@ -1,0 +1,293 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "Bill STP Wise Approval";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .table td {
+        padding: 10px 10px;
+        vertical-align: middle;
+        text-align: right;
+    }
+</style>
+<script src="~/app/ProccedBillProcess.js"></script>
+<div ng-controller="ProccedBillProcessController">
+    <div class="page-wrapper">
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor">Bill Approval</h3>
+            </div>
+            <div class="col-md-6 align-self-right">
+                <a href="javascript:history.back()" class="btn btn-sm btn-warning text-white float-right"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a> &nbsp;
+                <span class="float-right" style="margin-right:10px !important"><a data-toggle="collapse" href="#BillDetailArea" title="Search" role="button" aria-expanded="true" aria-controls="BillDetailArea" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Bill </a></span>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end mb-3">
+            </div>
+            <div class="card">
+                <div class="card-body p-3 pb-20">
+                    <input type="hidden" name="BillId" id="BillId" value="@ViewBag.BillId" />
+                    <div class="collapse" id="BillDetailArea">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table warning-bordered-table">
+                                            <tr>
+                                                <td colspan="6" class="text-center"><p class="font-weight-bold">{{BillDetails.headerText}}</p></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Firm Name</b></td>
+                                                <td>{{BillDetails.firmName}}</td>
+                                                <td><b> Bill No.</b></td>
+                                                <td>{{BillDetails.billNo}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Bill Date</b></td>
+                                                <td>{{BillDetails.billDate}}</td>
+                                                <td><b>Fuel Charges</b></td>
+                                                <td>{{BillDetails.fuelCharges}}</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><b>Net LD Charges</b></td>
+                                                <td>{{BillDetails.netLDCharges}}</td>
+                                                <td><b>Grand Total</b></td>
+                                                <td>{{BillDetails.grandtotal}}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model != null && Model.dtDetails != null && Model.dtDetails.Rows.Count > 0)
+                    {
+                        if (Model.dtDetails.Rows[0]["Flag"].ToString() == "1")
+                        {
+
+                            <div class="row">
+                                <div class="col-md-10">
+                                    @if (Model.dtDetails.Rows[0]["IsFinalApprovalAllow"].ToString() == "NO")
+                                    {
+                                        <p style="font-weight:200; color:black" class="mt-1 text-black">Please review and verify all STP data before confirming the bill. The confirmation button is currently disabled as not all STP data has been approved yet.</p>
+
+                                    }
+                                    else
+                                    {
+                                        <p style="font-weight:200; color:black" class="mt-1 text-black">All STP data has verified. Now you can verify it.</p>
+
+                                    }
+                                </div>
+                                <div class="col-md-2">
+                                    @if (Model.dtDetails.Rows[0]["IsFinalApprovalAllow"].ToString() == "YES")
+                                    {
+                                      @*   <button type="button" data-toggle="modal" data-target="#Bill_Approval_Modal" class="btn btn-outline-success btn-xs" style="float:right">
+                                            <i class="fa fa-check-circle" aria-hidden="true"></i> Verify </button> *@
+
+                                        <a style="float:right" class="btn btn-outline-warning btn-xs" href="/Bill/ProcessBill?id=@OCOO.Models.Crypto.Encrypt(@Model.dtDetails.Rows[0]["FK_FbillId"].ToString())" title="Click and proceed for further process">
+                                            <i class="fa fa-check-circle" aria-hidden="true"></i> Verify
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-outline-secondary btn-xs" style="float:right; cursor:not-allowed"><i class="fa fa-check-circle" aria-hidden="true"></i> Verify </button>
+                                    }
+                                </div>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <center class="my-5">
+                                <img width="150" src="~/assets/images/regulation.png" />
+                                <h4 class="mt-4">
+                                    @Model.dtDetails.Rows[0]["Message"].ToString()
+                                </h4>
+                            </center>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="container-fluid">
+            <div class="card-body pb-20">
+                <div class="row">
+                    @if (Model != null)
+                    {
+                        if (Model.dtDetails != null)
+                        {
+                            if (Model.dtDetails.Rows.Count > 0)
+                            {
+                                for (int i = 0; i < Model.dtDetails.Rows.Count; i++)
+                                {
+                                    <div class="col-md-3">
+                                        <div class="card card-outline-inverse">
+                                            <div class="card-header" style="padding: 0.45rem 0.45rem;background-color: #21aee4;">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <p class="m-b-0 text-white text-center">
+                                                            Electricity, DG and bill approval.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3>
+                                                    @Model.dtDetails.Rows[i]["StpName"].ToString()
+                                                </h3>
+                                                <br />
+                                                @if (Model.DesignationId == 4 && Model.DepartmentId == 24)
+                                                {
+                                                    @if (Model.dtDetails.Rows[i]["ElectricityBillStatus"].ToString().ToLower().Trim() == "verified")
+                                                    {
+                                                        <button disabled title="Already verified." class="btn btn-outline-secondary btn-xs clickable m-t-5" style="width:100%; cursor:not-allowed !important">
+                                                            <i class="fa fa-check-circle" aria-hidden="true"></i>  Procced Elec. Bill Approval
+                                                        </button>
+                                                    }
+                                                    else if (Model.dtDetails.Rows[i]["ElectricityBillStatus"].ToString() == "Pending")
+                                                    {
+                                                        <a style="width:100%" class="btn btn-outline-primary btn-xs clickable m-t-5" href="/Bill/ElectricityBillApproval?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_FbillId"].ToString())&&xyz=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_FirmId"].ToString())&&st=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["FK_STPId"].ToString())&&inv=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_InvId"].ToString())" title="Click and verify the Electricity bills.">
+                                                            <i class="fa fa-forward" aria-hidden="true"></i>  Procced Elec. Bill Approval
+                                                        </a>
+                                                    }
+                                                    @if (Model.dtDetails.Rows[i]["DGBillStatus"].ToString().ToLower().Trim() == "verified")
+                                                    {                                                       
+                                                            <button disabled title="Already verified." class="cursor-not-allowed btn btn-outline-secondary btn-xs clickable m-t-5" style="width:100%; cursor:not-allowed">
+                                                                <i class="fa fa-check-circle " aria-hidden="true"></i>  Procced DG Bill Approval
+                                                             </button>
+                                                        
+                                                    }
+                                                    else if (Model.dtDetails.Rows[i]["DGBillStatus"].ToString() == "Pending")
+                                                    {
+
+                                                        <a style="width:100%" class="btn btn-outline-success btn-xs clickable m-t-5" href="/Bill/DGBill?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_FbillId"].ToString())&&st=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["FK_STPId"].ToString())&&Inv=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_InvId"].ToString())" title="Click and verify the DB bills.">
+                                                            <i class="fa fa-forward" aria-hidden="true"></i>  Procced DG Bill Approval
+                                                        </a>
+                                                    }
+                                                }
+                                                @if (@Model.dtDetails.Rows[i]["IsApproved"].ToString() == "1")
+                                                {
+                                                    if (Model.DesignationId == 4 && new List<int> { 3, 24, 13 }.Contains(Model.DepartmentId))
+                                                    {
+                                                        <a style="width:100%" class="btn btn-success btn-xs clickable m-t-5" disabled href="/Bill/BillApproval?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_FbillId"].ToString())&&xyz=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_FirmId"].ToString())&&uvw=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Inv_Month"].ToString())&&mpa=@OCOO.Models.Crypto.Encrypt("/ApproveBilling/BillApprovalList")&&st=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["FK_STPId"].ToString())" title="It is already verified. If you want to re-verify, please click on the same button.">
+                                                            <i class="fa fa-check-circle" aria-hidden="true"></i>  Verified
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (Model.dtDetails.Rows[i]["IsEnabled"].ToString() == "True")
+                                                        {
+                                                            if (Model.DesignationId == 4 && new List<int> { 3, 24, 13 }.Contains(Model.DepartmentId))
+                                                            {
+
+                                                                <a style="width:100%" class="btn btn-outline-info btn-xs clickable m-t-5" href="/Bill/BillApproval?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_FbillId"].ToString())&&xyz=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_FirmId"].ToString())&&uvw=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Inv_Month"].ToString())&&mpa=@OCOO.Models.Crypto.Encrypt("/ApproveBilling/BillApprovalList")&&st=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["FK_STPId"].ToString())" title="Click and proceed for further process">
+                                                                    <i class="fa fa-forward" aria-hidden="true"></i>  Proceed
+                                                                </a>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (Model.dtDetails.Rows[i]["IsEnabled"].ToString() == "True")
+                                                    {
+                                                        if (Model.DesignationId == 4 && new List<int> { 3, 24, 13 }.Contains(Model.DepartmentId))
+                                                        {
+                                                            <a style="width:100%" class="btn btn-outline-info btn-xs clickable m-t-5" href="/Bill/BillApproval?id=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["PK_FbillId"].ToString())&&xyz=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Pk_FirmId"].ToString())&&uvw=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["Inv_Month"].ToString())&&mpa=@OCOO.Models.Crypto.Encrypt("/ApproveBilling/BillApprovalList")&&st=@OCOO.Models.Crypto.Encrypt(Model.dtDetails.Rows[i]["FK_STPId"].ToString())" title="Click and proceed for further process">
+                                                                <i class="fa fa-forward" aria-hidden="true"></i>  Proceed Bill Approval
+                                                            </a>
+                                                        }
+                                                    }
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning text-center">No Record Found</div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <form action="/Bill/JEBillApproval" method="post" name="BillApprovalForm" id="BillApprovalForm" enctype="multipart/form-data">
+        <div id="Bill_Approval_Modal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+            @Html.AntiForgeryToken()
+            <div class="modal-dialog modal-xs">
+                <div class="modal-content">
+                    <div class="modal-header modal-header">
+                        <h4 class="modal-title"><span class="fa fa-check-circle"></span> Verify Bill</h4>
+                        <button type="button" class="close float-right" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mt-2">
+                            <input type="hidden" name="Bill_Id" id="Bill_Id" value="@ViewBag.BillId" />
+                            <input type="hidden" id="fieldid_hidden" />
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Attachment</label>
+                                    <input type="file" id="Attachment" name="Attachment" class="form-control" placeholder="Attach your file" onchange="return ValidateFiles(this)" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Remark<small class="text-danger">*</small></label>
+                                    <textarea class="form-control" name="Remark" id="Remark" placeholder="Enter Remark."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <input type="checkbox" id="md_checkbox_34" class="filled-in chk-col-amber" />
+                                <label style="font-size:12px;" for="md_checkbox_34">It is hereby declared that the details mentioned here/above are true and correct.</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger  btn-xs" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+                        <button type="button" class="btn btn-outline-success btn-xs" onclick="ValiddateJEBillCApproval()"><i class="fa fa-save"></i> Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function ValiddateJEBillCApproval() {
+        if ($("#Remark").val() == undefined || $("#Remark").val() == "") {
+            fShowToastalert('Please enter remark.');
+            $("#Remark").focus();
+            return false;
+        }
+        else if ($("#md_checkbox_34").prop('checked') == false) {
+            fShowToastalert('Please check declaration box!');
+            return false;
+        }
+        else {
+            $("#BillApprovalForm").submit();
+        }
+
+
+    }
+</script>

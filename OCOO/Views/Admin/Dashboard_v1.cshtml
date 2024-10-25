@@ -1,0 +1,528 @@
+﻿@{
+    ViewData["Title"] = "Dashbaord_v1";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+   
+    select option:checked {
+        background-color: #21aee4 !important;
+        color:#fff !important;
+    }
+    .no-radius {
+        border-radius: 0px !important;
+    }
+
+    .chart-style {
+        padding-right: 2px !important;
+        padding-bottom: 2px !important;
+    }
+
+    table tbody td {
+        /*  height: 50px; */
+        overflow: auto;
+    }
+
+    .dashboard-li li {
+        list-style-type: none;
+    }
+
+        .dashboard-li li small {
+            font-size: 9px !important;
+        }
+
+    .year-li {
+        padding-right: 6px !important;
+    }
+
+    .date-li {
+        padding: 1px;
+        font-size: 6px;
+    }
+
+    div label input {
+        margin-right: 0px;
+    }
+
+    .cat {
+        border-radius: 2px;
+        border: 1px solid #fff;
+        width: 1.0em;
+        height: 0.5em;
+    }
+
+    .year-td-1 {
+        height: 3px !important;
+        width: 20px !important;
+        padding: 3px !important;
+        font-size: 9px;
+        font-weight: 500;
+    }
+
+    .year-td {
+        background-color: #fd7e14;
+        border: 1px solid #ffffff;
+        color: #ffffff;
+        height: 8px !important;
+        width: 20px !important;
+        padding: 0px !important;
+        font-size: 8px;
+        overflow: hidden;
+    }
+
+    table thead th {
+        font-size: 9px;
+        padding: 3px;
+    }
+
+    .table td {
+        white-space: nowrap !important;
+        width: 244px !important;
+    }
+
+    .custom-checkbox-input {
+        display: none;
+    }
+
+    .custom-checkbox-text {
+        padding: 0px 11px 0px 4px;
+        background-color: #aaa;
+        color: #555;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .custom-checkbox-input:checked ~ .custom-checkbox-text {
+        background-color: rgb(255, 123, 0);
+        color: white;
+    }
+
+    .dashboard-v1 table th, td {
+        padding: 4px 4px !important;
+        font-size: 11px !important;
+    }
+
+    .cale-li-1 {
+        margin-bottom: 1rem !important;
+    }
+
+    .cale-li {
+        margin-bottom: 1.7rem !important;
+    }
+
+    .cale-m {
+        margin-top: 5px;
+    }
+
+    .cale-y {
+        margin-top: 10px;
+    }
+
+    .YearSection [type=checkbox]:checked, [type=checkbox]:not(:checked) {
+        left: auto !important;
+        opacity: 99999 !important;
+        height: 8px !important;
+        width: 23px !important;
+    }
+
+    .checkboxField:before {
+        transition-timing-function: cubic-bezier(.075, .820, .165, 1);
+        border-radius: 2px;
+        background-color: #aaa;
+        border-color: transparent;
+        box-sizing: border-box;       
+        content: close-quote;
+        display: inline-block;
+        height: 8px;
+        transition-duration: .5s;
+        transition-property: background-color, border-color;
+        width: 23px;
+    }
+
+    .checkboxField:checked:before {
+        background-color: #eb8c23;
+        border-color: white;
+    }
+
+    .QuartersSection [type=checkbox]:checked, [type=checkbox]:not(:checked) {
+        left: auto !important;
+        opacity: 99999 !important;
+        height: 8px !important;
+        width: 10px !important;
+        position: relative !important;
+    }
+
+    .QuartercheckboxField:before {
+        transition-timing-function: cubic-bezier(.055, .520, .65, 1);
+        border-radius: 1px;
+        background-color: #aaa;
+        border-color: transparent;
+        box-sizing: border-box;
+        content: close-quote;
+        display: inline-block;
+        height: 8px;
+        transition-duration: .5s;
+        transition-property: background-color, border-color;
+        width: 10px !important;
+    }
+
+    .QuartercheckboxField:checked:before {
+        background-color: #eb8c23;
+        border-color: white;
+    }
+
+    .MonthSection [type=checkbox]:checked, [type=checkbox]:not(:checked) {
+        left: auto !important;
+        opacity: 99999 !important;
+        height: 8px !important;
+        width: 10px !important;
+    }
+
+    .MonthcheckboxField:before {
+        transition-timing-function: cubic-bezier(.055, .520, .65, 1);
+        border-radius: 1px;
+        background-color: #aaa;
+        border-color: transparent;
+        box-sizing: border-box;
+        content: close-quote;
+        display: inline-block;
+        height: 8px;
+        transition-duration: .5s;
+        transition-property: background-color, border-color;
+        width: 10px !important;
+    }
+
+    .MonthcheckboxField:checked:before {
+        background-color: #eb8c23;
+        border-color: white;
+    }
+
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+
+
+
+<script src="~/app/dashbard_v1.js?@DateTime.Now.Ticks"></script>
+<div class="page-wrapper" ng-controller="Dashboard_v1_Controller">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h3 class="text-themecolor">Dashboard</h3>
+        </div>
+        <div class="col-md-7 align-self-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card-date">
+                                    <div class="p-1">
+                                        <small class="card-title m-b-0">Date</small>
+                                        <i class="fa-stack date-li" style="float: right; cursor:pointer" ng-click="ClearCalendarFilter()">
+                                            <i class="fa fa-filter fa-stack-1x date-li"></i>
+                                            <i class="fa fa-times fa-stack-1x date-li" style="padding-left: 6px; padding-top: 4px;"></i>
+                                        </i>
+                                    </div>
+                                    <hr class="mt-0 mb-1">
+                                    <div class="card-body pt-0 collapse show">
+                                        <div class="row">
+                                            <div class="col-md-12 p-0 mb-2">
+                                                <small>All Periods</small>
+                                                <div class="btn-group" style="float:right; cursor:pointer">
+                                                    <select class="" name="Calendar" ng-model="Calendar" ng-change="CalendarChange()" style="border:none; font-size:10px">
+                                                        <option value="Y" selected>Years</option>
+                                                        <option value="Q">Quarters</option>
+                                                        <option value="M">Month</option>
+                                                        <option value="D">Days</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 p-0">
+                                                <div class="table-responsive datesSection">
+                                                    <ul class="YearSection d-flex dashboard-li cale-li p-0 cale-y year-list" ng-show="Calendar=='Y'">
+                                                        <li ng-repeat="yearObj in yearsArray" class="date-li year-li" ng-click="YearsChange()">
+                                                            <small>{{ yearObj.year }}</small>
+                                                            <div class="action">
+                                                                <input class="checkboxField m-0 p-0" name="year[]" value="{{yearObj.year}}" type="checkbox">
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                    <ul class="QuartersSection d-flex justify-content-between dashboard-li cale-li  p-0 quarters-list" ng-show="Calendar=='Q'">
+                                                        <li ng-repeat="yearObj in QuartersyearsArray" ng-click="QuartersChange()">
+                                                            <small>  {{ yearObj.year }}</small>
+                                                            <ul class="d-flex justify-content-between p-0 cale-m">
+                                                                <li class="date-li quarters-li" ng-repeat="quarterObj in yearObj.quarters">
+                                                                    {{ quarterObj.quarter }}
+                                                                    <div class="action">
+                                                                        <input class="QuartercheckboxField m-0 p-0" name="quarter[]" year="{{yearObj.year}}" value="{{quarterObj.quarter}}" type="checkbox">
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+
+                                                    <ul class="QuartersSection d-flex justify-content-between dashboard-li cale-li-1  p-0 days-list" ng-show="Calendar=='D'">
+                                                        <li ng-repeat="yearObj in yearsArray">
+                                                            <small>{{ yearObj.year }}</small>
+                                                            <ul class="d-flex justify-content-between p-0">
+                                                                <li ng-repeat="monthObj in yearObj.months">
+                                                                    <small>{{ monthObj.name }} {{ yearObj.year }}</small>
+                                                                    <ul class="d-flex justify-content-between p-0">
+                                                                        <li class="date-li" ng-repeat="date in monthObj.days" ng-click="DaysChange()">
+                                                                            {{ date | date:'d' }}
+                                                                            <div class="action">
+                                                                                <label class="custom-checkbox m-0 p-0">                                                                                    
+                                                                                    <input class="QuartercheckboxField m-0 p-0" name="Days[]" year="{{ yearObj.year }}" month="{{ monthObj.month }}" value="{{ date | date:'d' }}" type="checkbox">
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+
+                                                    <ul class="QuartersSection d-flex justify-content-between dashboard-li cale-li p-0 months-list" ng-show="Calendar=='M'">
+                                                        <li ng-repeat="yearObj in yearsArray">
+                                                            <small>{{ yearObj.year }}</small>
+                                                            <ul class="d-flex justify-content-between p-0 cale-m">
+                                                                <li class="date-li" ng-repeat="monthObj in yearObj.months" ng-click="MonthsChange()">
+                                                                    {{ monthObj.name }}
+                                                                    <div class="action">                                                                       
+                                                                        <label class="custom-checkbox m-0 p-0">
+                                                                            <input class="QuartercheckboxField m-0 p-0" name="months[]" year="{{yearObj.year}}" value="{{monthObj.month}}" type="checkbox">
+                                                                        </label>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 p-0">
+                                <div class="card-date">
+                                    <div class="card-body body-c">
+                                        <div class="row d-flex align-items-center">
+                                            <div class="col-md-3 d-flex align-items-center p-0">
+                                                <select name="Zone" id="Zones" class="multi-sel" multiple style="height: 125px !important" ng-model="Zones" ng-click="GetSTPDropdown()">
+                                                    <option value="" hidden>Select</option>
+                                                    <option ng-repeat="x in EmployeeZoneList" class="option-2" value="{{x.zoneId}}">{{x.zone}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-5 stpselect">
+                                                <label for="cars">Select STP</label>
+                                                <i class="fa-stack date-li" style="float: right; cursor:pointer" ng-click="ClearSTPFilter()" title="Clear filters">
+                                                    <i class="fa fa-filter fa-stack-1x date-li"></i>
+                                                    <i class="fa fa-times fa-stack-1x date-li" style="padding-left: 6px; padding-top: 4px;"></i>
+                                                </i>
+                                                <i class='fa fa-list date-li' style="cursor:pointer; margin-top:5px;float:right; color:{{ActiveColor}};" title="Multi-select (Alt+S)" ng-click="AllowSTPMultipleSelect()"></i>
+                                                <select name="STPs" id="STPs" class="form-control" style="height: 120px !important" ng-model="STPs" multiple ng-click="toggleSelection($event, STPs)" ng-change="STPChange()">
+                                                    <option value="" hidden>Select</option>
+                                                    <option ng-repeat="x in STPDropdownList" class="option-1" value="{{x.id}}">{{x.name}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 stpselect">
+                                                <select name="InspectionAgencys" id="InspectionAgencys" class="form-control" multiple style="height: 137px !important" ng-model="InspectionAgencys" ng-change="InspectionAgencyChange()">
+                                                    <option value="" hidden>Select</option>
+                                                    <option ng-repeat="x in InspectionAgencyDropdownList" class="option-1" value="{{x.id}}" title="{{x.name}}">{{x.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card no-radius">
+                                    <div class="p-1">
+                                        <div class="card-actions">
+                                            <a class="" data-action="collapse"><i class="fa fa-expand"></i></a>
+                                        </div>
+                                        <small class="card-title m-b-0">Flow Trend</small>
+                                    </div>
+                                    <div class="collapse show" id="FlowTrendChartchartContainer" style="height:124px !important">
+                                        <div>
+                                            <canvas id="FlowTrendChart" height="67" class="chart-style"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body p-0">
+                                <div class="testTable table-responsive small accordion" id="accordiontable">
+                                    <table class="stickyHead table table-striped dashboard-v1">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:200px !important">STP</th>
+                                                <th>Total Operation days</th>
+                                                <th>BOD Fail Days</th>
+                                                <th>BOD Fail Days Status</th>
+                                                <th>COD Fail Days</th>
+                                                <th>COD Fail Days Status</th>
+                                                <th>TSS Fail Days</th>
+                                                <th>TSS Fail Days Status</th>
+                                                <th>FC Fail Days</th>
+                                                <th>FC Fail Days Status</th>
+                                                <th>Quality KPI Status</th>
+                                                <th>Quantity KPI</th>
+                                                <th>Quantity KPI Status</th>
+                                                <th>Average of Actual Flow</th>
+                                                <th>Overall KPI Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody ng-repeat="x in PerformanceDashboardData" ng-show="!IsDataLoading">
+                                            <tr>
+                                                <td colspan="15" class="panel-title"><a href="" id="headingOne1" data-toggle="collapse" data-target="#collapseOne1{{x.zoneName}}" aria-expanded="true" aria-controls="collapseOne1{{x.zoneName}}"> {{x.zoneName}}</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="15" id="collapseOne1{{x.zoneName}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordiontable">
+                                                    <table class="table">
+                                                        <tr ng-repeat="v in x.stPsDataList">
+                                                            <td style="min-width:200px !important">{{v.stpName}}</td>
+                                                            <td>{{v.totalOperationDays}}</td>
+                                                            <td>{{v.bodFailDays}}</td>
+                                                            <td class="text-center"><span class="bstatus badge-{{v.bodFailDays==0?'success':'danger'}}"></span></td>
+                                                            <td>{{v.codFailDays}}</td>
+                                                            <td class="text-center"><span class="bstatus badge-{{v.codFailDays==0?'success':'danger'}}"></span></td>
+                                                            <td>{{v.tssFailDays}}</td>
+                                                            <td class="text-center"><span class="bstatus badge-{{v.tssFailDays==0?'success':'danger'}}"></span></td>
+                                                            <td>{{v.fcFailDays}}</td>
+                                                            <td class="text-center"><span class="bstatus badge-{{v.fcFailDays==0?'success':'danger'}}"></span></td>
+                                                            <td class="text-center"><span class="bstatus badge-{{v.quantityKPIStatus?'success':'danger'}}"></span></td>
+                                                            <td>{{v.quantityKPI}}</td>
+                                                            <td class="text-center"><span class="bstatus badge-success"></span></td>
+                                                            <td>{{v.averageOfActualFlow}}</td>
+                                                            <td class="text-center"><span class="bstatus badge-{{v.overallKPIStatus?'success':'danger'}}"></span></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot ng-show="IsDataLoading">
+                                           <tr>
+                                               <td class="text-danger text-center" colspan="15">
+                                                    <img src="~/assets/loading.gif" height="70px"/>
+                                               </td>
+                                           </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card no-radius">
+                    <div class="p-1">
+                        <div class="card-actions">
+                            <a class="" data-action="collapse"><i class="fa fa-expand"></i></a>
+                        </div>
+                        <small class="card-title m-b-0">BOD Trend</small>
+                    </div>
+                    <div class="collapse show" id="BODTrendChartchartContainer">
+                        <div>
+                            <canvas id="BODTrendChart" height="150" class="chart-style"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card no-radius">
+                    <div class="p-1">
+                        <div class="card-actions">
+                            <a class="" data-action="collapse"><i class="ti-minus"></i></a>
+                        </div>
+                        <small class="card-title m-b-0">TSS Trend</small>
+                    </div>
+                    <div class="collapse show" id="TSSTrendChartchartContainer">
+                        <div>
+                            <canvas id="TSSTrendChart" height="150" class="chart-style"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="card no-radius">
+                    <div class="p-1">
+                        <div class="card-actions">
+                            <a class="" data-action="collapse"><i class="ti-minus"></i></a>
+                        </div>
+                        <small class="card-title m-b-0">FC Trend</small>
+                    </div>
+                    <div class="collapse show" id="FCTrendChartchartContainer">
+                        <div>
+                            <canvas id="FCTrendChart" height="150" class="chart-style"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card no-radius">
+                    <div class="p-1">
+                        <div class="card-actions">
+                            <a class="" data-action="collapse"><i class="ti-minus"></i></a>
+                        </div>
+                        <small class="card-title m-b-0">COD Trend</small>
+                    </div>
+                    <div class="collapse show" id="CODTrendChartContainer">
+                        <div>
+                            <canvas id="CODTrendChart" height="150" class="chart-style"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Row -->
+
+
+
+    </div>
+
+    <footer class="footer">
+        © 2023 All Rights Reserved Swatch Bharath.
+    </footer>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        var lastClickedCheckbox = null;
+        $(".custom-checkbox-input").on("click", function (event) {
+            var checkboxValue = $(this).val();
+            if (event.ctrlKey) {
+
+            } else {
+                $(".custom-checkbox-input").prop("checked", false);
+                $(this).prop("checked", true);
+                lastClickedCheckbox = this;
+            }
+        });
+    });
+
+
+
+
+</script>

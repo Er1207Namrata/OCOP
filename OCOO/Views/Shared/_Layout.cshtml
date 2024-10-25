@@ -1,0 +1,388 @@
+﻿﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/favicon.png">
+    <title>UP JAL-NIGAM</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    @* <link href="~/assets/css/bootstrap-icons.css" rel="stylesheet" />*@
+    <!-- Morries chart CSS -->
+    <!-- Custom CSS -->
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <!-- You can change the theme colors from here -->
+    <link href="~/assets/css/colors/blue.css" id="theme" rel="stylesheet">
+    <link href="~/assets/css/custom.css" rel="stylesheet">
+    <link href="~/assets/css/FormTab.css" rel="stylesheet">
+    <link href="~/assets/plugins/toast-master/css/jquery.toast.css" rel="stylesheet">
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js">
+    </script>
+
+    @*  datepicker*@
+    <link href="~/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <script src="~/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    @*  end datepicker*@
+    <script src="~/script/dateformat.js"></script>
+
+    @* Added by SL000143 *@
+    <!-- Include AngularJS -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-messages.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/3.0.0/toaster.min.css" rel="stylesheet" />
+    <script src="https://code.angularjs.org/1.2.0/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/3.0.0/toaster.min.js"></script>
+
+    @* <script src="~/lib/angular/angular.min.js" asp-append-version="true"></script> *@
+
+    <script src="~/app/layoutscript.js"></script>
+
+    <link href="~/assets/plugins/datatables/fixedheader.bootstrap.min.css" rel="stylesheet" />
+    <script src="~/script/generatefirmbill.js"></script>
+    <style>
+        .input-box {
+            border-radius: 5px;
+            border: 0.5px solid lightgray;
+            padding: 4px;
+            width: 100px;
+        }
+
+        .form {
+            margin: 2% 20%;
+        }
+
+        .mul-select {
+            min-width: 100%;
+        }
+
+        .dataTables_empty {
+            text-align: center !important;
+            /*color: orange !important;*/
+            color: #856404;
+            background-color: #fff3cd;
+        }
+
+        .badge-wrapper {
+            position: relative;
+        }
+
+        .badge-1 {
+            position: absolute;
+            top: -14px;
+            right: -11px;
+            display: inline-block;
+            border-radius: 50%;
+            background-color: #443939;
+            font-size: xx-small;
+            padding: 5px;
+        }
+
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 8px;
+            cursor: pointer;
+        }
+
+
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 3px grey;
+            border-radius: 3px;
+        }
+
+
+        ::-webkit-scrollbar-thumb {
+            background: #21aee4;
+            border-radius: 3px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #21aee4;
+            }
+
+        .zone-badge {
+            max-width: 95px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .table td {
+            white-space: nowrap !important;
+        }
+    </style>
+
+</head>
+
+<body class="fix-header fix-sidebar card-no-border" ng-app="LayoutApp" ng-controller="layoutController">
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar">
+            <nav class="navbar top-navbar navbar-expand-md navbar-light">
+                <!-- ============================================================== -->
+                <!-- Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-header">
+                    <a class="navbar-brand">
+                        <!-- Logo icon --><b>
+                            <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                            <!-- Dark Logo icon -->
+                            <img src="~/assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
+                            <!-- Light Logo icon -->
+
+                        </b>
+                        <!--End Logo icon -->
+                        <!-- Logo text --><span>
+                            <!-- dark Logo text -->
+                            <img src="~/assets/images/logo-text.png" alt="homepage" class="dark-logo" />
+                            <!-- Light Logo text -->
+                        </span>
+                    </a>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-collapse">
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav mr-auto mt-md-0">
+                        <!-- This is  -->
+                        <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+                        <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+
+                        <!-- ============================================================== -->
+                        <!-- End Comment -->
+                        <!-- ============================================================== -->
+                    </ul>
+
+                    <!-- ============================================================== -->
+                    <!-- User profile and search -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav my-lg-0">
+                        <!-- ============================================================== -->
+                        <!-- Comment -->
+                        <!-- ============================================================== -->
+                        <li class="nav-item dropdown pr-3">
+                            <a class="nav-link dropdown-toggle text-muted text-muted waves-effect waves-dark" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-bell badge-wrapper">
+                                    <span class='badge-1'>0</span>
+                                </i>
+                            </a>
+                            <div class="dropdown-menu mailbox animated slideInUp">
+                                <ul id="dynamicList"></ul>
+                            </div>
+                        </li>
+                        <h3 class="mt-3 text-light userlogindet">
+                            @Context.Session.GetString("Name") <br />
+                            @if (Context.Session.GetString("Zone").ToString() != null && Context.Session.GetString("Zone").ToString() != "0" && Context.Session.GetString("Zone").ToString() != " ")
+                            {
+                                <span class="badge badge-info zone-badge" title="@Context.Session.GetString("Zone")"> @Context.Session.GetString("Zone")</span>
+                            }
+                        </h3>
+
+                        <!-- ============================================================== -->
+                        <!-- Profile -->
+                        <!-- ============================================================== -->
+                        <li class="nav-item dropdown">
+                            <input type="hidden" id="hddnUserPermission" class="hddnUserPermission" value="@Context.Session.GetString("disabledSave_Update")" "   />
+                            @if (Context.Session.GetString("ProfilePic") != "0" && Context.Session.GetString("ProfilePic") != null && Context.Session.GetString("ProfilePic") != " " && Context.Session.GetString("ProfilePic") != "")
+                            {
+                                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="@Context.Session.GetString("ShowFilePath")@Context.Session.GetString("ProfilePic")" alt="user" class="profile-pic" /></a>
+                            }
+                            else
+                            {
+                                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="~/assets/images/users/1.jpg" alt="user" class="profile-pic" /></a>
+                            }
+                            <div class="dropdown-menu dropdown-menu-right scale-up">
+                                <ul class="dropdown-user">
+                                    <li>
+                                        <div class="dw-user-box ">
+                                            @if (Context.Session.GetString("ProfilePic") != "0" && Context.Session.GetString("ProfilePic") != null && Context.Session.GetString("ProfilePic") != " " && Context.Session.GetString("ProfilePic") != "")
+                                            {
+                                                <div class="u-img"><img src="@Context.Session.GetString("ShowFilePath")@Context.Session.GetString("ProfilePic")" alt="user"></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="u-img"><img src="~/assets/images/users/1.jpg" alt="user"></div>
+                                            }
+                                            <div class="u-text">
+                                                <h4>@Context.Session.GetString("Name")</h4>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li><a href="/AdminReport/Profile"><i class="fa fa-user"></i> Update Profile</a></li>
+                                    <li><a href="/AdminReport/ChangePassword"><i class="fa fa-lock"></i> Change Password</a></li>
+                                    <li><a href="/Home/Logout"><i class="fa fa-power-off"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- User profile -->
+                <!-- End User profile text-->
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        @{
+                            Html.RenderPartial("_PartialLayout");
+                        }
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        @if (@TempData["Message"] != null)
+        {
+            <div class="toastsuccess">
+            </div>
+            <span id="Toastmsg" style="display:none;">@TempData["Message"]</span>
+
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="toasterror">
+            </div>
+            <span id="Toasterrormsg" style="display:none;">@TempData["ErrorMessage"]</span>
+        }
+        @RenderBody()
+        <footer class="footer">
+            <div class="row">
+                <div class="col-md-6 text-left"> © @DateTime.Now.Year All Rights Reserved One City One Operator.</div>
+                <div class="col-md-6 text-right">Design & Developed By Intense Technologies Limited</div>
+            </div>
+        </footer>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="~/assets/plugins/bootstrap/js/popper.min.js"></script>
+    <script src="~/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="~/assets/js/jquery.slimscroll.js"></script>
+    <!--Wave Effects -->
+    <script src="~/assets/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="~/assets/js/sidebarmenu.js"></script>
+    <!--stickey kit -->
+    <script src="~/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <script src="~/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <!--Custom JavaScript -->
+    <script src="~/assets/js/custom.min.js"></script>
+    <!-- ============================================================== -->
+    <script src="~/js/custom.js"></script>
+    <!-- This page plugins -->
+    <!-- ============================================================== -->
+    <!-- sparkline chart -->
+    <script src="~/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+    @*<script src="~/assets/js/dashboard4.js"></script>*@
+    <script src="~/assets/plugins/moment/moment.js"></script>
+    <script src="~/assets/plugins/toast-master/js/jquery.toast.js"></script>
+    <script src="~/js/toastr.js"></script>
+    <script src="~/js/jquery.datatables.min.js"></script>
+    <script src="~/assets/plugins/datatables/datatables.fixedheader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    @*    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>*@
+    <script src="~/script/pdf/dist/tableexport.js"></script>
+    <script src="~/script/pdf/dist/base64.js"></script>
+    <script src="~/script/pdf/dist/html2canvas.js"></script>
+    <script src="~/script/pdf/dist/jquery.base64.js"></script>
+    <script src="~/script/pdf/dist/jspdf.debug.js"></script>
+    <script src="~/script/pdf/dist/jspdf.min.js"></script>
+    <script src="~/script/pdf/dist/sprintf.js"></script>
+    <script src="~/js/common.js"></script>
+    <script>
+        $(document).ready(function () {
+            if ($('.toastsuccess').is(':visible')) {
+                var msg = $('#Toastmsg').html()
+                fShowToast(msg);
+            }
+            if ($('.toasterror').is(':visible')) {
+                var errormsg = $('#Toasterrormsg').html()
+                fShowToasterror(errormsg)
+            }
+        });
+        $(document).ready(function () {
+            fNotification()
+            $(".mul-select").select2({
+                placeholder: "--select--",
+                tags: true,
+            });
+
+        });
+    </script>
+    <script>
+        function generateRandomNumber() {
+            let minm = 100000;
+            let maxm = 999999;
+            return Math.floor(Math
+                .random() * (maxm - minm + 1)) + minm;
+        }
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+            if (charCode != 46 && charCode > 31
+                && (charCode < 48 || charCode > 57))
+                return false;
+        }
+    </script>
+</body>
+</html>

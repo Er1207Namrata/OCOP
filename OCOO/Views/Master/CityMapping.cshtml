@@ -1,0 +1,203 @@
+﻿@model OCOO.Models.CityMapping
+@{
+    ViewData["Title"] = "CityMapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">City Mapping</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <div class="card">
+            <form asp-action="CityMapping" asp-controller="Master" method="post" enctype="multipart/form-data">               
+                <input type="hidden" value="@ViewBag.ZoneBySession" id="ZoneIdBySession" />
+                <input type="hidden" id="TempEmp" asp-for="EmployeeId" value="@ViewBag.EmployeeId" />
+                <input type="hidden" id="TempEmp" asp-for="Pk_ZoneId" value="@ViewBag.Pk_ZoneId" />
+                <input type="hidden" value="@ViewBag.FK_EmployeeId" id="ViewBag_FK_EmployeeId" />
+                <input type="hidden" value="@ViewBag.Pk_ZoneId" id="ZoneID" />
+                <input type="hidden" value="@ViewBag.FK_MenuId" id="ViewBag_FK_MenuId" />
+                <div class="card-body pb-20">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Zone</label>
+                            @Html.DropDownListFor(m => m.Pk_ZoneId, new SelectList(ViewBag.ddlZone, "Value", "Text"), new { @class = "form-control" })
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Department</label>
+                            @Html.DropDownListFor(m => m.DepartmentId, new SelectList(ViewBag.ddldepartment, "Value", "Text"), new { @class = "form-control", @onchange = "return fbindOfficer();" })
+                        </div>
+                        <div class="col-md-3">
+                            <label>Designation</label>
+                            @Html.DropDownListFor(m => m.DesignationId, new SelectList(ViewBag.ddlDesignation, "Value", "Text"), new { @class = "form-control", @onchange = "return fbindOfficer();" })
+                        </div>
+                        <div class="col-md-3">
+                            <label>Officer</label>
+                            @Html.DropDownListFor(m => m.Fk_EmpId, new SelectList(ViewBag.ddlOfficer, "Value", "Text"), new { @class = "form-control", @onchange = "return GetMapping();" })
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+
+
+                    <div class="col-md-12">
+                        <table class="table table-responsive-sm" id="divTable">
+                            <thead>
+                                <tr>
+                                    <th>SN.</th>
+                                    <th>City</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.lstData != null)
+                                {
+                                    int i = 0;
+                                    foreach (var item in Model.lstData)
+                                    {
+                                        <tr>
+                                            <td>@(i + 1)</td>
+                                            <td>@item.CityName</td>
+                                            <td>
+                                                @if (item.IsChecked == "False")
+                                                {
+                                                    <input type="checkbox"
+                                                           name="CityName_@i"
+                                                           id="CityName_@i" class="filled-in chk-col-amber" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox"
+                                                           name="CityName_@i"
+                                                           id="CityName_@i"
+                                                           class="filled-in chk-col-amber" checked />
+                                                }
+                                                <label style="padding-top:3px;" for="CityName_@i"></label>
+                                                <input type="hidden" name="CityId_@i" id="CityId_@i" value="@item.Pk_CityId">
+                                                <input type="hidden" name="EmployeeId" id="EmployeeId" value="@ViewBag.EmployeeId">
+
+                                            </td>
+                                        </tr>
+                                        i++;
+                                    }
+                                    <input type="hidden" id="RowCount" name="RowCount" value="@i" />
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success  btn-sm btn-sm" id="Save" value="Save" name="Save"><i class="fa fa-save"> Save</i></button>
+                    &nbsp;
+                    <button class="btn btn-primary btn-sm" onclick="return reSet()">
+                        <i class="fa fa-refresh"> Reset</i>
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        debugger
+        var abc = $('#ZoneIdBySession').val();
+        if (abc == "3") {
+            $('#Pk_ZoneId').val(abc);
+        }
+        else if (abc == "4") {
+            $('#Pk_ZoneId').val(abc);
+        }
+
+    });
+
+    $(window).on("load", function () {
+        debugger
+        var ViewBag_Fk_ZoneId = $("#ZoneID").val();
+        var ViewBag_FK_EmployeeId = $("#TempEmp").val();
+        var ViewBag_FK_MenuId = $("#ViewBag_FK_MenuId").val();
+
+
+        if (ViewBag_Fk_ZoneId == undefined || ViewBag_Fk_ZoneId == NaN || ViewBag_Fk_ZoneId == "" || ViewBag_Fk_ZoneId == null) {
+            ViewBag_Fk_ZoneId = 0;
+        }
+
+        if (ViewBag_FK_EmployeeId == undefined || ViewBag_FK_EmployeeId == NaN || ViewBag_FK_EmployeeId == "" || ViewBag_FK_EmployeeId == null) {
+            ViewBag_FK_EmployeeId = 0;
+
+        }
+
+
+        BindMenu(ViewBag_Fk_ZoneId, ViewBag_FK_EmployeeId, ViewBag_FK_MenuId);
+
+    });
+
+    function reSet() {
+        $('#Fk_EmpId').val(0);
+        $('#Pk_ZoneId').val(0);
+        $('#DepartmentId').val(0);
+        $('#DesignationId').val(0);
+    }
+
+    function fbindOfficer() {
+        debugger;
+        let Pk_DepartmentId = $('#DepartmentId').val();
+        let Pk_DesignationId = $('#DesignationId').val();
+        debugger
+        $.ajax({
+            url: '/Master/GetEmployee',
+            type: 'GET',
+            data: { Pk_DepartmentId: Pk_DepartmentId, Pk_DesignationId: Pk_DesignationId },
+            success: function (response) {
+                debugger
+                if (response != null) {
+                    $("#Fk_EmpId").html('');
+                    let dd = '';
+                    for (let i = 0; i < response.length; i++) {
+                        dd += '<option value="' + response[i].value + '">' + response[i].text + '</option>';
+                    }
+                    $("#Fk_EmpId").html(dd);
+                }
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        })
+    }
+
+    function fvalidate() {
+        if ($('#Pk_ZoneId').val() == 0) {
+            $('#Pk_ZoneId').focus();
+            return false;
+        }
+        if ($('#Fk_EmpId').val() == 0) {
+            $('#Fk_EmpId').focus();
+            return false;
+        }
+    }
+
+    function GetMapping() {
+        debugger;
+        var empId = $('#Fk_EmpId').val();
+        var ZoneId = $('#Pk_ZoneId').val();
+        var DepartmentId = $('#DepartmentId').val();
+        var DesignationId = $('#DesignationId').val();
+        var url = '@Url.Action("CityMapping", "Master")'
+            + '?Emp_id=' + btoa(empId)
+            + '&Zone_id=' + btoa(ZoneId)
+            + '&Department_id=' + btoa(DepartmentId)
+            + '&Designation_id=' + btoa(DesignationId);
+        document.location = url;
+    }
+
+
+
+
+</script>
+
+
+

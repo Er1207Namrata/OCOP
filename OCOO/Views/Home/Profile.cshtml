@@ -1,0 +1,222 @@
+﻿@model OCOO.Models.Profile
+@{
+    ViewData["Title"] = "Profile";
+    @if (Context.Session.GetString("Fk_UsertypeId") == "2")
+    {
+        Layout = "~/Views/Shared/_FirmLayout.cshtml";
+    }
+    else if (Context.Session.GetString("Fk_UsertypeId") == "3")
+    {
+        Layout = "~/Views/Shared/_AgencyLayout.cshtml";
+
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">Profile</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+        @{
+            string msg = (string)TempData["msg"];
+            string code = (string)TempData["code"];
+            if (msg != null)
+            {
+                if (code.Equals("1"))
+                {
+                    <div class="alert alert-success m-t-30 msgdiv" id="divsuccess">
+                        <i class="mdi mdi-checkbox-multiple-marked-outline"></i> <strong>Success!</strong> @msg
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger m-t-30 msgdiv" id="divUpdate">
+                        <i class="mdi mdi-checkbox-multiple-marked-outline"></i>  <strong>Error!</strong> @msg
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+                    </div>
+
+                }
+            }
+        }
+        <div class="card">
+            <div class="card-body pb-0">
+                <form asp-action="Profile" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Name<span class="text-danger">*</span></label>
+                                    <input type="text" asp-for="Name" value="@Model.Name" class="form-control" placeholder="Enter Name" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Mobile No.<span class="text-danger">*</span></label>
+                                    <input type="text" value="@Model.MobileNo" asp-for="MobileNo" onkeypress="return isNumberKey(event)" class="form-control" maxlength="10" placeholder="Enter Mobile no." />
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Email Id<span class="text-danger">*</span></label>
+                                    <input type="email" onchange="return fCheck()" value="@Model.Email" asp-for="Email" class="form-control" placeholder="Enter Email Id" />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Profile Picture<span class="text-danger">*</span></label>
+                                    <input type="file" value="@Model.Documents" onchange="ShowImagePreview(this)" asp-for="ProfilePic" class="form-control" placeholder="Pic" onchange="return fvalidateTPIReport(this)" />
+                                    <small>Only Jpg,Png and jpeg files are allowed.</small>
+                                    <br />
+                                    <img src="@Context.Session.GetString("ShowFilePath")@Model.Documents" id="imagePreview" style="height: 120px;width: 200px;" />
+
+                                </div>
+                            </div>
+                        </div>
+                        @*  <div class="col-md-6">
+                        <div class="col-md-12">
+                        <div class="form-group">
+                        <label class="control-label">GST No</label>
+                        <input type="text" value="@Model.GSTNo" asp-for="GSTNo" class="form-control" onkeypress="return Isvalidateno(event);" placeholder="Enter Gst No" />
+
+                        </div>
+
+                        </div>
+                        </div> *@
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <button class="btn btn-success btn-xs" type="submit" name="Update" onclick="return fvalidate()" value="Update"><i class="fa fa-pencil"> Update</i></button>
+                            <button type="reset" class="btn btn-secondary btn-xs"><i class="fa fa-refresh"></i> Reset</button>
+                        </div>
+                        <br />
+                        <br />
+                        <input type="hidden" asp-for="Pk_AdminId" value="@Model.Pk_AdminId" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function ShowImagePreview(input) {
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imagePreview').prop('src', e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+        var path = input.value;
+        var ext = path.slice(path.lastIndexOf('.') + 1).toUpperCase()
+        if (ext == "JPG" || ext == "JPEG" || ext == "PNG") { }
+        else {
+            alert('Invalid Format')
+            $("#ProfilePic").val('');
+            $("#imagePreview").prop('src', '');
+            $("#ProfilePic").focus();
+            return false;
+        }
+    }
+    function ClearAll() {
+        debugger
+        $("#Name").val('');
+        $("#MobileNo").val('');
+        $("#ProfilePic").val('');
+        $("#Email").val('');
+        $("#imagePreview").prop('src', '');
+        $("#GSTNo").val('');
+    }
+    function Isvalidateno(no) {
+        debugger
+        var reggst = /^([0-9]){2}([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}([0-9]){1}([a-zA-Z]){1}([0-9]){1}?$/;
+        if (!reggst.test(no) && no != '') {
+            alert('GST Identification Number is not valid. It should be in this "11AAAAA1111Z1A1" format');
+        }
+    }
+    function fvalidate() {
+        debugger
+        $(".errortext").removeClass("errortext");
+        if ($('#Name').val() == '' || $('#Name').val() == null || $('#Name').val() == undefined || $('#Name').val() == "0" || $('#Name').val() == NaN) {
+            $("#Name").addClass('errortext');
+            $("#Name").focus()
+            return false;
+        }
+        if ($('#MobileNo').val() == '' || $('#MobileNo').val() == null || $('#MobileNo').val() == undefined || $('#MobileNo').val() == "0" || $('#MobileNo').val() == NaN) {
+            $("#MobileNo").addClass('errortext');
+            $("#MobileNo").focus();
+            return false;
+        }
+        const phoneNumber = $("#MobileNo").val();
+        if (validateIndianPhoneNumber(phoneNumber)) {
+        } else {
+            alert("Please Enter valid Mobile No !")
+            $("#MobileNo").focus();
+            return false;
+        }
+        if ($('#Email').val() == '' || $('#Email').val() == null || $('#Email').val() == undefined || $('#Email').val() == "0" || $('#Email').val() == NaN) {
+            $("#Email").addClass('errortext');
+            $("#Email").focus();
+            return false;
+        }
+        const email = $("#Email").val();
+        if (validateEmail(email)) {
+        } else {
+            alert("Please Enter valid Email Id !")
+            $("#Email").focus();
+            return false;
+        }
+
+
+        if ($('#ProfilePic').val() == '' || $('#ProfilePic').val() == null || $('#ProfilePic').val() == undefined || $('#ProfilePic').val() == "0" || $('#ProfilePic').val() == NaN) {
+            $("#ProfilePic").addClass('errortext');
+            $("#ProfilePic").focus();
+            return false;
+        }
+        if ($('#GSTNo').val() == '' || $('#GSTNo').val() == null || $('#GSTNo').val() == undefined || $('#GSTNo').val() == "0" || $('#GSTNo').val() == NaN) {
+            $("#GSTNo").addClass('errortext');
+            $("#GSTNo").focus();
+            return false;
+        }
+    }
+
+
+    function fCheck() {
+        let email = $("#Email").val();
+        if (email != null || email != "") {
+            $.ajax({
+                url: '/Admin/CheckEmailId',
+                type: 'GET',
+                data: { Id: email },
+                success: function (response) {
+
+                    if (response != null) {
+                        if (response.flag == "0") {
+                            alert(response.message)
+                            $("#Email").val("")
+                        }
+                    }
+                },
+                error: function () {
+                    alert('Something went wrong!');
+                }
+            });
+        }
+    }
+</script>

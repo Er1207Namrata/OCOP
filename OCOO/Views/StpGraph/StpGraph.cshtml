@@ -1,0 +1,214 @@
+﻿@model OCOO.Models.StpTree
+@{
+    ViewData["Title"] = "STP Graph";
+    Layout = "~/Views/Shared/_FirmLayout.cshtml";
+}
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor">STP Graph</h3>
+
+        </div>
+       @* <div class="col-md-6 align-self-right text-right">
+          
+          <a href="javascript:void(0)" class="btn btn-small text-light" style="background:#eb8c23" onclick="exportToExcel()"><span class="fa fa-file-excel-o"></span></a>
+        </div>*@
+    </div>
+    <style>
+
+        .SewerNode {
+            background: #5d975d;
+            color: beige;
+            font-size: 9px;
+            width: 100px;
+            height: 50px;
+            transform: skew(20deg);
+            border: none;
+            font-weight: 200;
+        }
+
+        .DrainNode {
+            background: #7979b8;
+            color: #fcfcfc;
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 9px;
+            font-weight: 200;
+        }
+
+
+        #chart_div {
+            width: 100%;
+            height: 700px;
+            overflow: auto !important;
+        }
+
+        .MPSNode {
+            background: #d8d822 !important;
+            color: black;
+            font-size: 9px;
+            font-weight: 200;
+        }
+
+        table {
+            width: 50% !important;
+        }
+
+        .color-div {
+            width: 40px;
+            height: 40px;
+            border: 1px solid grey;
+            background: #d8d822;
+        }
+
+        .color-div-1 {
+            width: 40px;
+            height: 40px;
+            border: 1px solid grey;
+            background: #5d975d;
+        }
+
+        .color-div-2 {
+            width: 40px;
+            height: 40px;
+            border: 1px solid grey;
+            background: #7979b8;
+        }
+
+        .google-visualization-orgchart-table {
+            width: 250px !important;
+        }
+    </style>
+    <input type="hidden" asp-for="Fk_STPId" />
+    <div class="container-fluid">
+        <div class="card">
+
+            <div class="">
+                <div class="d-flex justify-content-start align-items-center p-3">
+                    <div class="color-div mr-2"></div>
+                    <span>MPS/SPS/IPS</span>
+                </div>
+                <div class="d-flex justify-content-start align-items-center p-3">
+                    <div class="color-div-1  mr-2"> </div>
+                    <span>Sewer Length</span>
+                </div>
+                <div class="d-flex justify-content-start align-items-center p-3">
+                    <div class="color-div-2 mr-2"></div>
+                    <span>Drain</span>
+                </div>
+            </div>
+            <div id="chart_div" >
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
+<script>
+
+    google.charts.load('current', { packages: ["orgchart"] });
+
+    google.charts.setOnLoadCallback(function () {
+
+        $.ajax({
+            url: '/StpGraph/GetStpTree',
+            type: 'Post',
+            data: { Fk_STPId: $("#Fk_STPId").val() },
+            success: function (response) {
+
+                console.log(response);
+                if (response != null && Array.isArray(response.lstChild)) {
+                    // Create an object to store the hierarchical data
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('string', 'Name');
+                    data.addColumn('string', 'Manager');
+                    data.addColumn('string', 'ToolTip');
+
+                    response.lstChild.forEach(item => {
+                        data.addRows([
+                            // [item.name, item.parentName, '']
+                            [{ 'v': item.name, 'f': '<div ><b>' + item.name + '</b></div>' },
+                            item.parentName, 'MPS/SPS/IPS']// Add row for each item
+                        ]);
+                    });
+                    response.lstDrain.forEach(item => {
+                        data.addRows([
+                            // ['f': item.name, item.parentName, '']
+                            [{ 'v': item.dName, 'f': '<div ><b>' + item.name + '</b></div>' },
+                            item.parentName, 'Drain -' + item.name]// Add row for each item
+                        ]);
+                    });
+                    response.lstSeverLength.forEach(item => {
+                        data.addRows([
+                            //[item.name, item.parentName, '']
+                            [{ 'v': item.sName, 'f': '<div ><b>' + item.name + ' K.M.</b></div>' },
+                            item.parentName, 'Sewer length' + item.name + ' K.M.']
+                            // / Add row for each item
+                        ]);
+
+                    });
+
+                    // console.log(response.lstSeverLength)
+                    // For each orgchart box, provide the name, manager, and tooltip to show.
+
+                    // Create the chart.
+                   var options = {
+                        allowHtml: true,
+                        size: 'small',
+                        orientation: 'vertical',
+                         chartArea: { left: 0, top: 0, width: "70px", height: "70px" }
+                        , height: 10
+                        , width: 10
+                    };
+
+                    var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+                    chart.draw(data, options);
+                    // Add CSS classes to nodes dynamically based on their type
+                    $('.google-visualization-orgchart-node').each(function () {
+                        var nodeType = $(this, '.google-visualization-orgchart-node').attr('title');
+
+                        if (nodeType != undefined && nodeType != NaN && nodeType != "") {
+                            var ClassTitle = nodeType.substring(0, 3);
+                            if (ClassTitle === 'Dra') {
+
+                                $(this, '.google-visualization-orgchart-node').addClass('DrainNode');
+
+                            } else if (ClassTitle === 'Sew') {
+                                $(this, '.google-visualization-orgchart-node').addClass('SewerNode');
+
+                            }
+                            else if (ClassTitle === 'MPS') {
+                                $(this, '.google-visualization-orgchart-node').addClass('MPSNode');
+
+                            }
+
+                        }
+                    });
+
+                }
+
+            },
+            error: function (error) {
+                fShowToasterror(error);
+            }
+        });
+    });
+   // function exportToExcel() {
+        //let table = document.getElementsByTagName("table");
+        //console.log(table);
+        //debugger;
+        //TableToExcel.convert(table[0], {
+        //    name: `UserManagement.xlsx`,
+        //    sheet: {
+        //        name: 'Usermanagement'
+        //    }
+        //});
+    //}
+</script>
+
+
+

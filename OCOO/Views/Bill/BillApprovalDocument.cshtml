@@ -1,0 +1,312 @@
+﻿@model OCOO.Models.FirmDetails
+@{
+    ViewData["Title"] = "Bill Approval Document";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<
+<style>
+
+    .table-responsive {
+        height: calc(100vh - 260px);
+        overflow: auto;
+    }
+
+    table thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    table {
+        border-collapse: unset !important;
+    }
+
+    .table th, .table thead th {
+        color: #fff;
+        vertical-align: middle;
+        background: #21aee4 !important;
+        border: 1px solid #1b9aca;
+        text-align: center;
+        padding: 5px 10px;
+    }
+
+    .bg-light-info {
+        background-color: #f5fbff;
+        border: 1px solid #b6e2ff;
+    }
+
+    .bg-light-primary {
+        background-color: #f1effd;
+        border: 1px solid #dbd5ff;
+    }
+
+    .bg-light-warning {
+        background-color: #fff8ec;
+        border: 1px solid #ffe2b0;
+    }
+
+    .p-b-20 .radius {
+        padding: 10px 10px 0px 10px !important
+    }
+
+    .disabledTextBoxes {
+        width: 80px !important;
+        border: none;
+        background: none !important;
+    }
+
+    .modal-header {
+        color: #fff !important;
+        background: #eb8c23 !important;
+    }
+
+    .modal-title {
+        color: #fff !important;
+    }
+
+    .click {
+        cursor: pointer !important;
+    }
+
+    #UpdateBill_BOCODTSSFC input {
+        max-height: 20px !important;
+        border-radius: 2px !important;
+        font-size: 12px !important;
+    }
+
+    #UpdateBill_BOCODTSSFC .modal-dialog, .modal-header {
+        border-radius: 0px !important;
+    }
+
+    .Active_row {
+        border: 1px solid #eb8c23 !important;
+        color: #fff !important;
+        background: #eb8c23 !important;
+    }
+
+        .Active_row td {
+            border: none !important;
+        }
+
+
+
+    .Edited_Row {
+        border: 1px solid #f0f0f0 !important;
+        color: #fff !important;
+        background: #70bb4d !important;
+    }
+
+        .Edited_Row td {
+            border: none !important;
+        }
+
+</style>
+<script src="~/app/ProccedBillProcess.js"></script>
+<div ng-controller="ProccedBillProcessController">
+    <div class="page-wrapper" ng-init="GetAttachedFiles()">
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor">Bill Approval Document</h3>
+            </div>
+            <div class="col-md-6 align-self-right">
+                <a href="javascript:history.back()" class="btn btn-sm btn-warning text-white float-right"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a> &nbsp;
+                <span class="float-right" style="margin-right:10px !important"><a data-toggle="collapse" href="#BillDetailArea" title="Search" role="button" aria-expanded="true" aria-controls="BillDetailArea" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Bill </a></span>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            @if (Model.DesignationId == 1)
+            {
+                <input type="hidden" name="Fk_BillId" id="Fk_BillId" value="@ViewBag.BillId" />
+                <input type="hidden" name="BillId" id="BillId" value="@ViewBag.BillId" />
+                <input type="hidden" name="Bill_id" id="Bill_id" value="@ViewBag.id" />
+
+
+                <div class="collapse" id="BillDetailArea">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table warning-bordered-table">
+                                        <tr>
+                                            <td colspan="6" class="text-center"><p class="font-weight-bold">{{BillDetails.headerText}}</p></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Firm Name</b></td>
+                                            <td>{{BillDetails.firmName}}</td>
+                                            <td><b> Bill No.</b></td>
+                                            <td>{{BillDetails.billNo}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Bill Date</b></td>
+                                            <td>{{BillDetails.billDate}}</td>
+                                            <td><b>Fuel Charges</b></td>
+                                            <td>{{BillDetails.fuelCharges}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><b>Net LD Charges</b></td>
+                                            <td>{{BillDetails.netLDCharges}}</td>
+                                            <td><b>Grand Total</b></td>
+                                            <td>{{BillDetails.grandtotal}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body p-3">
+                        <h3>Attach Documents</h3>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="BillApprovalAttachmentForm" id="BillApprovalAttachmentForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Document Type <span class="text-danger">*</span></label>
+                                                @Html.DropDownListFor(m => m.DocumentType, new SelectList(ViewBag.ddlDocumentType, "Value", "Text"), new { @class = "form-control"})
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Attachment <span class="text-danger">*</span></label>
+                                                <input name="DocumentAttachment" ng-model="DocumentAttachment" id="DocumentAttachment" type="file" onchange="return fvalidateTPIReport(this)" class="form-control" />
+                                                <small class="text-danger">Please Upload only JPG,JPEG,PNG,PDF and file size only 1MB Allow!</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Remark</label>
+                                                <textarea name="Remarks" id="Remarks" ng-model="Remarks" class="form-control" rows="5"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 p-4 text-right">
+                                            <button type="button" class="btn btn-sm btn-xs btn-danger" id="Reset" onclick="return ResetForm();" value="Reset"><i class="fa fa-times"></i> Reset</button>
+                                            <button type="button" class="btn btn-sm btn-xs btn-success" id="Submit" ng-click="AddBillApprovalAttachment()" value="Save"><i class="fa fa-save"></i> Save</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="col-md-12" ng-show="BillApprovalAttachmentList.length>0">
+                                <div class="form-group">
+                                    <table class="table table-hover dataTable no-footer text-left">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">SN.</th>
+                                                <th class="text-left">Document Type</th>
+                                                <th class="text-left">Attachment</th>
+                                                <th class="text-left">Remark</th>
+                                                <th class="text-left">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="(index, Attachment) in BillApprovalAttachmentList">
+                                                <td class="text-left">{{index + 1}}</td>
+                                                <td class="text-left">{{Attachment.DocumentType}}</td>
+                                                <td>
+                                                    <div ng-if="Attachment.DocumentAttachment.type === 'application/pdf'">
+                                                        <a href="javascript:void(0)" ng-click="openPDF(Attachment.previewUrl)">{{ Attachment.previewUrl }}</a>
+                                                    </div>
+                                                    <div ng-if="Attachment.DocumentAttachment.type !== 'application/pdf'">
+                                                        <img ng-src="{{ Attachment.previewUrl }}" style="max-width: 100px; max-height: 60px;cursor:pointer" ng-click="openImage(Attachment.previewUrl)" />
+                                                    </div>
+                                                </td>
+                                                <td class="text-left">{{Attachment.Remarks}}</td>
+                                                <td class="text-center"><i ng-click="RemoveAttachment(index)" class="fa fa-trash text-danger" style="cursor:pointer" title="Click and remove this attachment from list."></i> </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <hr>
+                                <button class="btn btn-success btn-sm float-right" type="button" ng-click="SubmitAttachments()"><i class="fa fa-check"></i> Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body p-3">
+                        <h3>Attached Documents</h3>
+                        <div class="row">
+                            <div class="col-md-12" ng-show="AttachedList.length>0">
+                                <div class="form-group">
+                                    <table class="table table-hover dataTable no-footer text-left">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">SN.</th>
+                                                <th class="text-left">Document Type</th>
+                                                <th class="text-left">Attachment</th>
+                                                <th class="text-left">Remark</th>
+                                                <th class="text-left">Date</th>
+                                                <th class="text-left">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="(index, Attachment) in AttachedList">
+                                                <td class="text-left">{{index + 1}}</td>
+                                                <td class="text-left">{{Attachment.uploadDocName}}</td>
+                                                <td>
+                                                    <div ng-if="isPDF(Attachment.doc_Url)">
+                                                        <a href="/Bill/ViewDocument?filepath={{Attachment.doc_Url}}" target="_blank"><i class="fa fa-file-pdf-o text-danger" style="font-size:44px !important; font-weight:bold"></i> </a>
+                                                    </div>
+                                                    <div ng-if="!isPDF(Attachment.doc_Url)">
+                                                        <img ng-src="{{ Attachment.doc_Url }}" style="width: 80px; height: 60px; cursor:pointer" ng-click="openImage(Attachment.doc_Url)" />
+                                                    </div>
+                                                </td>
+
+                                                <td class="text-left">{{Attachment.remarks}}</td>
+                                                <td class="text-left">{{Attachment.date}}</td>
+                                                <td class="text-center"><i ng-click="DeleteAttachedFiles(Attachment.id)" class="fa fa-trash text-danger" style="cursor:pointer" title="Click and delete this attachment from list."></i> </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <div class="card p-2">
+                    <h5 class="text-danger text-center"><i class="fa fa-ban" aria-hidden="true"></i> Sorry, you are not allowed to access this page</h5>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="modal fade" id="openImageModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="" download="" class="btn btn-outline-info btn-sm file-download-button text-white"><i class="fa fa-download"></i> Download </a>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    @*  <h4 class="modal-title">Modal Header</h4> *@
+                </div>
+                <div class="modal-body">
+                    <img id="ImageViewTag" src="" style="max-height: 400px;" />
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="~/script/showtestingagency.js"></script>
+<script src="~/script/year.js"></script>
+<script>
+    function ResetForm() {
+        $('#BillApprovalAttachmentForm')[0].reset();
+    }
+    function fvalidateTPIReport() {
+
+    }
+</script>
+
+
+
